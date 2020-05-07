@@ -106,15 +106,15 @@ cond3(no)->op3
 2. 返回一组消息,通用消息样式。由msg,code,request 三个参数组成JSON响应体
 ```js
 {
-    "error_code": 0,
-    "msg": 'art add success!',
-    "request":"POST /v1/art/add_art"
+    "error_code": 10001,
+    "msg": 'error_json !',
+    "request":"GET /v1/users/add_user"
 }
 
 {
-    "error_code": 10001,
-    "msg": 'error_json !',
-    "request":"get /v1/users/add_user"
+    "error_code": 0,
+    "msg": 'user created!',
+    "request":"POST /v1/users/add_user"
 }
 
 ```
@@ -162,11 +162,10 @@ POST /web/token
 
 ##### Response 201
 ```js
-{
-    "account": abcdef,
-    "token": adf123dfas031dkiweoqk,
-    "uid": 1
-}
+    "error_code": 0,
+    "msg": "adf123dfas031dkiweoqk",
+    "request": "POST /web/token"
+
 ````
 
 ##### Response_description
@@ -181,40 +180,21 @@ POST /web/token
 POST /web/token/verify
 ````
 ##### Parameters
-- token 
+- token: 令牌
 
 ##### Response 200
 ```js
 {
-    "error_code": 0,
-    "msg": 'verify success!',
-    "request":"POST /web/token/verify"
+    "uid": 2,
+    "gid": 1,
+    "scope": 16,
+    "yf_code": "YF0309",
+    "nickname": "json"
 }
 ````
 
 ##### Response_description
 - 
-
-#### 忘记密码
-##### URL
-```js
-POST /web/token/forgot
-```
-##### Parameters
-- account
-
-##### Response 200
-```js
-{
-    "content":"验证码已发送",
-    "smsCode" "12D51"
-}
-````
-
-##### Response_description
--content: 获取验证码提示 
--smsCode: 第三方短信验证码
-
 
 ### 用户
 #### 用户列表获取
@@ -224,15 +204,41 @@ GET /web/users/list
 ````
 ##### Parameters
 - 
-
 ##### Response 200
-```js 
+```js
+[{
+    "uid":1,
+    "gid":[1,2,3],
+    "scope": 32,
+    "account": "18600000001",
+    "nickname" "json",
+    "state_name": 1,
+    "yf_code":"YF0315",
+    "yf_name": "西陵营服中心",
+    "groups": ["市场运营","B2I2C运营","营服总"]
+},{
+    "uid":2,
+    "gid":[1],
+    "scope": 8,
+    "account": "18600000001",
+    "nickname" "penny",
+    "state_name": 0,
+    "yf_code":"YF0315",
+    "yf_name": "伍家营服中心",
+    "groups": ["市场运营"]
+}]
 ````
 
 ##### Response_description
-- 
--
--
+- uid: 用户id
+- gid: 用户组id
+- scope: 用户权限级别
+- account: 账号
+- nickname: 用户昵称
+- state_name: 用户状态
+- yf_code: 营服编码
+- yf_name: 营服名称
+- groups: 权限
 
 #### 用户添加
 ##### URL
@@ -240,18 +246,23 @@ GET /web/users/list
 POST /web/users/add_user
 ````
 ##### Parameters
-- 
--
--
+- account: 账号
+- password: 密码
+- nickname: 用户昵称
+- gid: 用户组id
+- yf_code: 营服编码
 
-##### Response 200
-```js 
+##### Response 201
+```js
+{
+    "error_code": 0,
+    "msg":"user created",
+    "request": "POST /web/users/add_user"
+}
 ````
 
 ##### Response_description
 - 
--
--
 
 #### 用户启用
 ##### URL
@@ -259,18 +270,19 @@ POST /web/users/add_user
 GET /web/users/<int:uid>/enable
 ````
 ##### Parameters
-- 
--
--
+- uid: 用户id
 
-##### Response 200
+##### Response 201
 ```js 
+{
+    "error_code": 0,
+    "msg":"user enable",
+    "request": "GET /web/users/2/enable"    
+}
 ````
 
 ##### Response_description
 - 
--
--
 
 #### 用户删除
 ##### URL
@@ -278,18 +290,19 @@ GET /web/users/<int:uid>/enable
 GET /web/users/<int:uid>/remove
 ````
 ##### Parameters
-- 
--
--
+- uid: 用户id
 
-##### Response 200
+##### Response 201
 ```js 
+{
+    "error_code": 0,
+    "msg":"user disable",
+    "request": "GET /web/users/2/remove"    
+}
 ````
 
 ##### Response_description
 - 
--
--
 
 #### 用户编辑
 ##### URL
@@ -297,17 +310,18 @@ GET /web/users/<int:uid>/remove
 GET /web/users/<int:uid>/modify
 ````
 ##### Parameters
-- 
--
--
+- uid: 用户id
 
 ##### Response 200
 ```js 
+{
+    "error_code": 0,
+    "msg":"user modify",
+    "request": "GET /web/users/2/modify"    
+}
 ````
 
 ##### Response_description
-- 
--
 -
 
 #### 用户搜索
@@ -317,17 +331,34 @@ GET /web/users/search
 ````
 ##### Parameters
 - account: 账号
--
+- nickname: 用户昵称
 -
 
 ##### Response 200
-```js 
+```js
+{
+    "uid":1,
+    "gid":[1,2,3]
+    "scope": 32,
+    "account": "18600000001",
+    "nickname" "json",
+    "state_name": 1,
+    "yf_code":"YF0315",
+    "yf_name": "西陵营服中心",
+    "groups": ["市场运营","B2I2C运营","营服总"]
+}
 ````
 
 ##### Response_description
-- 
--
--
+- uid: 用户id
+- gid: 用户组id
+- scope: 用户权限级别
+- account: 账号
+- nickname: 用户昵称
+- state_name: 用户状态
+- yf_code: 营服编码
+- yf_name: 营服名称
+- groups: 权限
 
 #### 用户密码修改
 ##### URL
@@ -338,14 +369,36 @@ POST /web/users/security
 - account: 账号
 - password: 用户密码
 
-##### Response 200
+##### Response 201
 ```js 
+{
+    "error_code": 0,
+    "msg": "password updated",
+    "request": "POST /web/users/security"
+}
 ````
 
 ##### Response_description
 - account: 账号
 - password: 密码
--
+
+#### 短信验证码
+##### URL
+```js
+POST /web/token/smscode
+```
+##### Parameters
+- account: 账号
+
+##### Response 200
+```js
+{
+    "smsCode" "12D51"
+}
+````
+
+##### Response_description
+-smsCode: 短信验证码
 
 
 ### 分组
@@ -356,11 +409,23 @@ GET /web/group/list
 ````
 ##### Parameters
 - 
--
--
 
 ##### Response 200
 ```js 
+[
+    {
+        "gid":1,
+        "group_name": "市场运营",
+        "role":Depart Director,
+        "state_code": 0
+    },
+    {
+        "gid":2,
+        "group_name": "管理员",
+        "role":Admin,
+        "state_code": 0
+    }
+]
 ````
 
 ##### Response_description
@@ -797,7 +862,13 @@ GET /web/log/search
 -
 -
 
+## 权限管理
 
+## 数据结构
+#### 用户 user
+```js
+
+```
 
 
 
