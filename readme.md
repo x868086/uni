@@ -89,6 +89,170 @@ cond3(no)->op3
 
 
 ---
+# 数据表
+### 1. RDS MySQL
+#### state
+state_id | state_code | state_name
+-- | -- | --
+1 | 0 | 停用
+2 | 1 | 启用
+3 | 2 | 注销
+
+#### market_group
+id | is_market_group | market_group_name
+-- | -- | --
+1 | M | 公众
+2 | G | 政企
+3 | S2 | 校园
+
+#### roles
+role_id | role | role_name | scope
+-- | -- |-- | -- |
+1	| Admin	| 管理员	| 66
+2	| President	| 总经理	| 60
+3	| DepartmentChief	| 部门经理	| 54
+4	| DepartmentSupervisor	| 业务主管	| 48
+5	| MarketDirector	| 营服经理	| 42
+6	| StoreSupervisor	| 渠道主管	| 36
+7	| StoreManager	| 店长	| 30
+8	| DirectSeller	| 直销员	| 24
+
+#### routers
+route_id | path | rid 
+-- | -- |-- |
+1	| permission	| 1
+2	| permission	| 2
+3	| edit	| 1
+4	| edit	| 2
+5	| edit	| 3
+6	| dashboard	| 1
+7	| dashboard	| 4
+
+#### users
+user_id	| role_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
+-- | -- |-- |-- | -- |-- |-- | -- |-- |
+1	| 1	| 0	| 18600000001	| abcdef123de	| json	| 1	| 1
+1	| 2	| 0	| 18600000001	| abcdef123de	| json	| 1	| 1
+2	| 3	| 3	| 18600000003	| abcdef123de	| penny	| 1	| 1
+3	| 4	| 7	| 18600000004	| abcdef123de	| lily	| 1	| 0
+
+#### depart
+org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by
+-- | -- |-- |-- | -- |-- |-- | -- |-- |
+0 |	| | |			1	| root	| 66	| 1
+2 |	| | |			1	| 宜昌	| 60	| 1
+3	|	| | | 		2	| 公众	| 54	| 1
+4	|	| | |		2	| 政企	| 54	| 1
+5	|	| | |		3	| 营销部	| 48	| 1
+6	|	| | | 		3	| 综合服务支撑中心	| 48	| 1
+7	|	| | |		4	| 政企客户事业部	| 48	| 1
+8	|	| | |		5	| 西陵营服中心	| 42	| 1
+9	|	| | |		5	| 五峰城西营服中心	| 42	| 1
+10	|	| | |		7	| 城区校园营服中心	| 42	| 1
+11	|	| | |		8	| 西陵东山网格	| 36	| 1
+12	|	| | |		9	| 五峰城西一网格	| 36	| 1
+13	|	| | |		10	| 三峡大学网格	| 36	| 1
+14	| 09C15	| YF0307	| G	| 11	| 正兴合作厅	| 30	| 1
+15	| YVBBJ	| YF0307	| G	| 11	| 易杰数码宜昌市管理本部	| 30	| 1
+16	| YFYUJ	| YF0307	| G	| 11	| 宜昌市oppo渠道管理本部	| 30	| 1
+17	| 09CAA	| YF0337	| G	| 12	| 五峰新时空手机世界五峰店	| 30	| 1
+18	| Y1ZRI	| YF0337	| G	| 12	| 五峰城关自有营业厅	| 30	| 1
+19	| YAAJ0	| YF0590	| S2	| 13	| 宜昌市城区三峡大学图书城自有营业厅（校园）	| 30	| 1
+20	|	| | | |			直销员1	| 24	| 1
+21	|	| | | |			直销员2	| 24	| 1
+22	|	| | | |			直销员3	| 24	| 1
+
+
+### 2. TCB 云数据库
+#### b2i2c 二次销售号码
+```js
+[
+    {"serial_number":'15607200000',
+    "product_name":"腾讯大网卡",
+    "belong":"YF0307",
+    "fee":15,
+    "dev_name":"张三",
+    "contact_phone":"15607200000",
+    "operate_time",1589185965494,
+    "operate":"已处理"},
+
+    {"serial_number":'15607200000',
+    "product_name":"腾讯大网卡",
+    "belong":"YF0307",
+    "fee":15,
+    "dev_name":"张三",
+    "contact_phone":"15607200000",
+    "operate_time",1589185965494,
+    "operate":"驳回"},
+
+    {"serial_number":'15607200000',
+    "product_name":"腾讯大网卡",
+    "belong":"YF0307",
+    "fee":15,
+    "dev_name":"张三",
+    "contact_phone":"15607200000",
+    "operate_time",1589185965494,
+    "operate":"删除"},    
+]
+```
+
+#### thresholds 阈值列表
+```js
+[
+    {"cid":1,
+    "config_name":"5G折扣资费推荐",
+    "state_code":1,
+    "start_date":1589185965494,
+    "operator:"林艳",
+    "items":[{"gte":70.3,"lt":91.3,"title":"129元档打7折"},
+    {"gte":91.3,"lt":119.3,"title":"159元档打7折"},
+    {"gte":399.3,"lt":Infinity,"title":"599元档打7折"}],
+
+    {"cid":2,
+    "config_name":"花呗分期推荐20%赠费",
+    "state_code":0,
+    "start_date":1589185965494,
+    "operator:"林艳",
+    "items":[{"gte":0,"lt":15,"title":"ARPU值低于45元,请查询单卡弹窗结果"},
+    {"gte":45,"lt":50,"title":"低消78元,赠送红包23元,赠送时长24月"},
+    {"gte":50,"lt":Infinity,"title":"ARPU值超过50,不予推荐20%赠费花呗分期活动"}],
+    },
+
+    {"cid":3,
+    "config_name":"花呗分期推荐30%赠费",
+    "state_code":1,
+    "start_date":1589185965494,
+    "operator:"林艳",
+    "items":[{"gte":50,"lt":69,"title":"低消98元,赠送红包29元,赠送时长24月"},
+    {"gte":69,"lt":79,"title":"低消108元,赠送红包29元,赠送时长24月"},
+    {"gte":278,"lt":Infinity,"title":"低消超过278,不予推荐花呗分期活动"}],
+    }
+]
+```
+
+#### articles 文章
+```js
+[
+    {"aid":1,
+    "public_date":1589185965494,
+    "author":"张三",
+    "type":"资费",
+    "depart_name":"营销部",
+    "title":"关于做好5G折扣资费推广的通知",
+    "content":"<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>",
+    "state_code":0},
+
+    {"aid":2,
+    "public_date":1589185965494,
+    "author":"张三",
+    "type":"业务规范",
+    "depart_name":"政企营销中心",
+    "title":"CBSS欠费用户操作流程",
+    "content":"<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>",
+    "state_code":1}
+]
+```
+
 # API 接口文档
 ###  JSON格式约定
 任何参数提交（除 GET 参数外）均需要严格符合JSON数据格式。不要以单引号表示JSON 的键或者值。在blink api中所有json数据字符串都必须以双引号" " 来引用。请再在HTTP头里加上Content-Type： application/json
