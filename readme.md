@@ -116,6 +116,8 @@ role_id | role | role_name | scope
 6	| StoreSupervisor	| 渠道主管	| 36
 7	| StoreManager	| 店长	| 30
 8	| DirectSeller	| 直销员	| 24
+说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，大于等于scope值的允许，小于scope值的抛出错误。
+
 
 #### routers
 route_id | path | rid 
@@ -127,6 +129,7 @@ route_id | path | rid
 5	| edit	| 3
 6	| dashboard	| 1
 7	| dashboard	| 4
+说明：**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取routers表中role_id对应的path，生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
 
 #### users
 user_id	| role_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
@@ -161,6 +164,7 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 20	|	| | | |			直销员1	| 24	| 1
 21	|	| | | |			直销员2	| 24	| 1
 22	|	| | | |			直销员3	| 24	| 1
+说明：用户表中role_id取出对应的org_id，在depart表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表uid对应的org_id, 用org_id关联depart表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
 
 
 ### 2. TCB 云数据库
