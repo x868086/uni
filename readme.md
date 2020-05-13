@@ -97,6 +97,9 @@ state_id | state_code | state_name
 1 | 0 | 停用
 2 | 1 | 启用
 3 | 2 | 注销
+*state_id: TINYINT, unsigned, autoIncrement, primaryKey*
+*state_code: TINYINT, unsigned, unique*
+*state_name: STRING(64), unique*
 
 #### market_group
 id | is_market_group | market_group_name
@@ -104,6 +107,9 @@ id | is_market_group | market_group_name
 1 | M | 公众
 2 | G | 政企
 3 | S2 | 校园
+*id: TINYINT, unsigned, autoIncrement, primaryKey*
+*is_market_group: STRING(8), unique*
+*market_group_name: STRING(64), unique*
 
 #### roles
 role_id | role | role_name | scope
@@ -116,29 +122,40 @@ role_id | role | role_name | scope
 6	| StoreSupervisor	| 渠道主管	| 36
 7	| StoreManager	| 店长	| 30
 8	| DirectSeller	| 直销员	| 24
+*role_id: TINYINT, unsigned, autoIncrement, primaryKey*
+*role: STRING(128), unique*
+*role_name: STRING(128), unique*
+*scope: TINYINT, unsigned, unique*
 说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，大于等于scope值的允许，小于scope值的抛出错误。
 
 #### permissions
-user_id | role_id 
--- | -- | 
-1 | 1 
-1 | 2
-2 | 3
-3 | 5
-4 | 6
-5 | 7
-6 | 8
+id| user_id | role_id 
+--| -- | -- | 
+1 | 1 | 1 
+2 | 1 | 2
+3 | 2 | 3
+4 | 3 | 5
+5 | 4 | 6
+6 | 5 | 7
+7 | 6 | 8
+*id: SMALLINT, unsigned, autoIncrement, primaryKey*
+*user_id: INTERGER(11), unsigned*
+*role_id: TINYINT, unsigned*
 说明：用户的角色列表，**一个用户可同时拥有多个角色**，permissions表中用户的roles数组关联roleroutes表生成用户权限内的路由表。
 
 #### routes
 route_id | path | name
 -- | -- | -- |
-1  | /  | index
-2	| /permission | permission 
-3	| /edit | edit
-4	| /dashboard | dashboard 
-5   | /b2i2c | b2i2c
+1  | /  | 首页
+2	| /permission | 权限管理 
+3	| /edit | 信息发布
+4	| /dashboard | 面板 
+5   | /b2i2c | B2I2C运营
+*route_id: SMALLINT, unsigned, autoIncrement, primaryKey*
+*path: STRING(128), unique*
+*name: STRING(128), unique*
 说明：后端所有页面的路由信息，**前端新增页面后将路由信息添加到该表中**
+
 
 #### roleroutes
 id | role_id | route_id 
@@ -149,7 +166,9 @@ id | role_id | route_id
 4	| 3	| 3
 5	| 3	| 4
 6	| 7	| 5
-
+*id: SMALLINT, unsigned, autoIncrement, primaryKey*
+*role_id: TINYINT, unsigned*
+*route_id: SMALLINT, unsigned*
 说明：**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取roleroutes表中role_id对应的route_id，用route_id关联routes表生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
 
 
@@ -164,6 +183,13 @@ user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
 4	| 12	| 18600000005	| abcdef123de	| Jack	| 1	| 0
 5	| 17	| 18600000006	| abcdef123de	| White	| 1	| 0
 6	| 20	| 18600000007	| abcdef123de	| Kitty	| 1	| 0
+*user_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+*org_id: INTERGER(11), unsigned, unique*
+*account: STRING(256), unique*
+*password: STRING(256), set(val){this.setDataValue('password', pwd)}*
+*nick_name: STRING(256), allowNull:true,*
+*created_by: INTERGER(11), unsigned*
+*state_code: TINYINT, unsigned, unsigned*
 
 #### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by
@@ -190,8 +216,15 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 20	|	| YF0307 | M | |			直销员1	| 24	| 1
 21	|	| YF0337 | M | |			直销员2	| 24	| 1
 22	|	| YF0590 | S2 | |			直销员3	| 24	| 1
+*org_id: INTERGER(11), unsigned, unique, autoIncrement, primaryKey*
+*channel_id: STRING(64), unique, allowNull:true*
+*yf_code: STRING(64), allowNull:true*
+*is_market_group: STRING(8), allowNull:true*
+*parent_manager_id: INTERGER(11), unsigned*
+*org_desc: STRING(256)*
+*scope: TINYINT, unsigned*
+*created_by: INTERGER(11), unsigned*
 说明：用户表中取出org_id，在organizations表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表user_id对应的org_id, 用org_id关联organizations表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
-
 
 **role_id决定用户权限内的可访问路由信息，scope值决定用户后端API接口的最高权限，org_id和scope值同时使用决定用户在ornanizations表中其org_id下所有子节点对应的channel_id**
 
@@ -520,7 +553,7 @@ GET /web/users/<int:user_id>/enable
 ##### Parameters
 - user_id: 用户id
 
-##### Response 201
+##### Response 202
 ```js 
 {
     "error_code": 0,
@@ -540,7 +573,7 @@ GET /web/users/<int:user_id>/remove
 ##### Parameters
 - user_id: 用户id
 
-##### Response 201
+##### Response 204
 ```js 
 {
     "error_code": 0,
@@ -564,11 +597,11 @@ POST /web/users/<int:user_id>/modify
 - org_id: 用户组织节点id
 - roles: 用户角色id数组
 
-##### Response 201
+##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg":"user modify",
+    "msg":"user updated",
     "request": "GET /web/users/2/modify"    
 }
 ````
@@ -613,11 +646,11 @@ POST /web/users/security
 - account: 账号
 - password: 用户密码
 
-##### Response 201
+##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg": "password updated",
+    "msg": "password changed",
     "request": "POST /web/users/security"
 }
 ````
@@ -645,11 +678,11 @@ POST /web/users/smscode
 -smsCode: 短信验证码
 
 
-### 分组
-#### 分组列表获取
+### 角色
+#### 角色列表获取
 ##### URL
 ```js
-GET /web/users/roles
+GET /web/roles/list
 ````
 ##### Parameters
 - 
@@ -658,100 +691,114 @@ GET /web/users/roles
 ```js 
 [
     {
-        "role_id":1,
-        "role": "管理员",
-        "state_code": "启用"
-
+        "role_id": 1,
+        "role_name": "管理员",
+        "state_name": "启用",
+        "paths": ['首页','权限管理','信息发布']
     },
     {
-        "gid":2,
-        "group_name": "管理员",
-        "role":Admin,
-        "state_code": 0
+        "role_id": 3,
+        "role_name": "部门经理",
+        "state_name": "启用",
+        "paths": ['信息发布','面板']
+    },
+    {
+        "role_id": 7,
+        "role_name": "店长",
+        "state_name": "启用",
+        "paths": ['B2I2C运营']
     }
 ]
 ````
 
 ##### Response_description
-- 
--
--
+- role_id: 角色id
+- role_name: 角色名称
+- state_name: 状态
+- paths: 用户角色路由权限数组
 
-#### 分组启用
+#### 角色启用
 ##### URL
 ```js
-GET /web/group/<int:gid>/enable
+GET /web/roles/<int:role_id>/enable
 ````
 ##### Parameters
-- 
--
--
+- role_id: 角色id 
 
-##### Response 200
+##### Response 202
 ```js 
+{
+    "error_code": 0,
+    "msg": "role enable",
+    "request": "GET /web/roles/<int:role_id>/enable"
+}
 ````
 
 ##### Response_description
-- 
--
 -
 
 #### 分组编辑
 ##### URL
 ```js
-GET /web/group/<int:gid>/modify
+POST /web/roles/modify
 ````
 ##### Parameters
-- 
--
--
+- role_id: 角色id
+- role: 角色描述
+- role_name: 角色名称
 
-##### Response 200
+##### Response 202
 ```js 
+{
+    "error_code": 0,
+    "msg": "role updated",
+    "request": "POST /web/roles/modify"
+}
 ````
 
 ##### Response_description
 - 
--
--
 
 #### 分组删除
 ##### URL
 ```js
-GET /web/group/<int:gid>/remove
+GET /web/role/<int:role_id>/remove
 ````
 ##### Parameters
-- 
--
--
+- role_id：角色id
 
-##### Response 200
+##### Response 204
 ```js 
+{
+    "error_code": 0,
+    "msg": "role removed",
+    "request": "GET /web/roles/remove"
+}
 ````
 
 ##### Response_description
-- 
--
 -
 
 #### 分组添加
 ##### URL
 ```js
-POST /web/group/add_group
+POST /web/role/add_role
 ````
 ##### Parameters
-- 
--
--
+- role: 角色描述
+- role_name: 角色名称
+- scope: 后端API接口权限级别
+- routes: 角色路由数组
 
-##### Response 200
+##### Response 201
 ```js 
+    "error_code": 0,
+    "msg": "role created",
+    "request": "POST /web/roles/add_role"
 ````
 
 ##### Response_description
 - 
--
--
 
 
 ### 市场运营
