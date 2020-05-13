@@ -118,53 +118,82 @@ role_id | role | role_name | scope
 8	| DirectSeller	| 直销员	| 24
 说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，大于等于scope值的允许，小于scope值的抛出错误。
 
+#### permissions
+user_id | role_id 
+-- | -- | 
+1 | 1 
+1 | 2
+2 | 3
+3 | 5
+4 | 6
+5 | 7
+6 | 8
+说明：用户的角色列表，**一个用户可同时拥有多个角色**，permissions表中用户的roles数组关联roleroutes表生成用户权限内的路由表。
 
-#### routers
-route_id | path | rid 
+#### routes
+route_id | path | name
+-- | -- | -- |
+1  | /  | index
+2	| /permission | permission 
+3	| /edit | edit
+4	| /dashboard | dashboard 
+5   | /b2i2c | b2i2c
+说明：后端所有页面的路由信息，**前端新增页面后将路由信息添加到该表中**
+
+#### roleroutes
+id | role_id | route_id 
 -- | -- |-- |
-1	| permission	| 1
-2	| permission	| 2
-3	| edit	| 1
-4	| edit	| 2
-5	| edit	| 3
-6	| dashboard	| 1
-7	| dashboard	| 4
-说明：**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取routers表中role_id对应的path，生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
+1	| 1	| 1
+2	| 1	| 2
+3   | 1 | 4
+4	| 3	| 3
+5	| 3	| 4
+6	| 7	| 5
+
+说明：**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取roleroutes表中role_id对应的route_id，用route_id关联routes表生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
+
+
+
 
 #### users
-user_id	| role_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
--- | -- |-- |-- | -- |-- |-- | -- |-- |
-1	| 1	| 0	| 18600000001	| abcdef123de	| json	| 1	| 1
-1	| 2	| 0	| 18600000001	| abcdef123de	| json	| 1	| 1
-2	| 3	| 3	| 18600000003	| abcdef123de	| penny	| 1	| 1
-3	| 4	| 7	| 18600000004	| abcdef123de	| lily	| 1	| 0
+user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
+-- | -- |-- | -- |-- |-- | -- |-- |
+1	| 1	| 18600000001	| abcdef123de	| Json	| 1	| 1
+2	| 3	| 18600000003	| abcdef123de	| Penny	| 1	| 1
+3	| 8	| 18600000004	| abcdef123de	| Lily	| 1	| 0
+4	| 12	| 18600000005	| abcdef123de	| Jack	| 1	| 0
+5	| 17	| 18600000006	| abcdef123de	| White	| 1	| 0
+6	| 20	| 18600000007	| abcdef123de	| Kitty	| 1	| 0
 
-#### depart
+#### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by
 -- | -- |-- |-- | -- |-- |-- | -- |-- |
-0 |	| | |			1	| root	| 66	| 1
+1 |	| | |			0	| root	| 66	| 1
 2 |	| | |			1	| 宜昌	| 60	| 1
 3	|	| | | 		2	| 公众	| 54	| 1
 4	|	| | |		2	| 政企	| 54	| 1
 5	|	| | |		3	| 营销部	| 48	| 1
 6	|	| | | 		3	| 综合服务支撑中心	| 48	| 1
 7	|	| | |		4	| 政企客户事业部	| 48	| 1
-8	|	| | |		5	| 西陵营服中心	| 42	| 1
-9	|	| | |		5	| 五峰城西营服中心	| 42	| 1
-10	|	| | |		7	| 城区校园营服中心	| 42	| 1
-11	|	| | |		8	| 西陵东山网格	| 36	| 1
-12	|	| | |		9	| 五峰城西一网格	| 36	| 1
-13	|	| | |		10	| 三峡大学网格	| 36	| 1
-14	| 09C15	| YF0307	| G	| 11	| 正兴合作厅	| 30	| 1
-15	| YVBBJ	| YF0307	| G	| 11	| 易杰数码宜昌市管理本部	| 30	| 1
-16	| YFYUJ	| YF0307	| G	| 11	| 宜昌市oppo渠道管理本部	| 30	| 1
-17	| 09CAA	| YF0337	| G	| 12	| 五峰新时空手机世界五峰店	| 30	| 1
-18	| Y1ZRI	| YF0337	| G	| 12	| 五峰城关自有营业厅	| 30	| 1
+8	|	| YF0307 | M |		5	| 西陵营服中心	| 42	| 1
+9	|	| YF0337 | M |		5	| 五峰城西营服中心	| 42	| 1
+10	|	| YF0590 | S2 |		7	| 城区校园营服中心	| 42	| 1
+11	|	| YF0307 | M |		8	| 西陵东山网格	| 36	| 1
+12	|	| YF0337 | M |		9	| 五峰城西一网格	| 36	| 1
+13	|	| YF0590 | S2 |		10	| 三峡大学网格	| 36	| 1
+14	| 09C15	| YF0307	| M	| 11	| 正兴合作厅	| 30	| 1
+15	| YVBBJ	| YF0307	| M	| 11	| 易杰数码宜昌市管理本部	| 30	| 1
+16	| YFYUJ	| YF0307	| M	| 11	| 宜昌市oppo渠道管理本部	| 30	| 1
+17	| 09CAA	| YF0337	| M	| 12	| 五峰新时空手机世界五峰店	| 30	| 1
+18	| Y1ZRI	| YF0337	| M	| 12	| 五峰城关自有营业厅	| 30	| 1
 19	| YAAJ0	| YF0590	| S2	| 13	| 宜昌市城区三峡大学图书城自有营业厅（校园）	| 30	| 1
-20	|	| | | |			直销员1	| 24	| 1
-21	|	| | | |			直销员2	| 24	| 1
-22	|	| | | |			直销员3	| 24	| 1
-说明：用户表中role_id取出对应的org_id，在depart表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表uid对应的org_id, 用org_id关联depart表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
+20	|	| YF0307 | M | |			直销员1	| 24	| 1
+21	|	| YF0337 | M | |			直销员2	| 24	| 1
+22	|	| YF0590 | S2 | |			直销员3	| 24	| 1
+说明：用户表中取出org_id，在organizations表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表user_id对应的org_id, 用org_id关联organizations表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
+
+
+**role_id决定用户权限内的可访问路由信息，scope值决定用户后端API接口的最高权限，org_id和scope值同时使用决定用户在ornanizations表中其org_id下所有子节点对应的channel_id**
 
 
 ### 2. TCB 云数据库
@@ -241,7 +270,7 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
     "public_date":1589185965494,
     "author":"张三",
     "type":"资费",
-    "depart_name":"营销部",
+    "channel_name":"营销部",
     "title":"关于做好5G折扣资费推广的通知",
     "content":"<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>",
     "state_code":0},
@@ -250,7 +279,7 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
     "public_date":1589185965494,
     "author":"张三",
     "type":"业务规范",
-    "depart_name":"政企营销中心",
+    "channel_name":"政企营销中心",
     "title":"CBSS欠费用户操作流程",
     "content":"<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>",
     "state_code":1}
@@ -322,30 +351,27 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 #### 用户登录
 ##### URL
 ```js
-POST /web/token
+POST /web/users/verify
 ````
 ##### Parameters
 - account: 账号
 - password: 密码
 
-##### Response 201
+##### Response 200
 ```js
-    "error_code": 0,
-    "msg": "adf123dfas031dkiweoqk",
-    "request": "POST /web/token"
-
+{
+    "token": "adf123dfas031dkiweoqk"
+}
 ````
 
 ##### Response_description
-- account: 账号
 - token: 令牌
-- uid: 用户id
-
+说明: 账号密码校验通过后签发token,token包含通过account关联查询users表中的user_id，org_id。
 
 #### token校验
 ##### URL
 ```js
-POST /web/token/verify
+POST /web/users/userinfo
 ````
 ##### Parameters
 - token: 令牌
@@ -353,18 +379,60 @@ POST /web/token/verify
 ##### Response 200
 ```js
 {
-    "uid": 2,
-    "gid": 1,
-    "scope": 16,
-    "yf_code": "YF0309",
-    "nickname": "json"
+    "user_id": 1,
+    "org_id":1,
+    "roles": [1,2,3],
+    "scope": [66,60,54],
+    "scope_top": 66,
+    "role_name": "管理员"
+}
+````
+说明： 通过user_id关联查询permissions表中的roles数组,roles数组生成用户权限内的路由对象。通过roles数组关联roles表中的scope数组，取scope数组的最大值就是用户后端API接口的最高权限。
+
+##### Response_description
+- user_id: 用户id
+- org_id: 用户组织节点id
+- roles: 用户角色id数据, **前端根据roles数组动态生成用户可访问路由对象**
+- scope: 用户后端API接口权限级别
+- scope_top: 用户后端API接口的最高权限
+- role_name: 用户最高角色名称
+
+### 用户
+#### 用户权限内渠道列表
+##### URL
+```js
+POST /web/users/channels
+````
+##### Parameters
+- user_id: 用户id
+- org_id: 用户组织节点id
+- scope_top: 用户后端API接口的最高权限
+
+##### Response 200
+```js
+{
+    {
+        "scope": 60,
+        "org_desc": "宜昌",
+        "channels": ['09C15','YVBBJ','YFYUJ','09CAA','Y1ZRI','YAAJ0']
+    },{
+        "scope": 36,
+        "org_desc":"西陵东山网格",
+        "channels": ['09C15','YVBBJ','YFYUJ']
+    },{
+        "scope": 30,
+        "org_desc":"正兴合作厅",
+        "channels": ['09C15']       
+    }
 }
 ````
 
 ##### Response_description
-- 
+- scope: 用户后端API接口权限级别
+- org_desc: 用户组织节点名称
+- channels: 用户权限渠道列表
+说明: **递归查找**，按org_desc层级汇总org_desc下所有channels列表
 
-### 用户
 #### 用户列表获取
 ##### URL
 ```js
@@ -375,38 +443,50 @@ GET /web/users/list
 ##### Response 200
 ```js
 [{
-    "uid":1,
-    "gid":[1,2,3],
-    "scope": 32,
     "account": "18600000001",
-    "nickname" "json",
-    "state_name": 1,
-    "yf_code":"YF0315",
-    "yf_name": "西陵营服中心",
-    "groups": ["市场运营","B2I2C运营","营服总"]
+    "roles_name":['管理员','总经理'],
+    "org_desc":"root"
+    "nickname" "Json",
+    "state_name": "启用"
 },{
-    "uid":2,
-    "gid":[1],
-    "scope": 8,
-    "account": "18600000001",
-    "nickname" "penny",
-    "state_name": 0,
-    "yf_code":"YF0315",
-    "yf_name": "伍家营服中心",
-    "groups": ["市场运营"]
+    "account": "18600000003",
+    "roles_name":['部门经理'],
+    "org_desc":"公众"
+    "nickname" "Penny",
+    "state_name": "启用"
+},{
+    "account": "18600000004",
+    "roles_name":['营服经理'],
+    "org_desc":"西陵营服中心"
+    "nickname" "Lily",
+    "state_name": "停用"   
+},{
+    "account": "18600000005",
+    "roles_name":['渠道主管'],
+    "org_desc":"五峰城西一网格"
+    "nickname" "Jack",
+    "state_name": "停用"   
+},{
+    "account": "18600000006",
+    "roles_name":['店长'],
+    "org_desc":"五峰新时空手机世界五峰店"
+    "nickname" "White",
+    "state_name": "停用"   
+},{
+    "account": "18600000007",
+    "roles_name":['直销员'],
+    "org_desc":"直销员1"
+    "nickname" "Kitty",
+    "state_name": "停用"   
 }]
 ````
 
 ##### Response_description
-- uid: 用户id
-- gid: 用户组id
-- scope: 用户权限级别
 - account: 账号
+- roles_name: 用户权限名称数组
+- org_desc: 用户组织节点名称
 - nickname: 用户昵称
-- state_name: 用户状态
-- yf_code: 营服编码
-- yf_name: 营服名称
-- groups: 权限
+- state_name: 状态
 
 #### 用户添加
 ##### URL
@@ -417,8 +497,8 @@ POST /web/users/add_user
 - account: 账号
 - password: 密码
 - nickname: 用户昵称
-- gid: 用户组id
-- yf_code: 营服编码
+- org_id: 用户组织节点id
+- roles: 用户角色id数组
 
 ##### Response 201
 ```js
@@ -435,10 +515,10 @@ POST /web/users/add_user
 #### 用户启用
 ##### URL
 ```js
-GET /web/users/<int:uid>/enable
+GET /web/users/<int:user_id>/enable
 ````
 ##### Parameters
-- uid: 用户id
+- user_id: 用户id
 
 ##### Response 201
 ```js 
@@ -455,10 +535,10 @@ GET /web/users/<int:uid>/enable
 #### 用户删除
 ##### URL
 ```js
-GET /web/users/<int:uid>/remove
+GET /web/users/<int:user_id>/remove
 ````
 ##### Parameters
-- uid: 用户id
+- user_id: 用户id
 
 ##### Response 201
 ```js 
@@ -475,12 +555,16 @@ GET /web/users/<int:uid>/remove
 #### 用户编辑
 ##### URL
 ```js
-GET /web/users/<int:uid>/modify
+POST /web/users/<int:user_id>/modify
 ````
 ##### Parameters
-- uid: 用户id
+- user_id: 用户id
+- nick_name: 用户昵称
+- password: 用户密码
+- org_id: 用户组织节点id
+- roles: 用户角色id数组
 
-##### Response 200
+##### Response 201
 ```js 
 {
     "error_code": 0,
@@ -495,38 +579,30 @@ GET /web/users/<int:uid>/modify
 #### 用户搜索
 ##### URL
 ```js
-GET /web/users/search
+POST /web/users/search
 ````
 ##### Parameters
 - account: 账号
 - nickname: 用户昵称
--
 
 ##### Response 200
 ```js
 {
-    "uid":1,
-    "gid":[1,2,3]
-    "scope": 32,
-    "account": "18600000001",
-    "nickname" "json",
-    "state_name": 1,
-    "yf_code":"YF0315",
-    "yf_name": "西陵营服中心",
-    "groups": ["市场运营","B2I2C运营","营服总"]
+    "account": "18600000005",
+    "roles_name":['渠道主管'],
+    "org_desc":"五峰城西一网格"
+    "nickname" "Jack",
+    "state_name": "停用"
 }
 ````
 
 ##### Response_description
-- uid: 用户id
-- gid: 用户组id
-- scope: 用户权限级别
 - account: 账号
+- roles_name: 用户角色名称数组
+- org_desc: 用户组织节点名称
 - nickname: 用户昵称
-- state_name: 用户状态
-- yf_code: 营服编码
-- yf_name: 营服名称
-- groups: 权限
+- state_name: 状态
+
 
 #### 用户密码修改
 ##### URL
@@ -553,7 +629,7 @@ POST /web/users/security
 #### 短信验证码
 ##### URL
 ```js
-POST /web/token/smscode
+POST /web/users/smscode
 ```
 ##### Parameters
 - account: 账号
@@ -573,7 +649,7 @@ POST /web/token/smscode
 #### 分组列表获取
 ##### URL
 ```js
-GET /web/group/list
+GET /web/users/roles
 ````
 ##### Parameters
 - 
@@ -582,10 +658,10 @@ GET /web/group/list
 ```js 
 [
     {
-        "gid":1,
-        "group_name": "市场运营",
-        "role":Depart Director,
-        "state_code": 0
+        "role_id":1,
+        "role": "管理员",
+        "state_code": "启用"
+
     },
     {
         "gid":2,
