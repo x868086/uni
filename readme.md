@@ -338,13 +338,13 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 {
     "error_code": 10001,
     "msg": 'error_json !',
-    "request":"GET /v1/users/add_user"
+    "request":"GET /v1/users/create"
 }
 
 {
     "error_code": 0,
     "msg": 'user created!',
-    "request":"POST /v1/users/add_user"
+    "request":"POST /v1/users/create"
 }
 
 ```
@@ -401,7 +401,7 @@ POST /web/users/verify
 - token: 令牌
 说明: 账号密码校验通过后签发token,token包含通过account关联查询users表中的user_id，org_id。
 
-#### token校验
+#### 获取用户信息
 ##### URL
 ```js
 POST /web/users/userinfo
@@ -524,7 +524,7 @@ GET /web/users/list
 #### 用户添加
 ##### URL
 ```js
-POST /web/users/add_user
+POST /web/users/create
 ````
 ##### Parameters
 - account: 账号
@@ -538,7 +538,7 @@ POST /web/users/add_user
 {
     "error_code": 0,
     "msg":"user created",
-    "request": "POST /web/users/add_user"
+    "request": "POST /web/users/create"
 }
 ````
 
@@ -577,7 +577,7 @@ GET /web/users/<int:user_id>/remove
 ```js 
 {
     "error_code": 0,
-    "msg":"user disable",
+    "msg":"user removed",
     "request": "GET /web/users/2/remove"    
 }
 ````
@@ -690,24 +690,20 @@ GET /web/roles/list
 ##### Response 200
 ```js 
 [
-    {
-        "role_id": 1,
-        "role_name": "管理员",
-        "state_name": "启用",
-        "paths": ['首页','权限管理','信息发布']
+    {"role_id": 1,
+    "role_name": "管理员",
+    "state_name": "启用",
+    "paths": ['首页','权限管理','信息发布']
     },
-    {
-        "role_id": 3,
-        "role_name": "部门经理",
-        "state_name": "启用",
-        "paths": ['信息发布','面板']
+    {"role_id": 3,
+    "role_name": "部门经理",
+    "state_name": "启用",
+    "paths": ['信息发布','面板']
     },
-    {
-        "role_id": 7,
-        "role_name": "店长",
-        "state_name": "启用",
-        "paths": ['B2I2C运营']
-    }
+    {"role_id": 7,
+    "role_name": "店长",
+    "state_name": "启用",
+    "paths": ['B2I2C运营']}
 ]
 ````
 
@@ -782,7 +778,7 @@ GET /web/role/<int:role_id>/remove
 #### 分组添加
 ##### URL
 ```js
-POST /web/role/add_role
+POST /web/role/create
 ````
 ##### Parameters
 - role: 角色描述
@@ -794,7 +790,7 @@ POST /web/role/add_role
 ```js 
     "error_code": 0,
     "msg": "role created",
-    "request": "POST /web/roles/add_role"
+    "request": "POST /web/roles/create"
 ````
 
 ##### Response_description
@@ -979,7 +975,7 @@ GET /web/conf/<int:cfid>/remove
 #### 配置提交
 ##### URL
 ```js
-POST /web/conf/add_conf
+POST /web/conf/create
 ````
 ##### Parameters
 - 
@@ -1076,7 +1072,7 @@ POST /web/art/<int:artid>/modify
 #### 信息发布
 ##### URL
 ```js
-POST /web/art/add_art
+POST /web/art/public
 ````
 ##### Parameters
 - 
