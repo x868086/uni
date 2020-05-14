@@ -126,6 +126,7 @@ role_id | role | role_name | scope
 *role: STRING(128), unique*
 *role_name: STRING(128), unique*
 *scope: TINYINT, unsigned, unique*
+
 说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，大于等于scope值的允许，小于scope值的抛出错误。
 
 #### permissions
@@ -141,6 +142,7 @@ id| user_id | role_id
 *id: SMALLINT, unsigned, autoIncrement, primaryKey*
 *user_id: INTERGER(11), unsigned*
 *role_id: TINYINT, unsigned*
+
 说明：用户的角色列表，**一个用户可同时拥有多个角色**，permissions表中用户的roles数组关联roleroutes表生成用户权限内的路由表。
 
 #### routes
@@ -154,6 +156,7 @@ route_id | path | name
 *route_id: SMALLINT, unsigned, autoIncrement, primaryKey*
 *path: STRING(128), unique*
 *name: STRING(128), unique*
+
 说明：后端所有页面的路由信息，**前端新增页面后将路由信息添加到该表中**
 
 
@@ -169,6 +172,7 @@ id | role_id | route_id
 *id: SMALLINT, unsigned, autoIncrement, primaryKey*
 *role_id: TINYINT, unsigned*
 *route_id: SMALLINT, unsigned*
+
 说明：**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取roleroutes表中role_id对应的route_id，用route_id关联routes表生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
 
 
@@ -189,33 +193,33 @@ user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
 *password: STRING(256), set(val){this.setDataValue('password', pwd)}*
 *nick_name: STRING(256), allowNull:true,*
 *created_by: INTERGER(11), unsigned*
-*state_code: TINYINT, unsigned, unsigned*
+*state_code: TINYINT, unsigned, defaultValue:1*
 
 #### organizations
-org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by
--- | -- |-- |-- | -- |-- |-- | -- |-- |
-1 |	| | |			0	| root	| 66	| 1
-2 |	| | |			1	| 宜昌	| 60	| 1
-3	|	| | | 		2	| 公众	| 54	| 1
-4	|	| | |		2	| 政企	| 54	| 1
-5	|	| | |		3	| 营销部	| 48	| 1
-6	|	| | | 		3	| 综合服务支撑中心	| 48	| 1
-7	|	| | |		4	| 政企客户事业部	| 48	| 1
-8	|	| YF0307 | M |		5	| 西陵营服中心	| 42	| 1
-9	|	| YF0337 | M |		5	| 五峰城西营服中心	| 42	| 1
-10	|	| YF0590 | S2 |		7	| 城区校园营服中心	| 42	| 1
-11	|	| YF0307 | M |		8	| 西陵东山网格	| 36	| 1
-12	|	| YF0337 | M |		9	| 五峰城西一网格	| 36	| 1
-13	|	| YF0590 | S2 |		10	| 三峡大学网格	| 36	| 1
-14	| 09C15	| YF0307	| M	| 11	| 正兴合作厅	| 30	| 1
-15	| YVBBJ	| YF0307	| M	| 11	| 易杰数码宜昌市管理本部	| 30	| 1
-16	| YFYUJ	| YF0307	| M	| 11	| 宜昌市oppo渠道管理本部	| 30	| 1
-17	| 09CAA	| YF0337	| M	| 12	| 五峰新时空手机世界五峰店	| 30	| 1
-18	| Y1ZRI	| YF0337	| M	| 12	| 五峰城关自有营业厅	| 30	| 1
-19	| YAAJ0	| YF0590	| S2	| 13	| 宜昌市城区三峡大学图书城自有营业厅（校园）	| 30	| 1
-20	|	| YF0307 | M | |			直销员1	| 24	| 1
-21	|	| YF0337 | M | |			直销员2	| 24	| 1
-22	|	| YF0590 | S2 | |			直销员3	| 24	| 1
+org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by | state_code 
+-- | -- |-- |-- | -- |-- |-- | -- |-- | -- |
+1 |	| | |			0	| root	| 66	| 1 | 1
+2 |	| | |			1	| 宜昌	| 60	| 1 | 1
+3	|	| | | 		2	| 公众	| 54	| 1 | 1
+4	|	| | |		2	| 政企	| 54	| 1 | 1
+5	|	| | |		3	| 营销部	| 48	| 1 | 1
+6	|	| | | 		3	| 综合服务支撑中心	| 48	| 1 | 1
+7	|	| | |		4	| 政企客户事业部	| 48	| 1 | 1
+8	|	| YF0307 | M |		5	| 西陵营服中心	| 42	| 1 | 1
+9	|	| YF0337 | M |		5	| 五峰城西营服中心	| 42	| 1 | 1
+10	|	| YF0590 | S2 |		7	| 城区校园营服中心	| 42	| 1 | 1
+11	|	| YF0307 | M |		8	| 西陵东山网格	| 36	| 1 | 1
+12	|	| YF0337 | M |		9	| 五峰城西一网格	| 36	| 1 | 1
+13	|	| YF0590 | S2 |		10	| 三峡大学网格	| 36	| 1 | 1
+14	| 09C15	| YF0307	| M	| 11	| 正兴合作厅	| 30	| 1 | 1
+15	| YVBBJ	| YF0307	| M	| 11	| 易杰数码宜昌市管理本部	| 30	| 1 | 1
+16	| YFYUJ	| YF0307	| M	| 11	| 宜昌市oppo渠道管理本部	| 30	| 1 | 1
+17	| 09CAA	| YF0337	| M	| 12	| 五峰新时空手机世界五峰店	| 30	| 1 | 1
+18	| Y1ZRI	| YF0337	| M	| 12	| 五峰城关自有营业厅	| 30	| 1 | 1
+19	| YAAJ0	| YF0590	| S2	| 13	| 宜昌市城区三峡大学图书城自有营业厅（校园）	| 30	| 1 | 1
+20	|	| YF0307 | M | |			直销员1	| 24	| 1 | 1
+21	|	| YF0337 | M | |			直销员2	| 24	| 1 | 1
+22	|	| YF0590 | S2 | |			直销员3	| 24	| 1 | 1
 *org_id: INTERGER(11), unsigned, unique, autoIncrement, primaryKey*
 *channel_id: STRING(64), unique, allowNull:true*
 *yf_code: STRING(64), allowNull:true*
@@ -224,6 +228,8 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 *org_desc: STRING(256)*
 *scope: TINYINT, unsigned*
 *created_by: INTERGER(11), unsigned*
+*state_code: TINYINT, unsigned, defaultValue:1*
+
 说明：用户表中取出org_id，在organizations表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表user_id对应的org_id, 用org_id关联organizations表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
 
 **role_id决定用户权限内的可访问路由信息，scope值决定用户后端API接口的最高权限，org_id和scope值同时使用决定用户在ornanizations表中其org_id下所有子节点对应的channel_id**
@@ -233,65 +239,69 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 #### b2i2c 二次销售号码
 ```js
 [
-    {"serial_number":'15607200000',
-    "product_name":"腾讯大网卡",
-    "belong":"YF0307",
-    "fee":15,
-    "dev_name":"张三",
-    "contact_phone":"15607200000",
-    "operate_time",1589185965494,
-    "operate":"已处理"},
+    {"serial_number": '15607200000',
+    "product_name": "腾讯大网卡",
+    "belong": "YF0307",
+    "fee": 15,
+    "dev_name": "张三",
+    "contact_phone": "15607200000",
+    "operate_time": 1589185965494,
+    "operate": "已处理"},
 
-    {"serial_number":'15607200000',
-    "product_name":"腾讯大网卡",
-    "belong":"YF0307",
-    "fee":15,
-    "dev_name":"张三",
-    "contact_phone":"15607200000",
-    "operate_time",1589185965494,
-    "operate":"驳回"},
+    {"serial_number": '15607200000',
+    "product_name": "腾讯大网卡",
+    "belong": "YF0307",
+    "fee": 15,
+    "dev_name": "张三",
+    "contact_phone": "15607200000",
+    "operate_time": 1589185965494,
+    "operate": "驳回"},
 
-    {"serial_number":'15607200000',
-    "product_name":"腾讯大网卡",
-    "belong":"YF0307",
-    "fee":15,
-    "dev_name":"张三",
-    "contact_phone":"15607200000",
-    "operate_time",1589185965494,
-    "operate":"删除"},    
+    {"serial_number": '15607200000',
+    "product_name": "腾讯大网卡",
+    "belong": "YF0307",
+    "fee": 15,
+    "dev_name": "张三",
+    "contact_phone": "15607200000",
+    "operate_time": 1589185965494,
+    "operate": "删除"}   
 ]
 ```
 
 #### thresholds 阈值列表
 ```js
 [
-    {"cid":1,
-    "config_name":"5G折扣资费推荐",
-    "state_code":1,
-    "start_date":1589185965494,
-    "operator:"林艳",
-    "items":[{"gte":70.3,"lt":91.3,"title":"129元档打7折"},
+    {"id":1,
+    "config_name": "5G折扣资费推荐",
+    "state_code": 1,
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,
+    "operator: "林艳",
+    "items": [{"gte":70.3,"lt":91.3,"title":"129元档打7折"},
     {"gte":91.3,"lt":119.3,"title":"159元档打7折"},
-    {"gte":399.3,"lt":Infinity,"title":"599元档打7折"}],
-
-    {"cid":2,
-    "config_name":"花呗分期推荐20%赠费",
-    "state_code":0,
-    "start_date":1589185965494,
-    "operator:"林艳",
-    "items":[{"gte":0,"lt":15,"title":"ARPU值低于45元,请查询单卡弹窗结果"},
-    {"gte":45,"lt":50,"title":"低消78元,赠送红包23元,赠送时长24月"},
-    {"gte":50,"lt":Infinity,"title":"ARPU值超过50,不予推荐20%赠费花呗分期活动"}],
+    {"gte":399.3,"lt":Infinity,"title":"599元档打7折"}]
     },
 
-    {"cid":3,
-    "config_name":"花呗分期推荐30%赠费",
-    "state_code":1,
-    "start_date":1589185965494,
-    "operator:"林艳",
-    "items":[{"gte":50,"lt":69,"title":"低消98元,赠送红包29元,赠送时长24月"},
+    {"id":2,
+    "config_name": "花呗分期推荐20%赠费",
+    "state_code": 0,
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,    
+    "operator: "林艳",
+    "items": [{"gte":0,"lt":15,"title":"ARPU值低于45元,请查询单卡弹窗结果"},
+    {"gte":45,"lt":50,"title":"低消78元,赠送红包23元,赠送时长24月"},
+    {"gte":50,"lt":Infinity,"title":"ARPU值超过50,不予推荐20%赠费花呗分期活动"}]
+    },
+
+    {"id":3,
+    "config_name": "花呗分期推荐30%赠费",
+    "state_code": 1,
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,    
+    "operator: "林艳",
+    "items": [{"gte":50,"lt":69,"title":"低消98元,赠送红包29元,赠送时长24月"},
     {"gte":69,"lt":79,"title":"低消108元,赠送红包29元,赠送时长24月"},
-    {"gte":278,"lt":Infinity,"title":"低消超过278,不予推荐花呗分期活动"}],
+    {"gte":278,"lt":Infinity,"title":"低消超过278,不予推荐花呗分期活动"}]
     }
 ]
 ```
@@ -299,23 +309,56 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 #### articles 文章
 ```js
 [
-    {"aid":1,
-    "public_date":1589185965494,
-    "author":"张三",
-    "type":"资费",
-    "channel_name":"营销部",
-    "title":"关于做好5G折扣资费推广的通知",
-    "content":"<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>",
-    "state_code":0},
+    {"article_id": 1,
+    "public_date": 1589185965494,
+    "author": "张三",
+    "type": "资费",
+    "channel_name": "营销部",
+    "title": "关于做好5G折扣资费推广的通知",
+    "content": "<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>",
+    "state_code": 0},
 
-    {"aid":2,
-    "public_date":1589185965494,
-    "author":"张三",
-    "type":"业务规范",
-    "channel_name":"政企营销中心",
-    "title":"CBSS欠费用户操作流程",
-    "content":"<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>",
-    "state_code":1}
+    {"article_id":2,
+    "public_date": 1589185965494,
+    "author": "张三",
+    "type": "业务规范",
+    "channel_name": "政企营销中心",
+    "title": "CBSS欠费用户操作流程",
+    "content": "<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>",
+    "state_code": 1}
+]
+```
+#### OSS文件
+```js
+[{
+    "file_id": 1,
+    "file_name": "B2I2C号码20200505",
+    "path": "cloud://dev-b93ee9.6465-dev-b93ee9-1258449791/tmp-1564234144754-01.json",
+    "size": "94.43 MB",
+    "upload_date": 1589185965494
+},{
+    "file_id": 2,
+    "file_name": "B2I2C号码20200201",
+    "path": "cloud://dev-b93ee9.6465-dev-b93ee9-1258449791/tmp-1564234144754-01.json",
+    "size": "658 Byte",
+    "upload_date": 1589185965494    
+}]
+```
+
+#### 日志信息
+```js
+[
+    {
+        "id": 1,
+        "logo_date": "1589185965494",
+        "account": "15600000001",
+        "api": "/web/file/upload"
+    },{
+        "id": 2,
+        "logo_date": "1589185965494",
+        "account": "15600000001",
+        "api": "/web/users/list"
+    }
 ]
 ```
 
@@ -387,8 +430,8 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 POST /web/users/verify
 ````
 ##### Parameters
-- account: 账号
-- password: 密码
+- account: 账号 [string]
+- password: 密码 [string] 
 
 ##### Response 200
 ```js
@@ -398,7 +441,9 @@ POST /web/users/verify
 ````
 
 ##### Response_description
-- token: 令牌
+- data: [type: object]
+- token: 令牌 [type: string]
+
 说明: 账号密码校验通过后签发token,token包含通过account关联查询users表中的user_id，org_id。
 
 #### 获取用户信息
@@ -407,7 +452,7 @@ POST /web/users/verify
 POST /web/users/userinfo
 ````
 ##### Parameters
-- token: 令牌
+- token: 令牌 [type: string]
 
 ##### Response 200
 ```js
@@ -423,12 +468,13 @@ POST /web/users/userinfo
 说明： 通过user_id关联查询permissions表中的roles数组,roles数组生成用户权限内的路由对象。通过roles数组关联roles表中的scope数组，取scope数组的最大值就是用户后端API接口的最高权限。
 
 ##### Response_description
-- user_id: 用户id
-- org_id: 用户组织节点id
-- roles: 用户角色id数据, **前端根据roles数组动态生成用户可访问路由对象**
-- scope: 用户后端API接口权限级别
-- scope_top: 用户后端API接口的最高权限
-- role_name: 用户最高角色名称
+- data: [type: object]
+- user_id: 用户id [type: number]
+- org_id: 用户组织节点id [type: number]
+- roles: 用户角色id数据, **前端根据roles数组动态生成用户可访问路由对象** [type: array]
+- scope: 用户后端API接口权限级别 [type: array]
+- scope_top: 用户后端API接口的最高权限 [type: number]
+- role_name: 用户最高角色名称 [type: string]
 
 ### 用户
 #### 用户权限内渠道列表
@@ -437,13 +483,13 @@ POST /web/users/userinfo
 POST /web/users/channels
 ````
 ##### Parameters
-- user_id: 用户id
-- org_id: 用户组织节点id
-- scope_top: 用户后端API接口的最高权限
+- user_id: 用户id [type: number]
+- org_id: 用户组织节点id [type: number]
+- scope_top: 用户后端API接口的最高权限 [type: number]
 
 ##### Response 200
 ```js
-{
+[
     {
         "scope": 60,
         "org_desc": "宜昌",
@@ -457,13 +503,15 @@ POST /web/users/channels
         "org_desc":"正兴合作厅",
         "channels": ['09C15']       
     }
-}
+]
 ````
 
 ##### Response_description
-- scope: 用户后端API接口权限级别
-- org_desc: 用户组织节点名称
-- channels: 用户权限渠道列表
+- data: [type: array]
+- scope: 用户后端API接口权限级别 [type: number]
+- org_desc: 用户组织节点名称 [type: string]
+- channels: 用户权限渠道列表 [type: array]
+
 说明: **递归查找**，按org_desc层级汇总org_desc下所有channels列表
 
 #### 用户列表获取
@@ -515,11 +563,12 @@ GET /web/users/list
 ````
 
 ##### Response_description
-- account: 账号
-- roles_name: 用户权限名称数组
-- org_desc: 用户组织节点名称
-- nickname: 用户昵称
-- state_name: 状态
+- data: [type: array]
+- account: 账号 [type: string]
+- roles_name: 用户权限名称数组 [type: string]
+- org_desc: 用户组织节点名称 [type: string]
+- nickname: 用户昵称 [type: string]
+- state_name: 状态 [type: string]
 
 #### 用户添加
 ##### URL
@@ -527,11 +576,11 @@ GET /web/users/list
 POST /web/users/create
 ````
 ##### Parameters
-- account: 账号
-- password: 密码
-- nickname: 用户昵称
-- org_id: 用户组织节点id
-- roles: 用户角色id数组
+- account: 账号 [type: string]
+- password: 密码 [type: string]
+- nickname: 用户昵称 [type: string]
+- org_id: 用户组织节点id [type: number]
+- roles: 用户角色id数组 [type: number]
 
 ##### Response 201
 ```js
@@ -543,7 +592,7 @@ POST /web/users/create
 ````
 
 ##### Response_description
-- 
+- data: [type:object]
 
 #### 用户启用
 ##### URL
@@ -551,19 +600,19 @@ POST /web/users/create
 GET /web/users/<int:user_id>/enable
 ````
 ##### Parameters
-- user_id: 用户id
+- user_id: 用户id [type: number]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
     "msg":"user enable",
-    "request": "GET /web/users/2/enable"    
+    "request": "GET /web/users/<int:user_id>/enable"    
 }
 ````
 
 ##### Response_description
-- 
+- data: [type: object]
 
 #### 用户删除
 ##### URL
@@ -571,19 +620,19 @@ GET /web/users/<int:user_id>/enable
 GET /web/users/<int:user_id>/remove
 ````
 ##### Parameters
-- user_id: 用户id
+- user_id: 用户id [type: number]
 
 ##### Response 204
 ```js 
 {
     "error_code": 0,
     "msg":"user removed",
-    "request": "GET /web/users/2/remove"    
+    "request": "GET /web/users/<int:user_id>/remove"    
 }
 ````
 
 ##### Response_description
-- 
+- data: [type: object]
 
 #### 用户编辑
 ##### URL
@@ -591,23 +640,23 @@ GET /web/users/<int:user_id>/remove
 POST /web/users/<int:user_id>/modify
 ````
 ##### Parameters
-- user_id: 用户id
-- nick_name: 用户昵称
-- password: 用户密码
-- org_id: 用户组织节点id
-- roles: 用户角色id数组
+- user_id: 用户id [type: number]
+- nick_name: 用户昵称 [type: string]
+- password: 用户密码 [type: string]
+- org_id: 用户组织节点id [type: number]
+- roles: 用户角色id数组 [type: number]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
     "msg":"user updated",
-    "request": "GET /web/users/2/modify"    
+    "request": "GET /web/users/<int:user_id>/modify"    
 }
 ````
 
 ##### Response_description
--
+- data: [type: object]
 
 #### 用户搜索
 ##### URL
@@ -615,8 +664,8 @@ POST /web/users/<int:user_id>/modify
 POST /web/users/search
 ````
 ##### Parameters
-- account: 账号
-- nickname: 用户昵称
+- account: 账号 [type: string]
+- nickname: 用户昵称 [type: string]
 
 ##### Response 200
 ```js
@@ -630,11 +679,12 @@ POST /web/users/search
 ````
 
 ##### Response_description
-- account: 账号
-- roles_name: 用户角色名称数组
-- org_desc: 用户组织节点名称
-- nickname: 用户昵称
-- state_name: 状态
+- data: [type: object]
+- account: 账号 [type: string]
+- roles_name: 用户角色名称数组 [type: array]
+- org_desc: 用户组织节点名称 [type: string]
+- nickname: 用户昵称 [type: string]
+- state_name: 状态 [type: string]
 
 
 #### 用户密码修改
@@ -643,8 +693,8 @@ POST /web/users/search
 POST /web/users/security
 ````
 ##### Parameters
-- account: 账号
-- password: 用户密码
+- account: 账号 [type: string]
+- password: 用户密码 [type: string]
 
 ##### Response 202
 ```js 
@@ -656,8 +706,9 @@ POST /web/users/security
 ````
 
 ##### Response_description
-- account: 账号
-- password: 密码
+- data: [type: object]
+- account: 账号 [type: string]
+- password: 密码 [type: string]
 
 #### 短信验证码
 ##### URL
@@ -665,7 +716,7 @@ POST /web/users/security
 POST /web/users/smscode
 ```
 ##### Parameters
-- account: 账号
+- account: 账号 [type: string]
 
 ##### Response 200
 ```js
@@ -675,7 +726,8 @@ POST /web/users/smscode
 ````
 
 ##### Response_description
--smsCode: 短信验证码
+- data: [type: object]
+-smsCode: 短信验证码 [type: string]
 
 
 ### 角色
@@ -708,10 +760,11 @@ GET /web/roles/list
 ````
 
 ##### Response_description
-- role_id: 角色id
-- role_name: 角色名称
-- state_name: 状态
-- paths: 用户角色路由权限数组
+- data: [type: array]
+- role_id: 角色id [type: number]
+- role_name: 角色名称 [type: string]
+- state_name: 状态 [type: string]
+- paths: 用户角色路由权限数组 [type: array]
 
 #### 角色启用
 ##### URL
@@ -719,7 +772,7 @@ GET /web/roles/list
 GET /web/roles/<int:role_id>/enable
 ````
 ##### Parameters
-- role_id: 角色id 
+- role_id: 角色id [type: number]
 
 ##### Response 202
 ```js 
@@ -731,7 +784,7 @@ GET /web/roles/<int:role_id>/enable
 ````
 
 ##### Response_description
--
+- data: [type: object]
 
 #### 分组编辑
 ##### URL
@@ -739,9 +792,9 @@ GET /web/roles/<int:role_id>/enable
 POST /web/roles/modify
 ````
 ##### Parameters
-- role_id: 角色id
-- role: 角色描述
-- role_name: 角色名称
+- role_id: 角色id [type: number]
+- role: 角色描述 [type: string]
+- role_name: 角色名称 [type: number]
 
 ##### Response 202
 ```js 
@@ -753,7 +806,7 @@ POST /web/roles/modify
 ````
 
 ##### Response_description
-- 
+- data: [type: object]
 
 #### 分组删除
 ##### URL
@@ -761,19 +814,19 @@ POST /web/roles/modify
 GET /web/role/<int:role_id>/remove
 ````
 ##### Parameters
-- role_id：角色id
+- role_id：角色id [type: number]
 
 ##### Response 204
 ```js 
 {
     "error_code": 0,
     "msg": "role removed",
-    "request": "GET /web/roles/remove"
+    "request": "GET /web/roles/<int:role_id>/remove"
 }
 ````
 
 ##### Response_description
--
+- data: [type: object]
 
 #### 分组添加
 ##### URL
@@ -781,20 +834,22 @@ GET /web/role/<int:role_id>/remove
 POST /web/role/create
 ````
 ##### Parameters
-- role: 角色描述
-- role_name: 角色名称
-- scope: 后端API接口权限级别
-- routes: 角色路由数组
+- role: 角色描述 [type: string]
+- role_name: 角色名称 [type: string]
+- scope: 后端API接口权限级别 [type: number]
+- routes: 角色路由数组 [type: array]
 
 ##### Response 201
 ```js 
+{
     "error_code": 0,
     "msg": "role created",
     "request": "POST /web/roles/create"
+}
 ````
 
 ##### Response_description
-- 
+- data: [type: object]
 
 
 ### 市场运营
@@ -806,308 +861,387 @@ GET /web/serial/list
 ````
 ##### Parameters
 - 
--
--
 
 ##### Response 200
-```js 
+```js
+[{
+    "serial_number": "15607200000",
+    "product_name": "腾讯大王卡",
+    "belong": "YF0307",
+    "fee": 15,
+    "dev_name": "Jack",
+    "contact_phone": "18600000001",
+    "operate":""
+},{
+    "serial_number": "15607200000",
+    "product_name": "腾讯大王卡",
+    "belong": "YF0307",
+    "fee": 15,
+    "dev_name": "Jack",
+    "contact_phone": "18600000001",
+    "operate":""  
+}] 
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: array]
+- serial_number: 号码 [type: string]
+- product_name: 产品名称 [type: string]
+- fee: 月租 [type: number]
+- dev_name: 派送人 [type: string]
+- contact_phone: 联系电话 [type: string]
+- operate: 当前处理环节 [type: string]
 
 #### 号码分配
 ##### URL
 ```js
-GET /web/serial/<int:id>/allocate
+GET /web/serial/<string:serial_number>/allocate
 ````
 ##### Parameters
-- 
--
--
+- serial_number: 号码 [type: string]
 
-##### Response 200
+##### Response 202
 ```js 
+{
+    "error_code": 0,
+    "msg": "serial_number allocated",
+    "request": "GET /web/serial/<string:serial_number>/allocate"
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 号码驳回
 ##### URL
 ```js
-GET /web/serial/<int:id>/reject
+GET /web/serial/<string:serial_number>/reject
 ````
 ##### Parameters
-- 
--
--
+- serial_number: 号码 [type: string]
 
-##### Response 200
+##### Response 202
 ```js 
+{
+    "error_code": 0,
+    "msg": "serial_number rejected",
+    "request": "GET /web/serial/<string:serial_number>/reject"    
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 号码删除
 ##### URL
 ```js
-GET /web/serial/<int:id>/remove
+GET /web/serial/<string:serial_number>/remove
 ````
 ##### Parameters
-- 
--
--
+- serial_number: 号码 [type: string]
 
-##### Response 200
+##### Response 204
 ```js 
+{
+    "error_code": 0,
+    "msg": "serial_number removed",
+    "request": "GET /web/serial/<string:serial_number>/remove" 
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 号码搜索
 ##### URL
 ```js
-GET /web/serial/search
+GET /web/serial/<string:serial_number>/search
 ````
 ##### Parameters
-- serial: 手机号码
--
--
+- serial: 手机号码 [type: string]
 
 ##### Response 200
 ```js 
+{
+    "serial_number": "15607200000",
+    "product_name": "腾讯大王卡",
+    "belong": "YF0307",
+    "fee": 15,
+    "dev_name": "Jack",
+    "contact_phone": "18600000001",
+    "operate":"已处理"    
+}
 ````
-
 ##### Response_description
-- 
--
--
+- data: [type: object]
+- serial_number: 号码 [type: string]
+- product_name: 产品名称 [type: string]
+- fee: 月租 [type: number]
+- dev_name: 派送人 [type: string]
+- contact_phone: 联系电话 [type: string]
+- operate: 当前处理环节 [type: string]
 
-#### 明细导出
-##### URL
-```js
-GET /web/serial/export
-````
-##### Parameters
-- 
--
--
-
-##### Response 200
-```js 
-````
-
-##### Response_description
-- 
--
--
 
 
 #### 2. 存量经营
 #### 配置列表获取
 ##### URL
 ```js
-GET /web/conf/list
+GET /web/thresholds/list
 ````
 ##### Parameters
 - 
--
--
 
 ##### Response 200
 ```js 
+[
+    {
+    "id":1,
+    "config_name": "5G折扣资费推荐",
+    "state_name": "生效",
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,
+    "operator:"林艳"
+    },{
+    "id":2,
+    "config_name":"花呗分期推荐20%赠费",
+    "state_name": "失效",
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,    
+    "operator:"林艳"
+    },{
+    "id":3,
+    "config_name":"花呗分期推荐30%赠费",
+    "state_name": "失效",
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,    
+    "operator:"林艳"        
+    }
+]
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: array]
+- id: 阈值规则id [type: number]
+- config_name: 阈值规则名称 [type: string]
+- state_name: 状态 [type: string]
+- start_date: 开始时间, 时间戳 [type: string] [timestamp]
+- end_date: 结束时间, 时间戳 [type: string] [timestamp]
+- operator: 操作人 [type: string]
 
 #### 配置启用
 ##### URL
 ```js
-GET /web/conf/<int:cfid>/enable
+GET /web/thresholds/<int:id>/enable
 ````
 ##### Parameters
-- 
--
--
+- id: 阈值规则id [type: number]
 
-##### Response 200
+##### Response 202
 ```js 
+{
+    "error_code": 0,
+    "msg": "thresholds updated",
+    "request": "GET /web/thresholds/<int:id>/enable" 
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 配置删除
 ##### URL
 ```js
-GET /web/conf/<int:cfid>/remove
+GET /web/thresholds/<int:id>/remove
 ````
 ##### Parameters
 - 
--
--
 
-##### Response 200
-```js 
+##### Response 204
+```js
+{
+    "error_code": 0,
+    "msg": "thresholds removed",
+    "request": "GET /web/thresholds/<int:id>/remove" 
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 配置提交
 ##### URL
 ```js
-POST /web/conf/create
+POST /web/thresholds/create
 ````
 ##### Parameters
-- 
--
--
+- config_name: 阈值规则名称 [type: string]
+- start_date: 开始时间 [type: string] [timestamp]
+- end_date: 结束时间 [type: string] [timestamp]
+- operator: 操作人 [type: string]
+- items: 配置详情，数组，区间值 [type: array]
 
-##### Response 200
-```js 
+##### Response 201
+```js
+{
+    "error_code": 0,
+    "msg": "thresholds created",
+    "request": "POST /web/thresholds/create"     
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 
 ### 信息发布
 #### 信息列表获取
 ##### URL
 ```js
-GET /web/art/list
+GET /web/article/list
 ````
 ##### Parameters
 - 
--
--
 
 ##### Response 200
-```js 
-````
-
-##### Response_description
-- 
--
--
-
-#### 信息启用
-##### URL
 ```js
-GET /web/art/<int:artid>/enable
-````
-##### Parameters
-- 
--
--
+[
+    {"article_id": 1,
+    "public_date": 1589185965494,
+    "author": "张三",
+    "type": "资费",
+    "channel_name": "营销部",
+    "title": "关于做好5G折扣资费推广的通知",
+    "content": "<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>"},
 
-##### Response 200
-```js 
+    {"article_id": 2,
+    "public_date": 1589185965494,
+    "author": "张三",
+    "type": "业务规范",
+    "channel_name": "政企营销中心",
+    "title": "CBSS欠费用户操作流程",
+    "content": "<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>"}
+] 
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: array]
+- atricle_id: 文章id [type: number]
+- public_date: 发布时间 [type: string] [timestamp]
+- author: 作者 [type: string]
+- type: 文章类型 [type: string]
+- channel_name: 文章发布部门 [type: string]
+- title: 文件标题 [type: string]
+- content: 文章内容，html代码片段 [type: string]
+
 
 #### 信息删除
 ##### URL
 ```js
-GET /web/art/<int:artid>/remove
+GET /web/article/<int:article_id>/remove
 ````
 ##### Parameters
-- 
--
--
+- article_id: 文章id [type: number]
 
 ##### Response 200
-```js 
+```js
+{
+    "error_code": 0,
+    "msg": "article removed",
+    "request": "GET /web/article/<int:article_id>/remove"      
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 信息编辑
 ##### URL
 ```js
-POST /web/art/<int:artid>/modify
+POST /web/article/<int:article_id>/modify
 ````
 ##### Parameters
-- 
--
--
+- public_date: 发布时间 [type: string] [timestamp]
+- author: 作者 [type: string]
+- type: 文章类型 [type: string]
+- channel_name: 文章发布部门 [type: string]
+- title: 文件标题 [type: string]
+- content: 文章内容，html代码片段 [type: string]
 
 ##### Response 200
-```js 
+```js
+{
+    "error_code": 0,
+    "msg": "article updated",
+    "request": "GET /web/article/<int:article_id>/modify" 
+} 
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object]
 
 #### 信息发布
 ##### URL
 ```js
-POST /web/art/public
+POST /web/article/public
 ````
 ##### Parameters
-- 
--
--
+- public_date: 发布时间 [type: string] [timestamp]
+- author: 作者 [type: string]
+- type: 文章类型 [type: string]
+- channel_name: 文章发布部门 [type: string]
+- title: 文件标题 [type: string]
+- content: 文章内容，html代码片段 [type: string]
 
 ##### Response 200
-```js 
+```js
+{
+    "error_code": 0,
+    "msg": "article created",
+    "request": "POST /web/article/public" 
+}
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: object] 
 
 
-### 数据导入
-#### 数据上传
+### 文件上传下载
+#### 数据导入
 ##### URL
 ```js
-POST /web/binary/import
+POST /web/file/upload
 ````
 ##### Parameters
-- 
--
--
+- data: [type: binary] [enctype="multipart/form-data"]
+- fileid: [type: string]
+
+##### Response 201
+```js
+{
+    "error_code": 0,
+    "msg": "object uploaded",
+    "request": "POST /web/file/upload" 
+}
+```
+##### Response_description
+- data: [type: object]
+
+
+#### 数据导出
+##### URL
+```js
+GET /web/file/<string:file_id>/export
+````
+##### Parameters
+- file_id: 文件id [type: number]
 
 ##### Response 200
-```js 
-````
+- data: [type: binary]
 
 ##### Response_description
-- 
--
--
+- data: [type: binary]
+
 
 
 ### 日志管理
@@ -1118,44 +1252,55 @@ GET /web/log/list
 ````
 ##### Parameters
 - 
--
--
 
 ##### Response 200
 ```js 
+[
+    {
+        "id": 1,
+        "logo_date": "1589185965494",
+        "account": "15600000001",
+        "api": "/web/file/upload"
+    },{
+        "id": 2,
+        "logo_date": "1589185965494",
+        "account": "15600000001",
+        "api": "/web/users/list"
+    }
+]
 ````
 
 ##### Response_description
-- 
--
--
+- data: [type: array]
+- id: 日志id [type: number]
+- logo_date: 记录时间 [type: string] [timestamp]
+- account: 账号 [type: string]
+- api: 访问接口名称 [type: string]
 
 #### 日志搜索
 ##### URL
 ```js
-GET /web/log/search
+GET /web/log/<int:id>/search
 ````
 ##### Parameters
-- 
--
--
+- id: 日志id [type: number]
 
 ##### Response 200
-```js 
+```js
+{
+    "id": 1,
+    "logo_date": "1589185965494",
+    "account": "15600000001",
+    "api": "/web/file/upload"    
+}
 ````
 
 ##### Response_description
-- 
--
--
-
-## 权限管理
-
-## 数据结构
-#### 用户 user
-```js
-
-```
+- data: [type: object]
+- id: 日志id [type: number]
+- logo_date: 记录时间 [type: string] [timestamp]
+- account: 账号 [type: string]
+- api: 访问接口名称 [type: string]
 
 
 
