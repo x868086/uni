@@ -44,14 +44,15 @@ cond3(no)->op3
     io2=>inputoutput: outputCSV
     op2=>operation: fetch_list_CMS
     op3=>operation: assignment
-    op4=>operation:  set_state_serial
-    op5=>operation: send_message
+    op4=>operation:  set_state_done
+    op5=>operation:  set_state_reject
+    op6=>operation: send_message
 
     cond1=>condition: feasible?
 
-    st->io1->op2(right)->cond1
-    cond1(yes)->op3->op4->op5->io2->e
-    cond1(no)->op4->op5->io2->e
+    st->op2(right)->cond1
+    cond1(yes)->op3->op4->op6
+    cond1(no)->op5->op6->e
 
 ```
 
@@ -127,7 +128,7 @@ role_id | role | role_name | scope
 *role_name: STRING(128), unique*
 *scope: TINYINT, unsigned, unique*
 
-说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，大于等于scope值的允许，小于scope值的抛出错误。
+说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，小于等于scope值的请求允许，大于scope值的请求抛出错误。
 
 #### permissions
 id| user_id | role_id 
@@ -157,7 +158,7 @@ route_id | path | name
 *path: STRING(128), unique*
 *name: STRING(128), unique*
 
-说明：后端所有页面的路由信息，**前端新增页面后将路由信息添加到该表中**
+说明：前端所有页面的路由信息，**前端新增页面后将路由信息添加到该表中**
 
 
 #### roleroutes
@@ -173,14 +174,14 @@ id | role_id | route_id
 *role_id: TINYINT, unsigned*
 *route_id: SMALLINT, unsigned*
 
-说明：**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取roleroutes表中role_id对应的route_id，用route_id关联routes表生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
+说明：角色路由信息。**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取roleroutes表中role_id对应的route_id，用route_id关联routes表生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
 
 
 
 
 #### users
-user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
--- | -- |-- | -- |-- |-- | -- |-- |
+user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code | sms_code
+-- | -- |-- | -- |-- |-- | -- |-- |-- |
 1	| 1	| 18600000001	| abcdef123de	| Json	| 1	| 1
 2	| 3	| 18600000003	| abcdef123de	| Penny	| 1	| 1
 3	| 8	| 18600000004	| abcdef123de	| Lily	| 1	| 0
@@ -194,6 +195,7 @@ user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code
 *nick_name: STRING(256), allowNull:true,*
 *created_by: INTERGER(11), unsigned*
 *state_code: TINYINT, unsigned, defaultValue:1*
+*sms_code: STRING(16), allowNull:true*
 
 #### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by | state_code 
@@ -220,7 +222,7 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 20	|	| YF0307 | M | |			直销员1	| 24	| 1 | 1
 21	|	| YF0337 | M | |			直销员2	| 24	| 1 | 1
 22	|	| YF0590 | S2 | |			直销员3	| 24	| 1 | 1
-*org_id: INTERGER(11), unsigned, unique, autoIncrement, primaryKey*
+*org_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
 *channel_id: STRING(64), unique, allowNull:true*
 *yf_code: STRING(64), allowNull:true*
 *is_market_group: STRING(8), allowNull:true*
@@ -233,6 +235,47 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 说明：用户表中取出org_id，在organizations表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表user_id对应的org_id, 用org_id关联organizations表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
 
 **role_id决定用户权限内的可访问路由信息，scope值决定用户后端API接口的最高权限，org_id和scope值同时使用决定用户在ornanizations表中其org_id下所有子节点对应的channel_id**
+
+
+
+#### OSS文件
+file_id | file_name | path | size | create_by
+-- | -- | -- | -- | -- |
+1 | B2I2C号码20200505 | cloud://dev-b93ee9 | 96696.32 | 1
+2 | B2I2C号码20200201 | cloud://dev-b93ee9 | 658 | 1
+*file_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+*file_name: STRING(256)*
+*path: STRING(256)*
+*size: INTERGER(11), unsigned, unique*
+*create_by: INTERGER(11), unsigned*
+
+#### 日志信息
+id | logo_date | account | api
+-- | -- | --| --|
+1 | 1589185965494 | 15600000001 | /web/file/upload
+2 | 1589185965494 | 15600000001 | /web/file/upload
+*id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+*logo_date: STRING(256)*
+*account: STRING(256)*
+*api: STRING(256)*
+
+#### 证件号码1-10 出生地，出生年份
+id | serial | fee
+--| --| --|
+1 | 4205251988 | 25
+
+#### 证件号码 11-16 出生月份，出生日期，出生顺序
+id | serial | fee
+--| --| --|
+1 | 111112 | 25
+
+#### 证件号码 17-18 性别，校验码
+id | serial | fee
+--| --| --|
+1 | 21 | 25
+
+
+
 
 
 ### 2. TCB 云数据库
@@ -328,39 +371,7 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
     "state_code": 1}
 ]
 ```
-#### OSS文件
-```js
-[{
-    "file_id": 1,
-    "file_name": "B2I2C号码20200505",
-    "path": "cloud://dev-b93ee9.6465-dev-b93ee9-1258449791/tmp-1564234144754-01.json",
-    "size": "94.43 MB",
-    "upload_date": 1589185965494
-},{
-    "file_id": 2,
-    "file_name": "B2I2C号码20200201",
-    "path": "cloud://dev-b93ee9.6465-dev-b93ee9-1258449791/tmp-1564234144754-01.json",
-    "size": "658 Byte",
-    "upload_date": 1589185965494    
-}]
-```
 
-#### 日志信息
-```js
-[
-    {
-        "id": 1,
-        "logo_date": "1589185965494",
-        "account": "15600000001",
-        "api": "/web/file/upload"
-    },{
-        "id": 2,
-        "logo_date": "1589185965494",
-        "account": "15600000001",
-        "api": "/web/users/list"
-    }
-]
-```
 
 # API 接口文档
 ###  JSON格式约定
@@ -1025,8 +1036,8 @@ GET /web/thresholds/list
 - id: 阈值规则id [type: number]
 - config_name: 阈值规则名称 [type: string]
 - state_name: 状态 [type: string]
-- start_date: 开始时间, 时间戳 [type: string] [timestamp]
-- end_date: 结束时间, 时间戳 [type: string] [timestamp]
+- start_date: 开始时间, 时间戳 [type: number] [timestamp]
+- end_date: 结束时间, 时间戳 [type: number] [timestamp]
 - operator: 操作人 [type: string]
 
 #### 配置启用
@@ -1076,8 +1087,8 @@ POST /web/thresholds/create
 ````
 ##### Parameters
 - config_name: 阈值规则名称 [type: string]
-- start_date: 开始时间 [type: string] [timestamp]
-- end_date: 结束时间 [type: string] [timestamp]
+- start_date: 开始时间 [type: number] [timestamp]
+- end_date: 结束时间 [type: number] [timestamp]
 - operator: 操作人 [type: string]
 - items: 配置详情，数组，区间值 [type: array]
 
@@ -1127,7 +1138,7 @@ GET /web/article/list
 ##### Response_description
 - data: [type: array]
 - atricle_id: 文章id [type: number]
-- public_date: 发布时间 [type: string] [timestamp]
+- public_date: 发布时间 [type: number] [timestamp]
 - author: 作者 [type: string]
 - type: 文章类型 [type: string]
 - channel_name: 文章发布部门 [type: string]
@@ -1161,7 +1172,7 @@ GET /web/article/<int:article_id>/remove
 POST /web/article/<int:article_id>/modify
 ````
 ##### Parameters
-- public_date: 发布时间 [type: string] [timestamp]
+- public_date: 发布时间 [type: number] [timestamp]
 - author: 作者 [type: string]
 - type: 文章类型 [type: string]
 - channel_name: 文章发布部门 [type: string]
@@ -1186,7 +1197,7 @@ POST /web/article/<int:article_id>/modify
 POST /web/article/public
 ````
 ##### Parameters
-- public_date: 发布时间 [type: string] [timestamp]
+- public_date: 发布时间 [type: number] [timestamp]
 - author: 作者 [type: string]
 - type: 文章类型 [type: string]
 - channel_name: 文章发布部门 [type: string]
@@ -1258,12 +1269,12 @@ GET /web/log/list
 [
     {
         "id": 1,
-        "logo_date": "1589185965494",
+        "logo_date": 1589185965494,
         "account": "15600000001",
         "api": "/web/file/upload"
     },{
         "id": 2,
-        "logo_date": "1589185965494",
+        "logo_date": 1589185965494,
         "account": "15600000001",
         "api": "/web/users/list"
     }
@@ -1273,7 +1284,7 @@ GET /web/log/list
 ##### Response_description
 - data: [type: array]
 - id: 日志id [type: number]
-- logo_date: 记录时间 [type: string] [timestamp]
+- logo_date: 记录时间 [type: number] [timestamp]
 - account: 账号 [type: string]
 - api: 访问接口名称 [type: string]
 
@@ -1298,7 +1309,7 @@ GET /web/log/<int:id>/search
 ##### Response_description
 - data: [type: object]
 - id: 日志id [type: number]
-- logo_date: 记录时间 [type: string] [timestamp]
+- logo_date: 记录时间 [type: number] [timestamp]
 - account: 账号 [type: string]
 - api: 访问接口名称 [type: string]
 
