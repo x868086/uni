@@ -98,10 +98,9 @@ state_id | state_code | state_name
 1 | 0 | 停用
 2 | 1 | 启用
 3 | 2 | 注销
-
-*state_id: TINYINT, unsigned, autoIncrement, primaryKey*
-*state_code: TINYINT, unsigned, unique*
-*state_name: STRING(64), unique*
+- *state_id: TINYINT, unsigned, autoIncrement, primaryKey*
+- *state_code: TINYINT, unsigned, unique*
+- *state_name: STRING(64), unique*
 
 #### market_group
 id | is_market_group | market_group_name
@@ -109,9 +108,9 @@ id | is_market_group | market_group_name
 1 | M | 公众
 2 | G | 政企
 3 | S2 | 校园
-*id: TINYINT, unsigned, autoIncrement, primaryKey*
-*is_market_group: STRING(8), unique*
-*market_group_name: STRING(64), unique*
+- *id: TINYINT, unsigned, autoIncrement, primaryKey*
+- *is_market_group: STRING(8), unique*
+- *market_group_name: STRING(64), unique*
 
 #### roles
 role_id | role | role_name | scope
@@ -124,10 +123,10 @@ role_id | role | role_name | scope
 6	| StoreSupervisor	| 渠道主管	| 36
 7	| StoreManager	| 店长	| 30
 8	| DirectSeller	| 直销员	| 24
-*role_id: TINYINT, unsigned, autoIncrement, primaryKey*
-*role: STRING(128), unique*
-*role_name: STRING(128), unique*
-*scope: TINYINT, unsigned, unique*
+- *role_id: TINYINT, unsigned, autoIncrement, primaryKey*
+- *role: STRING(128), unique*
+- *role_name: STRING(128), unique*
+- *scope: TINYINT, unsigned, unique*
 
 说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，小于等于scope值的请求允许，大于scope值的请求抛出错误。
 
@@ -141,9 +140,9 @@ id| user_id | role_id
 5 | 4 | 6
 6 | 5 | 7
 7 | 6 | 8
-*id: SMALLINT, unsigned, autoIncrement, primaryKey*
-*user_id: INTERGER(11), unsigned*
-*role_id: TINYINT, unsigned*
+- *id: SMALLINT, unsigned, autoIncrement, primaryKey*
+- *user_id: INTERGER(11), unsigned*
+- *role_id: TINYINT, unsigned*
 
 说明：用户的角色列表，**一个用户可同时拥有多个角色**，permissions表中用户的roles数组关联roleroutes表生成用户权限内的路由表。
 
@@ -155,9 +154,9 @@ route_id | path | name
 3	| /edit | 信息发布
 4	| /dashboard | 面板 
 5   | /b2i2c | B2I2C运营
-*route_id: SMALLINT, unsigned, autoIncrement, primaryKey*
-*path: STRING(128), unique*
-*name: STRING(128), unique*
+- *route_id: SMALLINT, unsigned, autoIncrement, primaryKey*
+- *path: STRING(128), unique*
+- *name: STRING(128), unique*
 
 说明：前端所有页面的路由信息，**前端新增页面后将路由信息添加到该表中**
 
@@ -171,9 +170,9 @@ id | role_id | route_id
 4	| 3	| 3
 5	| 3	| 4
 6	| 7	| 5
-*id: SMALLINT, unsigned, autoIncrement, primaryKey*
-*role_id: TINYINT, unsigned*
-*route_id: SMALLINT, unsigned*
+- *id: SMALLINT, unsigned, autoIncrement, primaryKey*
+- *role_id: TINYINT, unsigned*
+- *route_id: SMALLINT, unsigned*
 
 说明：角色路由信息。**前端页面级权限控制**，用户登录后获取用户的role_id，role，使用role_id获取roleroutes表中role_id对应的route_id，用route_id关联routes表生成用户权限内能访问的路由表，再使用router.addRoutes()方法动态添加路由信息，生成用户能访问的页面路由权限。**前端页面DOM级权限控制**，使用DOM绑定自定义指令控制页面元素随用户role级别渲染，DOM绑定的自定义指定大于用户role则不渲染。
 
@@ -189,14 +188,14 @@ user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code | sm
 4	| 12	| 18600000005	| abcdef123de	| Jack	| 1	| 0
 5	| 17	| 18600000006	| abcdef123de	| White	| 1	| 0
 6	| 20	| 18600000007	| abcdef123de	| Kitty	| 1	| 0
-*user_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-*org_id: INTERGER(11), unsigned, unique*
-*account: STRING(256), unique*
-*password: STRING(256), set(val){this.setDataValue('password', pwd)}*
-*nick_name: STRING(256), allowNull:true,*
-*created_by: INTERGER(11), unsigned*
-*state_code: TINYINT, unsigned, defaultValue:1*
-*sms_code: STRING(16), allowNull:true*
+- *user_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *org_id: INTERGER(11), unsigned, unique*
+- *account: STRING(256), unique*
+- *password: STRING(256), set(val){this.setDataValue('password', pwd)}*
+- *nick_name: STRING(256), allowNull:true,*
+- *created_by: INTERGER(11), unsigned*
+- *state_code: TINYINT, unsigned, defaultValue:1*
+- *sms_code: STRING(16), allowNull:true*
 
 #### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by | state_code 
@@ -223,15 +222,15 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 20	|	| YF0307 | M | |			直销员1	| 24	| 1 | 1
 21	|	| YF0337 | M | |			直销员2	| 24	| 1 | 1
 22	|	| YF0590 | S2 | |			直销员3	| 24	| 1 | 1
-*org_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-*channel_id: STRING(64), unique, allowNull:true*
-*yf_code: STRING(64), allowNull:true*
-*is_market_group: STRING(8), allowNull:true*
-*parent_manager_id: INTERGER(11), unsigned*
-*org_desc: STRING(256)*
-*scope: TINYINT, unsigned*
-*created_by: INTERGER(11), unsigned*
-*state_code: TINYINT, unsigned, defaultValue:1*
+- *org_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *channel_id: STRING(64), unique, allowNull:true*
+- *yf_code: STRING(64), allowNull:true*
+- *is_market_group: STRING(8), allowNull:true*
+- *parent_manager_id: INTERGER(11), unsigned*
+- *org_desc: STRING(256)*
+- *scope: TINYINT, unsigned*
+- *created_by: INTERGER(11), unsigned*
+- *state_code: TINYINT, unsigned, defaultValue:1*
 
 说明：用户表中取出org_id，在organizations表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表user_id对应的org_id, 用org_id关联organizations表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
 
@@ -244,36 +243,40 @@ file_id | file_name | path | size | create_by
 -- | -- | -- | -- | -- |
 1 | B2I2C号码20200505 | cloud://dev-b93ee9 | 96696.32 | 1
 2 | B2I2C号码20200201 | cloud://dev-b93ee9 | 658 | 1
-*file_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-*file_name: STRING(256)*
-*path: STRING(256)*
-*size: INTERGER(11), unsigned, unique*
-*create_by: INTERGER(11), unsigned*
+- *file_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *file_name: STRING(256)*
+- *path: STRING(256)*
+- *size: INTERGER(11), unsigned, unique*
+- *create_by: INTERGER(11), unsigned*
 
 #### 日志信息
 id | logo_date | account | api
 -- | -- | --| --|
 1 | 1589185965494 | 15600000001 | /web/file/upload
 2 | 1589185965494 | 15600000001 | /web/file/upload
-*id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-*logo_date: STRING(256)*
-*account: STRING(256)*
-*api: STRING(256)*
+- *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *logo_date: STRING(256)*
+- *account: STRING(256)*
+- *api: STRING(256)*
 
-#### 证件号码1-10 出生地，出生年份
+#### 证件号码
+##### 证件号码1-10 出生地，出生年份
 id | serial | fee
 --| --| --|
 1 | 4205251988 | 25
 
-#### 证件号码 11-16 出生月份，出生日期，出生顺序
+##### 证件号码 11-16 出生月份，出生日期，出生顺序
 id | serial | fee
 --| --| --|
 1 | 111112 | 25
 
-#### 证件号码 17-18 性别，校验码
+##### 证件号码 17-18 性别，校验码
 id | serial | fee
 --| --| --|
 1 | 21 | 25
+- *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *serial: STRING(10), unsigned*
+- *fee: INTERGER(11), unsigned*
 
 
 
