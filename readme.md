@@ -98,6 +98,7 @@ state_id | state_code | state_name
 1 | 0 | 停用
 2 | 1 | 启用
 3 | 2 | 注销
+
 *state_id: TINYINT, unsigned, autoIncrement, primaryKey*
 *state_code: TINYINT, unsigned, unique*
 *state_name: STRING(64), unique*
