@@ -5,7 +5,7 @@
 st=>start: Login
 e=>end: End
 op1=>operation: auth_user
-op2=>operation: save_token[cookie,storage]
+op2=>operation: save_doubleToken[cookie,storage]
 sub1=>subroutine: get_proxy
 op3=>operation: get_userinfo
 op4=>operation: create_vuex_routerlist
@@ -445,21 +445,51 @@ id | serial | fee
 POST /web/users/verify
 ````
 ##### Parameters
-- account: 账号 [string]
-- password: 密码 [string] 
+- account: 账号 [type: string]
+- password: 密码 [type: string]
+
 
 ##### Response 200
 ```js
 {
-    "token": "adf123dfas031dkiweoqk"
+    "accessToken": "adf123dfas031dkiweoqk",
+    "refreshToken" "adf123dfas031dkiweoqk"
 }
 ````
 
 ##### Response_description
 - data: [type: object]
-- token: 令牌 [type: string]
+- accessToken: 权限令牌 [type: string]
+- refreshToken: 刷新令牌 [type: string]
 
-说明: 账号密码校验通过后签发token,token包含通过account关联查询users表中的user_id，org_id。
+说明: 账号密码校验通过后签发accessToken,账号密码校验通过后签发accessToken包含通过account关联查询users表中的user_id，org_id,有效期2小时。同时签发refreshToken，有效期1个月。
+
+
+#### 刷新令牌
+##### URL
+```js
+POST /web/users/tokenrefresh
+````
+##### Parameters
+- refreshToken: 令牌 [type: string]
+
+
+##### Response 200
+```js
+{
+    "accessToken": "adf123dfas031dkiweoqk",
+    "refreshToken" "adf123dfas031dkiweoqk"
+}
+````
+
+##### Response_description
+- data: [type: object]
+- accessToken: 权限令牌 [type: string]
+- refreshToken: 刷新令牌 [type: string]
+
+说明: Koa全局中间件判断accessToken是否过期后，如果过期了使用refreshToken获取新的accessToken(有效期2小时)和新的refreshToken(有效期1个月)。
+
+
 
 #### 获取用户信息
 ##### URL
@@ -467,7 +497,7 @@ POST /web/users/verify
 POST /web/users/userinfo
 ````
 ##### Parameters
-- token: 令牌 [type: string]
+- accessToken: 令牌 [type: string]
 
 ##### Response 200
 ```js
@@ -480,7 +510,7 @@ POST /web/users/userinfo
     "role_name": "管理员"
 }
 ````
-说明： 通过user_id关联查询permissions表中的roles数组,roles数组生成用户权限内的路由对象。通过roles数组关联roles表中的scope数组，取scope数组的最大值就是用户后端API接口的最高权限。
+说明： 通过user_id关联查询permissions表中的roles数组,roles数组生成用户权限内的路由对象。通过roles数组关联roles表中的scope数组，取scope数组的最大值就是用户后端API接口的最高权限。**以上返回的数据通过后端token解密后不能存储在前端，将解密的数据挂载到后端ctx的上下文上提高安全性**。
 
 ##### Response_description
 - data: [type: object]
