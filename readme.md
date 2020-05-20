@@ -260,23 +260,16 @@ id | logo_date | account | api
 - *api: STRING(256)*
 
 #### 证件号码
-##### 证件号码1-10 出生地，出生年份
-id | serial | fee
---| --| --|
+id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
+--| --| --| --| --| --|
 1 | 4205251988 | 25
 
-##### 证件号码 11-16 出生月份，出生日期，出生顺序
-id | serial | fee
---| --| --|
-1 | 111112 | 25
-
-##### 证件号码 17-18 性别，校验码
-id | serial | fee
---| --| --|
-1 | 21 | 25
 - *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-- *serial: STRING(10), unsigned*
+- *serial: STRING(20), unique*
 - *fee: INTERGER(11), unsigned*
+- *pdlevel20: STRING(256)*
+- *pdlevel30: STRING(256)*
+- *pdlevel40: STRING(256)*
 
 
 
