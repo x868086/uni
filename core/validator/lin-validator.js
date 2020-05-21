@@ -281,7 +281,7 @@ class LinValidator {
         return [];
     }
 }
-exports.LinValidator = LinValidator;
+
 /**
  * 规则类
  */
@@ -340,4 +340,8 @@ class Rule {
         }
     }
 }
-exports.Rule = Rule;
+
+module.exports = {
+    LinValidator,
+    Rule
+}

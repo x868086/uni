@@ -194,7 +194,7 @@ id | role_id | route_id
 
 
 #### users
-user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code | sms_code
+user_id	| org_id	| account	| secret	| nick_name	| created_by	| state_code | sms_code
 -- | -- |-- | -- |-- |-- | -- |-- |-- |
 1	| 1	| 18600000001	| abcdef123de	| Json	| 1	| 1
 2	| 3	| 18600000003	| abcdef123de	| Penny	| 1	| 1
@@ -204,12 +204,12 @@ user_id	| org_id	| account	| password	| nick_name	| created_by	| state_code | sm
 6	| 20	| 18600000007	| abcdef123de	| Kitty	| 1	| 0
 - *user_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
 - *org_id: INTERGER(11), unsigned, unique*
-- *account: STRING(256), unique*
-- *password: STRING(256), set(val){this.setDataValue('password', pwd)}*
-- *nick_name: STRING(256), allowNull:true,*
+- *account: STRING(128), unique*
+- *secret: STRING(128), set(val){this.setDataValue('secret', pwd)}*
+- *nick_name: STRING(128), allowNull:true,*
 - *created_by: INTERGER(11), unsigned*
 - *state_code: TINYINT, unsigned, defaultValue:1*
-- *sms_code: STRING(16), allowNull:true*
+- *sms_code: INTERGER(6), allowNull:true*
 
 #### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by | state_code 
@@ -453,7 +453,7 @@ POST /users/verify
 ````
 ##### Parameters
 - account: 账号 [type: string]
-- password: 密码 [type: string]
+- secret: 密码 [type: string]
 - loginTypeCode: 登录类型 [type: number]
 
 
@@ -632,7 +632,7 @@ POST /users/create
 ````
 ##### Parameters
 - account: 账号 [type: string]
-- password: 密码 [type: string]
+- secret: 密码 [type: string]
 - nickname: 用户昵称 [type: string]
 - org_id: 用户组织节点id [type: number]
 - roles: 用户角色id数组 [type: number]
@@ -697,7 +697,7 @@ POST /users/<int:user_id>/modify
 ##### Parameters
 - user_id: 用户id [type: number]
 - nick_name: 用户昵称 [type: string]
-- password: 用户密码 [type: string]
+- secret: 用户密码 [type: string]
 - org_id: 用户组织节点id [type: number]
 - roles: 用户角色id数组 [type: number]
 
@@ -749,13 +749,13 @@ POST /users/security
 ````
 ##### Parameters
 - account: 账号 [type: string]
-- password: 用户密码 [type: string]
+- secret: 用户密码 [type: string]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg": "password changed",
+    "msg": "secret changed",
     "request": "POST /users/security"
 }
 ````
@@ -763,7 +763,7 @@ POST /users/security
 ##### Response_description
 - data: [type: object]
 - account: 账号 [type: string]
-- password: 密码 [type: string]
+- secret: 密码 [type: string]
 
 #### 短信验证码
 ##### URL
