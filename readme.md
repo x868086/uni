@@ -129,6 +129,20 @@ role_id | role | role_name | scope
 - *scope: TINYINT, unsigned, unique*
 
 说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，小于等于scope值的请求允许，大于scope值的请求抛出错误。
+[^_^]: M：manage；是管理序列。
+[^_^]: P：profession是专业序列 比如财务、人力资源等。
+[^_^]: T：technology是技术序列，诸如工程师等。
+[^_^]: S：strikingly；是营销序列。
+[^_^]: 其他职务的英语：
+[^_^]: 董事长、Chairman of the Board。
+[^_^]: 总经理、General Manager (GM)。
+[^_^]: 副总经理、Assistant Manager 。
+[^_^]: 部门主管、Department Chief, Market Director,Deaprt Director, Supervisor。
+[^_^]: 财务部经理、Manager of Finance or Finance Manager。
+[^_^]: 文员、Clerk, Associate。
+[^_^]: 助手、Assistant, Secrectry。
+[^_^]: 行政助理、Administrative Assistant。
+[^_^]: 总务专员、Specialist of General Affairs。
 
 #### permissions
 id| user_id | role_id 
@@ -252,8 +266,8 @@ file_id | file_name | path | size | create_by
 #### 日志信息
 id | logo_date | account | api
 -- | -- | --| --|
-1 | 1589185965494 | 15600000001 | /web/file/upload
-2 | 1589185965494 | 15600000001 | /web/file/upload
+1 | 1589185965494 | 15600000001 | /file/upload
+2 | 1589185965494 | 15600000001 | /file/upload
 - *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
 - *logo_date: STRING(256)*
 - *account: STRING(256)*
@@ -430,16 +444,17 @@ id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
 10006 | error_server | 内部错误
 
 
-## WEB端
+
 ### 登录
 #### 用户登录
 ##### URL
 ```js
-POST /web/users/verify
+POST /users/verify
 ````
 ##### Parameters
 - account: 账号 [type: string]
 - password: 密码 [type: string]
+- loginTypeCode: 登录类型 [type: number]
 
 
 ##### Response 200
@@ -461,7 +476,7 @@ POST /web/users/verify
 #### 刷新令牌
 ##### URL
 ```js
-POST /web/users/tokenrefresh
+POST /users/tokenrefresh
 ````
 ##### Parameters
 - refreshToken: 令牌 [type: string]
@@ -487,7 +502,7 @@ POST /web/users/tokenrefresh
 #### 获取用户信息
 ##### URL
 ```js
-POST /web/users/userinfo
+POST /users/userinfo
 ````
 ##### Parameters
 - accessToken: 令牌 [type: string]
@@ -500,7 +515,8 @@ POST /web/users/userinfo
     "roles": [1,2,3],
     "scope": [66,60,54],
     "scope_top": 66,
-    "role_name": "管理员"
+    "role_name": "管理员",
+    "loginType": "web"
 }
 ````
 说明： 通过user_id关联查询permissions表中的roles数组,roles数组生成用户权限内的路由对象。通过roles数组关联roles表中的scope数组，取scope数组的最大值就是用户后端API接口的最高权限。**以上返回的数据通过后端token解密后不能存储在前端，将解密的数据挂载到后端ctx的上下文上提高安全性**。
@@ -513,12 +529,13 @@ POST /web/users/userinfo
 - scope: 用户后端API接口权限级别 [type: array]
 - scope_top: 用户后端API接口的最高权限 [type: number]
 - role_name: 用户最高角色名称 [type: string]
+- loginType: 用户登录类型 [type: string]
 
 ### 用户
 #### 用户权限内渠道列表
 ##### URL
 ```js
-POST /web/users/channels
+POST /users/channels
 ````
 ##### Parameters
 - user_id: 用户id [type: number]
@@ -555,7 +572,7 @@ POST /web/users/channels
 #### 用户列表获取
 ##### URL
 ```js
-GET /web/users/list
+GET /users/list
 ````
 ##### Parameters
 - 
@@ -611,7 +628,7 @@ GET /web/users/list
 #### 用户添加
 ##### URL
 ```js
-POST /web/users/create
+POST /users/create
 ````
 ##### Parameters
 - account: 账号 [type: string]
@@ -625,7 +642,7 @@ POST /web/users/create
 {
     "error_code": 0,
     "msg":"user created",
-    "request": "POST /web/users/create"
+    "request": "POST /users/create"
 }
 ````
 
@@ -635,7 +652,7 @@ POST /web/users/create
 #### 用户启用
 ##### URL
 ```js
-GET /web/users/<int:user_id>/enable
+GET /users/<int:user_id>/enable
 ````
 ##### Parameters
 - user_id: 用户id [type: number]
@@ -645,7 +662,7 @@ GET /web/users/<int:user_id>/enable
 {
     "error_code": 0,
     "msg":"user enable",
-    "request": "GET /web/users/<int:user_id>/enable"    
+    "request": "GET /users/<int:user_id>/enable"    
 }
 ````
 
@@ -655,7 +672,7 @@ GET /web/users/<int:user_id>/enable
 #### 用户删除
 ##### URL
 ```js
-GET /web/users/<int:user_id>/remove
+GET /users/<int:user_id>/remove
 ````
 ##### Parameters
 - user_id: 用户id [type: number]
@@ -665,7 +682,7 @@ GET /web/users/<int:user_id>/remove
 {
     "error_code": 0,
     "msg":"user removed",
-    "request": "GET /web/users/<int:user_id>/remove"    
+    "request": "GET /users/<int:user_id>/remove"    
 }
 ````
 
@@ -675,7 +692,7 @@ GET /web/users/<int:user_id>/remove
 #### 用户编辑
 ##### URL
 ```js
-POST /web/users/<int:user_id>/modify
+POST /users/<int:user_id>/modify
 ````
 ##### Parameters
 - user_id: 用户id [type: number]
@@ -689,7 +706,7 @@ POST /web/users/<int:user_id>/modify
 {
     "error_code": 0,
     "msg":"user updated",
-    "request": "GET /web/users/<int:user_id>/modify"    
+    "request": "GET /users/<int:user_id>/modify"    
 }
 ````
 
@@ -699,7 +716,7 @@ POST /web/users/<int:user_id>/modify
 #### 用户搜索
 ##### URL
 ```js
-POST /web/users/search
+POST /users/search
 ````
 ##### Parameters
 - account: 账号 [type: string]
@@ -728,7 +745,7 @@ POST /web/users/search
 #### 用户密码修改
 ##### URL
 ```js
-POST /web/users/security
+POST /users/security
 ````
 ##### Parameters
 - account: 账号 [type: string]
@@ -739,7 +756,7 @@ POST /web/users/security
 {
     "error_code": 0,
     "msg": "password changed",
-    "request": "POST /web/users/security"
+    "request": "POST /users/security"
 }
 ````
 
@@ -751,7 +768,7 @@ POST /web/users/security
 #### 短信验证码
 ##### URL
 ```js
-POST /web/users/smscode
+POST /users/smscode
 ```
 ##### Parameters
 - account: 账号 [type: string]
@@ -772,7 +789,7 @@ POST /web/users/smscode
 #### 角色列表获取
 ##### URL
 ```js
-GET /web/roles/list
+GET /roles/list
 ````
 ##### Parameters
 - 
@@ -807,7 +824,7 @@ GET /web/roles/list
 #### 角色启用
 ##### URL
 ```js
-GET /web/roles/<int:role_id>/enable
+GET /roles/<int:role_id>/enable
 ````
 ##### Parameters
 - role_id: 角色id [type: number]
@@ -817,7 +834,7 @@ GET /web/roles/<int:role_id>/enable
 {
     "error_code": 0,
     "msg": "role enable",
-    "request": "GET /web/roles/<int:role_id>/enable"
+    "request": "GET /roles/<int:role_id>/enable"
 }
 ````
 
@@ -827,7 +844,7 @@ GET /web/roles/<int:role_id>/enable
 #### 分组编辑
 ##### URL
 ```js
-POST /web/roles/modify
+POST /roles/modify
 ````
 ##### Parameters
 - role_id: 角色id [type: number]
@@ -839,7 +856,7 @@ POST /web/roles/modify
 {
     "error_code": 0,
     "msg": "role updated",
-    "request": "POST /web/roles/modify"
+    "request": "POST /roles/modify"
 }
 ````
 
@@ -849,7 +866,7 @@ POST /web/roles/modify
 #### 分组删除
 ##### URL
 ```js
-GET /web/role/<int:role_id>/remove
+GET /role/<int:role_id>/remove
 ````
 ##### Parameters
 - role_id：角色id [type: number]
@@ -859,7 +876,7 @@ GET /web/role/<int:role_id>/remove
 {
     "error_code": 0,
     "msg": "role removed",
-    "request": "GET /web/roles/<int:role_id>/remove"
+    "request": "GET /roles/<int:role_id>/remove"
 }
 ````
 
@@ -869,7 +886,7 @@ GET /web/role/<int:role_id>/remove
 #### 分组添加
 ##### URL
 ```js
-POST /web/role/create
+POST /role/create
 ````
 ##### Parameters
 - role: 角色描述 [type: string]
@@ -882,7 +899,7 @@ POST /web/role/create
 {
     "error_code": 0,
     "msg": "role created",
-    "request": "POST /web/roles/create"
+    "request": "POST /roles/create"
 }
 ````
 
@@ -895,7 +912,7 @@ POST /web/role/create
 #### 号码列表获取
 ##### URL
 ```js
-GET /web/serial/list
+GET /serial/list
 ````
 ##### Parameters
 - 
@@ -933,7 +950,7 @@ GET /web/serial/list
 #### 号码分配
 ##### URL
 ```js
-GET /web/serial/<string:serial_number>/allocate
+GET /serial/<string:serial_number>/allocate
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
@@ -943,7 +960,7 @@ GET /web/serial/<string:serial_number>/allocate
 {
     "error_code": 0,
     "msg": "serial_number allocated",
-    "request": "GET /web/serial/<string:serial_number>/allocate"
+    "request": "GET /serial/<string:serial_number>/allocate"
 }
 ````
 
@@ -953,7 +970,7 @@ GET /web/serial/<string:serial_number>/allocate
 #### 号码驳回
 ##### URL
 ```js
-GET /web/serial/<string:serial_number>/reject
+GET /serial/<string:serial_number>/reject
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
@@ -963,7 +980,7 @@ GET /web/serial/<string:serial_number>/reject
 {
     "error_code": 0,
     "msg": "serial_number rejected",
-    "request": "GET /web/serial/<string:serial_number>/reject"    
+    "request": "GET /serial/<string:serial_number>/reject"    
 }
 ````
 
@@ -973,7 +990,7 @@ GET /web/serial/<string:serial_number>/reject
 #### 号码删除
 ##### URL
 ```js
-GET /web/serial/<string:serial_number>/remove
+GET /serial/<string:serial_number>/remove
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
@@ -983,7 +1000,7 @@ GET /web/serial/<string:serial_number>/remove
 {
     "error_code": 0,
     "msg": "serial_number removed",
-    "request": "GET /web/serial/<string:serial_number>/remove" 
+    "request": "GET /serial/<string:serial_number>/remove" 
 }
 ````
 
@@ -993,7 +1010,7 @@ GET /web/serial/<string:serial_number>/remove
 #### 号码搜索
 ##### URL
 ```js
-GET /web/serial/<string:serial_number>/search
+GET /serial/<string:serial_number>/search
 ````
 ##### Parameters
 - serial: 手机号码 [type: string]
@@ -1025,7 +1042,7 @@ GET /web/serial/<string:serial_number>/search
 #### 配置列表获取
 ##### URL
 ```js
-GET /web/thresholds/list
+GET /thresholds/list
 ````
 ##### Parameters
 - 
@@ -1070,7 +1087,7 @@ GET /web/thresholds/list
 #### 配置启用
 ##### URL
 ```js
-GET /web/thresholds/<int:id>/enable
+GET /thresholds/<int:id>/enable
 ````
 ##### Parameters
 - id: 阈值规则id [type: number]
@@ -1080,7 +1097,7 @@ GET /web/thresholds/<int:id>/enable
 {
     "error_code": 0,
     "msg": "thresholds updated",
-    "request": "GET /web/thresholds/<int:id>/enable" 
+    "request": "GET /thresholds/<int:id>/enable" 
 }
 ````
 
@@ -1090,7 +1107,7 @@ GET /web/thresholds/<int:id>/enable
 #### 配置删除
 ##### URL
 ```js
-GET /web/thresholds/<int:id>/remove
+GET /thresholds/<int:id>/remove
 ````
 ##### Parameters
 - 
@@ -1100,7 +1117,7 @@ GET /web/thresholds/<int:id>/remove
 {
     "error_code": 0,
     "msg": "thresholds removed",
-    "request": "GET /web/thresholds/<int:id>/remove" 
+    "request": "GET /thresholds/<int:id>/remove" 
 }
 ````
 
@@ -1110,7 +1127,7 @@ GET /web/thresholds/<int:id>/remove
 #### 配置提交
 ##### URL
 ```js
-POST /web/thresholds/create
+POST /thresholds/create
 ````
 ##### Parameters
 - config_name: 阈值规则名称 [type: string]
@@ -1124,7 +1141,7 @@ POST /web/thresholds/create
 {
     "error_code": 0,
     "msg": "thresholds created",
-    "request": "POST /web/thresholds/create"     
+    "request": "POST /thresholds/create"     
 }
 ````
 
@@ -1136,7 +1153,7 @@ POST /web/thresholds/create
 #### 信息列表获取
 ##### URL
 ```js
-GET /web/article/list
+GET /article/list
 ````
 ##### Parameters
 - 
@@ -1176,7 +1193,7 @@ GET /web/article/list
 #### 信息删除
 ##### URL
 ```js
-GET /web/article/<int:article_id>/remove
+GET /article/<int:article_id>/remove
 ````
 ##### Parameters
 - article_id: 文章id [type: number]
@@ -1186,7 +1203,7 @@ GET /web/article/<int:article_id>/remove
 {
     "error_code": 0,
     "msg": "article removed",
-    "request": "GET /web/article/<int:article_id>/remove"      
+    "request": "GET /article/<int:article_id>/remove"      
 }
 ````
 
@@ -1196,7 +1213,7 @@ GET /web/article/<int:article_id>/remove
 #### 信息编辑
 ##### URL
 ```js
-POST /web/article/<int:article_id>/modify
+POST /article/<int:article_id>/modify
 ````
 ##### Parameters
 - public_date: 发布时间 [type: number] [timestamp]
@@ -1211,7 +1228,7 @@ POST /web/article/<int:article_id>/modify
 {
     "error_code": 0,
     "msg": "article updated",
-    "request": "GET /web/article/<int:article_id>/modify" 
+    "request": "GET /article/<int:article_id>/modify" 
 } 
 ````
 
@@ -1221,7 +1238,7 @@ POST /web/article/<int:article_id>/modify
 #### 信息发布
 ##### URL
 ```js
-POST /web/article/public
+POST /article/public
 ````
 ##### Parameters
 - public_date: 发布时间 [type: number] [timestamp]
@@ -1236,7 +1253,7 @@ POST /web/article/public
 {
     "error_code": 0,
     "msg": "article created",
-    "request": "POST /web/article/public" 
+    "request": "POST /article/public" 
 }
 ````
 
@@ -1248,7 +1265,7 @@ POST /web/article/public
 #### 数据导入
 ##### URL
 ```js
-POST /web/file/upload
+POST /file/upload
 ````
 ##### Parameters
 - data: [type: binary] [enctype="multipart/form-data"]
@@ -1259,7 +1276,7 @@ POST /web/file/upload
 {
     "error_code": 0,
     "msg": "object uploaded",
-    "request": "POST /web/file/upload" 
+    "request": "POST /file/upload" 
 }
 ```
 ##### Response_description
@@ -1269,7 +1286,7 @@ POST /web/file/upload
 #### 数据导出
 ##### URL
 ```js
-GET /web/file/<string:file_id>/export
+GET /file/<string:file_id>/export
 ````
 ##### Parameters
 - file_id: 文件id [type: number]
@@ -1286,7 +1303,7 @@ GET /web/file/<string:file_id>/export
 #### 日志列表获取
 ##### URL
 ```js
-GET /web/log/list
+GET /log/list
 ````
 ##### Parameters
 - 
@@ -1298,12 +1315,12 @@ GET /web/log/list
         "id": 1,
         "logo_date": 1589185965494,
         "account": "15600000001",
-        "api": "/web/file/upload"
+        "api": "/file/upload"
     },{
         "id": 2,
         "logo_date": 1589185965494,
         "account": "15600000001",
-        "api": "/web/users/list"
+        "api": "/users/list"
     }
 ]
 ````
@@ -1318,7 +1335,7 @@ GET /web/log/list
 #### 日志搜索
 ##### URL
 ```js
-GET /web/log/<int:id>/search
+GET /log/<int:id>/search
 ````
 ##### Parameters
 - id: 日志id [type: number]
@@ -1329,7 +1346,7 @@ GET /web/log/<int:id>/search
     "id": 1,
     "logo_date": "1589185965494",
     "account": "15600000001",
-    "api": "/web/file/upload"    
+    "api": "/file/upload"    
 }
 ````
 
