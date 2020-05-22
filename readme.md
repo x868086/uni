@@ -264,14 +264,17 @@ file_id | file_name | path | size | create_by
 - *create_by: INTERGER(11), unsigned*
 
 #### 日志信息
-id | logo_date | account | api
--- | -- | --| --|
-1 | 1589185965494 | 15600000001 | /file/upload
-2 | 1589185965494 | 15600000001 | /file/upload
+id | logo_date | account | api | status_code | error_code | error_message
+-- | -- | --| --| --| --| --|
+1 | 2020-05-01 12:20:01 | 15600000001 | /file/upload | 200 | | |
+2 | 2020-05-01 12:20:01 | 15600000001 | /file/upload | 500 | 10000| abcdefg|
 - *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
 - *logo_date: STRING(256)*
 - *account: STRING(256)*
 - *api: STRING(256)*
+- *status_code: INTERGER(11), unsigned*
+- *error_code: INTERGER(11), unsigned*
+- *error_message: STRING(256)*
 
 #### 证件号码
 id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
@@ -776,13 +779,13 @@ POST /users/smscode
 ##### Response 200
 ```js
 {
-    "smsCode" "12D51"
+    "smsCode" "12051"
 }
 ````
 
 ##### Response_description
 - data: [type: object]
--smsCode: 短信验证码 [type: string]
+-smsCode: 短信验证码 [type: number]
 
 
 ### 角色

@@ -1,11 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
+// const tslib_1 = require("tslib");
 const lodash_1 = require("lodash");
-const exception_1 = require("../exception");
-const validator_1 = tslib_1.__importDefault(require("validator"));
+// validator校验请求参数，错误信息通过自定义 http-exception返回
+const exception_1 = require("../http-exception.js");
+const validator_1 = require("validator");
 const extended_validator_1 = require("./extended-validator");
-const utils_1 = require("../utils");
+
+function getAllMethodNames(obj, option) {
+    let methods = new Set();
+    // tslint:disable-next-line:no-conditional-assignment
+    while ((obj = Reflect.getPrototypeOf(obj))) {
+        let keys = Reflect.ownKeys(obj);
+        keys.forEach(k => methods.add(k));
+    }
+    let keys = Array.from(methods.values());
+    return prefixAndFilter(keys, option);
+}
+// exports.getAllMethodNames = getAllMethodNames;
+
+function getAllFieldNames(obj, option) {
+    let keys = Reflect.ownKeys(obj);
+    return prefixAndFilter(keys, option);
+}
+// exports.getAllFieldNames = getAllFieldNames;
+function prefixAndFilter(keys, option) {
+    option &&
+        option.prefix &&
+        (keys = keys.filter(key => key.toString().startsWith(option.prefix)));
+    option && option.filter && (keys = keys.filter(option.filter));
+    return keys;
+}
+
 /**
  * 强大的校验器
  * 支持optional，支持array，支持nested object
@@ -92,7 +118,7 @@ class LinValidator {
         // 筛选出是Rule或Rules的key
         // 添加规则校验 validateKey
         // default校验规则 throw
-        let keys = utils_1.getAllFieldNames(this, {
+        let keys = getAllFieldNames(this, {
             filter: key => {
                 const value = this[key];
                 if (lodash_1.isArray(value)) {
@@ -197,7 +223,7 @@ class LinValidator {
                 }
             }
         }
-        let validateFuncKeys = utils_1.getAllMethodNames(this, {
+        let validateFuncKeys = getAllMethodNames(this, {
             filter: key => /validate([A-Z])\w+/g.test(key) && typeof this[key] === 'function'
         });
         for (const validateFuncKey of validateFuncKeys) {
@@ -281,7 +307,7 @@ class LinValidator {
         return [];
     }
 }
-
+exports.LinValidator = LinValidator;
 /**
  * 规则类
  */
@@ -340,8 +366,4 @@ class Rule {
         }
     }
 }
-
-module.exports = {
-    LinValidator,
-    Rule
-}
+exports.Rule = Rule;

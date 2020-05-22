@@ -4,14 +4,15 @@ const router = new Router({
     prefix: '/v1/user'
 })
 
-const { User } = require('../../models/user')
+const { UserService } = require('../../services/user')
 
 const { AccountValidator } = require('../../validators/validators')
 
-router.get('/', async (ctx, next) => {
-    const v = await new AccountValidator().validate(ctx)
-    ctx.body = 'abc'
-    console.log(v.get('body.smsCode'))
+router.post('/create', async (ctx, next) => {
+    // let { account, secret, nickname, org_id, roles } = ctx.request.body
+    // const v = await new AccountValidator().validate(ctx)
+    let userInstance = await new UserService(ctx.request.body).userCreate()
+    console.log(userInstance)
 })
 
 

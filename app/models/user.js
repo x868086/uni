@@ -1,13 +1,14 @@
 const { Sequelize, Model } = require('sequelize')
 const { sequelize } = require('../../core/db')
+const { secretUtile } = require('../../core/utile')
 
 
-class User extends Model {
+class UserModel extends Model {
 
 }
 
-User.init({
-    id: {
+UserModel.init({
+    user_id: {
         type: Sequelize.INTEGER(11),
         unsigned: true,
         autoIncrement: true,
@@ -22,13 +23,13 @@ User.init({
         type: Sequelize.STRING(128),
         unique: true
     },
-    password: {
+    secret: {
         type: Sequelize.STRING(128),
         allowNull: false,
-        // set(val) {
-        //     const pwd = pwdUtils.generateSecret(val)
-        //     this.setDataValue('password', pwd)
-        // },
+        set(val) {
+            const pwd = secretUtile.generateSecret(val)
+            this.setDataValue('secret', pwd)
+        },
         allowNull: false,
         unique: true
     },
@@ -56,5 +57,5 @@ User.init({
 })
 
 module.exports = {
-    User
+    UserModel
 }
