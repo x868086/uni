@@ -2,14 +2,29 @@ const { UserModel } = require("../models/user");
 
 const { PermissionService } = require("../services/permission");
 
+const { tokenUtile, secretUtile } = require("../../core/utile");
+
+const { tokenSecurity } = require("../../config/config");
+
 class UserService {
-  constructor({ account, secret, orgId, nickName, roles, createBy }) {
+  constructor({
+    account,
+    secret,
+    orgId,
+    nickName,
+    roles,
+    createBy,
+    smsCode,
+    loginType,
+  }) {
     this.account = account;
     this.secret = secret;
     this.orgId = orgId;
     this.nickName = nickName;
     this.roles = roles;
     this.createBy = createBy;
+    this.smsCode = smsCode;
+    this.loginType = loginType;
   }
 
   async userCreate() {
@@ -30,11 +45,38 @@ class UserService {
         org_id: this.orgId,
         nick_name: this.nickName,
         create_by: this.createBy,
+        sms_code: this.smsCode,
       },
     });
     if (user_id) {
       await new PermissionService(user_id, this.roles).permissionCreate();
-      return user_id;
+      return this.account;
+    }
+  }
+
+  async userVerify() {
+    let user = await UserModel.findOne({
+      where: {
+        account: this.account,
+      },
+    });
+    if (user.secret || user.sms_code) {
+      let correct =
+        secretUtile.decodedSecret(this.account, user.secret) ||
+        this.smsCode === user.sms_code;
+      if (correct) {
+        let accessToken = tokenUtile.generateToken(
+          user.user_id,
+          user.org_id,
+          tokenSecurity.accessExpiresIn
+        );
+        let refreshToken = tokenUtile.generateToken(
+          user.user_id,
+          user.org_id,
+          tokenSecurity.refreshExpiresIn
+        );
+        return { accessToken, refreshToken };
+      }
     }
   }
 }
