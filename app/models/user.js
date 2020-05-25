@@ -1,61 +1,61 @@
-const { Sequelize, Model } = require('sequelize')
-const { sequelize } = require('../../core/db')
-const { secretUtile } = require('../../core/utile')
+const { Sequelize, Model } = require("sequelize");
+const { sequelize } = require("../../core/db");
+const { secretUtile } = require("../../core/utile");
 
+class UserModel extends Model {}
 
-class UserModel extends Model {
-
-}
-
-UserModel.init({
+UserModel.init(
+  {
     user_id: {
-        type: Sequelize.INTEGER(11),
-        unsigned: true,
-        autoIncrement: true,
-        primaryKey: true
+      type: Sequelize.INTEGER(11),
+      unsigned: true,
+      autoIncrement: true,
+      primaryKey: true,
     },
     org_id: {
-        type: Sequelize.INTEGER(11),
-        unsigned: true,
-        unique: true
+      type: Sequelize.INTEGER(11),
+      unsigned: true,
+      unique: true,
     },
     account: {
-        type: Sequelize.STRING(128),
-        unique: true
+      type: Sequelize.STRING(128),
+      unique: true,
     },
     secret: {
-        type: Sequelize.STRING(128),
-        allowNull: false,
-        set(val) {
-            const pwd = secretUtile.generateSecret(val)
-            this.setDataValue('secret', pwd)
-        },
-        allowNull: false,
-        unique: true
+      type: Sequelize.STRING(128),
+      allowNull: false,
+      set(val) {
+        const pwd = secretUtile.generateSecret(val);
+        this.setDataValue("secret", pwd);
+      },
+      allowNull: false,
+      unique: true,
     },
     nick_name: {
-        type: Sequelize.STRING(128),
-        allowNull: true
+      type: Sequelize.STRING(128),
+      allowNull: true,
     },
     create_by: {
-        type: Sequelize.INTEGER(11),
-        unsigned: true,
-        allowNull: true
+      type: Sequelize.INTEGER(11),
+      unsigned: true,
+      allowNull: true,
     },
     state_code: {
-        type: Sequelize.TINYINT,
-        unsigned: true,
-        defaultValue: 1
+      type: Sequelize.TINYINT,
+      unsigned: true,
+      defaultValue: 1,
     },
     sms_code: {
-        type: Sequelize.STRING(16),
-        allowNull: true
-    }
-}, {
+      type: Sequelize.STRING(16),
+      allowNull: true,
+    },
+  },
+  {
     sequelize,
-    tableName: 'users'
-})
+    tableName: "users",
+  }
+);
 
 module.exports = {
-    UserModel
-}
+  UserModel,
+};
