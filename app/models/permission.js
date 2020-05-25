@@ -22,7 +22,7 @@ PermissionModel.init({
     }
 }, {
     sequelize,
-    tablename: 'permissions'
+    tableName: 'permissions'
 })
 
 module.exports = {

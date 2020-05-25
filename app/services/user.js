@@ -1,6 +1,6 @@
 const { UserModel } = require('../models/user')
 
-// const { PermissionService } = require('../services/permission')
+const { PermissionService } = require('../services/permission')
 
 class UserService {
     constructor({ account, secret, orgId, nickName, roles, createBy }) {
@@ -13,7 +13,7 @@ class UserService {
     }
 
     async userCreate() {
-        let result = await UserModel.findOrCreate({
+        let result = await UserModel.create({
             where: {
                 account: this.account,
                 secret: this.secret,
@@ -23,7 +23,12 @@ class UserService {
             }
         })
         return result
-        // PermissionService.permissionCreate(user_id, this.roles)
+        // if (user_id) {
+        //     let abcd = await new PermissionService(user_id, this.roles).permissionCreate()
+        // } else {
+        //     throw new global.errs.HttpException('用户已存在')
+        // }
+
 
     }
 
