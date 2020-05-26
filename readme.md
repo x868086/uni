@@ -203,7 +203,7 @@ user_id	| org_id	| account	| secret	| nick_name	| created_by	| state_code | sms_
 5	| 17	| 18600000006	| abcdef123de	| White	| 1	| 0
 6	| 20	| 18600000007	| abcdef123de	| Kitty	| 1	| 0
 - *user_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-- *org_id: INTERGER(11), unsigned, unique*
+- *org_id: INTERGER(11), unsigned, allowNull:false*
 - *account: STRING(128), unique*
 - *secret: STRING(128), set(val){this.setDataValue('secret', pwd)}*
 - *nick_name: STRING(128), allowNull:true,*
@@ -445,6 +445,7 @@ id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
 10004 | error_forbidden | 禁止访问
 10005 | error_unauthorized | 未授权
 10006 | error_server | 内部错误
+10007 | error_modify | 不可重复操作
 
 
 
@@ -479,10 +480,10 @@ POST /users/verify
 #### 刷新令牌
 ##### URL
 ```js
-POST /users/tokenrefresh
+GET /users/tokenrefresh
 ````
 ##### Parameters
-- refreshToken: 令牌 [type: string]
+- **BasicAuth:** refreshToken令牌 [type: string]
 
 
 ##### Response 200
@@ -655,17 +656,17 @@ POST /users/create
 #### 用户启用
 ##### URL
 ```js
-GET /users/<int:user_id>/enable
+GET /users/<str:account>/enable
 ````
 ##### Parameters
-- user_id: 用户id [type: number]
+- account: 用户id [type: string]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
     "msg":"user enable",
-    "request": "GET /users/<int:user_id>/enable"    
+    "request": "GET /users/<str:account>/enable"    
 }
 ````
 
@@ -675,17 +676,17 @@ GET /users/<int:user_id>/enable
 #### 用户删除
 ##### URL
 ```js
-GET /users/<int:user_id>/remove
+GET /users/<str:account>/remove
 ````
 ##### Parameters
-- user_id: 用户id [type: number]
+- account: 用户id [type: string]
 
 ##### Response 204
 ```js 
 {
     "error_code": 0,
     "msg":"user removed",
-    "request": "GET /users/<int:user_id>/remove"    
+    "request": "GET /users/<str:account>/remove"    
 }
 ````
 
@@ -695,10 +696,10 @@ GET /users/<int:user_id>/remove
 #### 用户编辑
 ##### URL
 ```js
-POST /users/<int:user_id>/modify
+POST /users/<str:account>/modify
 ````
 ##### Parameters
-- user_id: 用户id [type: number]
+- account: 用户id [type: string]
 - nick_name: 用户昵称 [type: string]
 - secret: 用户密码 [type: string]
 - org_id: 用户组织节点id [type: number]
@@ -709,7 +710,7 @@ POST /users/<int:user_id>/modify
 {
     "error_code": 0,
     "msg":"user updated",
-    "request": "GET /users/<int:user_id>/modify"    
+    "request": "GET /users/<str:account>/modify"    
 }
 ````
 

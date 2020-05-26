@@ -9,14 +9,20 @@ const { tokenSecurity: {
 
 // tokenType传入时，必须为'accessExpiresIn'或者'refreshExpiresIn'，用来区分accessToken和refreshToken
 const generateToken = (userId, orgId, tokenType, ...restToken) => {
-    const token = jwt.sign({
-        // 复用generateToken方法生成refreshToken,剩余参数为accout,secret收敛到...restToken中 
-        userId, orgId, ...restToken
-    },
-        secret, {
-        expiresIn: tokenType
+    let token
+    try {
+        token = jwt.sign({
+            // 复用generateToken方法生成refreshToken,剩余参数为accout,secret收敛到...restToken中 
+            userId, orgId, ...restToken
+        },
+            secret, {
+            expiresIn: tokenType
+        }
+        )
+    } catch (error) {
+        throw new global.errs.HttpException(error.message, 10003, 500)
     }
-    )
+
     return token
 }
 

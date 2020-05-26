@@ -15,7 +15,7 @@ UserModel.init(
     org_id: {
       type: Sequelize.INTEGER(11),
       unsigned: true,
-      unique: true,
+      allowNull: false,
     },
     account: {
       type: Sequelize.STRING(128),
@@ -28,8 +28,7 @@ UserModel.init(
         const pwd = secretUtile.generateSecret(val);
         this.setDataValue("secret", pwd);
       },
-      allowNull: false,
-      unique: true,
+      unique: true
     },
     nick_name: {
       type: Sequelize.STRING(128),

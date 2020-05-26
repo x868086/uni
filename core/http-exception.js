@@ -7,7 +7,14 @@ class HttpException extends Error {
     }
 }
 
-
+class Success extends HttpException {
+    constructor(msg = "created", errorCode = 0, code = 201) {
+        super()
+        this.msg = msg
+        this.errorCode = errorCode
+        this.code = code
+    }
+}
 
 class ParametersException extends HttpException {
     constructor(msg = '请求参数错误', errorCode = 10000, code = 400) {
@@ -28,8 +35,19 @@ class Forbidden extends HttpException {
     }
 }
 
+class ModifyError extends HttpException {
+    constructor(msg = '不可重复操作', errorCode = 10007, code = 400) {
+        super()
+        this.msg = msg
+        this.errorCode = errorCode
+        this.code = code
+    }
+}
+
 module.exports = {
     HttpException,
+    Success,
     ParametersException,
-    Forbidden
+    Forbidden,
+    ModifyError
 }
