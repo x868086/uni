@@ -2,7 +2,7 @@ const { Sequelize, Model } = require("sequelize");
 const { sequelize } = require("../../core/db");
 const { secretUtile } = require("../../core/utile");
 
-class UserModel extends Model {}
+class UserModel extends Model { }
 
 UserModel.init(
   {
@@ -46,7 +46,7 @@ UserModel.init(
       defaultValue: 1,
     },
     sms_code: {
-      type: Sequelize.STRING(16),
+      type: Sequelize.INTEGER(11),
       allowNull: true,
     },
   },

@@ -498,7 +498,7 @@ POST /users/tokenrefresh
 - accessToken: 权限令牌 [type: string]
 - refreshToken: 刷新令牌 [type: string]
 
-说明: Koa全局中间件判断accessToken是否过期后，如果过期了使用refreshToken获取新的accessToken(有效期2小时)和新的refreshToken(有效期1个月)。
+说明: Koa全局中间件判断accessToken是否过期后，如果过期了使用refreshToken获取新的accessToken(有效期2小时)和新的refreshToken(有效期3天)。
 
 
 

@@ -8,9 +8,10 @@ const { tokenSecurity: {
 } } = require('../config/config')
 
 // tokenType传入时，必须为'accessExpiresIn'或者'refreshExpiresIn'，用来区分accessToken和refreshToken
-const generateToken = (userId, orgId, tokenType) => {
+const generateToken = (userId, orgId, tokenType, ...restToken) => {
     const token = jwt.sign({
-        userId, orgId
+        // 复用generateToken方法生成refreshToken,剩余参数为accout,secret收敛到...restToken中 
+        userId, orgId, ...restToken
     },
         secret, {
         expiresIn: tokenType
