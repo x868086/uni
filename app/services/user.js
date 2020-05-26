@@ -1,6 +1,7 @@
 const { UserModel } = require("../models/user");
 
 const { PermissionService } = require("../services/permission");
+const { RoleService } = require("../services/role")
 
 const { tokenUtile, secretUtile } = require("../../core/utile");
 
@@ -63,13 +64,14 @@ class UserService {
     }
 
     async userVerify() {
-        let user
+        let user, scopeMax
         try {
             user = await UserModel.findOne({
                 where: {
                     account: this.account,
                 },
             });
+            new RoleService(user.user_id)
         } catch (error) {
             throw new global.errs.HttpException(error.message, 10006, 500);
         }
