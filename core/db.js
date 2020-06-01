@@ -21,6 +21,12 @@ const sequelize = new Sequelize(
     logging: true,
     timezone: '+08:00',
     dialect: dialect,
+    pool: {
+        max: 5,
+        min: 0,
+        idle: 30000,
+        acquire: 60000
+    },
     define: {
         timestamps: true,
         paranoid: true,

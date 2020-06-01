@@ -2,6 +2,7 @@ const { UserModel } = require("../models/user");
 
 const { PermissionService } = require("../services/permission");
 const { RoleService } = require("../services/role")
+const { OrganizationService } = require("../services/organization")
 
 const { tokenUtile, secretUtile } = require("../../core/utile");
 
@@ -64,14 +65,24 @@ class UserService {
     }
 
     async userVerify() {
-        let user, scopeMax
+        // 获取用户的user_id,org_id,roles数组,scope数组,scope_top值,channels数组 并以此生成token
+        let user, permissionArray, scopeArray, scopeTop
         try {
+            // 查询user
             user = await UserModel.findOne({
                 where: {
                     account: this.account,
                 },
             });
-            new RoleService(user.user_id)
+
+            // 查询user的roles和scope
+            let result = await new RoleService(user.user_id).findScope()
+            permissionArray = result['permissionArray'].map((e) => e.role_id)
+            scopeArray = result['scopeArray']
+            scopeTop = result['scopeTop']
+
+            // 查询user的channels
+            let abc = await new OrganizationService(user).findChannels()
         } catch (error) {
             throw new global.errs.HttpException(error.message, 10006, 500);
         }

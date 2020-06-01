@@ -155,7 +155,7 @@ id| user_id | role_id
 6 | 5 | 7
 7 | 6 | 8
 - *id: SMALLINT, unsigned, autoIncrement, primaryKey*
-- *user_id: INTERGER(11), unsigned*
+- *user_id: INTEGER(11), unsigned*
 - *role_id: TINYINT, unsigned*
 
 说明：用户的角色列表，**一个用户可同时拥有多个角色**，permissions表中用户的roles数组关联roleroutes表生成用户权限内的路由表。
@@ -202,14 +202,14 @@ user_id	| org_id	| account	| secret	| nick_name	| created_by	| state_code | sms_
 4	| 12	| 18600000005	| abcdef123de	| Jack	| 1	| 0
 5	| 17	| 18600000006	| abcdef123de	| White	| 1	| 0
 6	| 20	| 18600000007	| abcdef123de	| Kitty	| 1	| 0
-- *user_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
-- *org_id: INTERGER(11), unsigned, allowNull:false*
+- *user_id: INTEGER(11), unsigned, autoIncrement, primaryKey*
+- *org_id: INTEGER(11), unsigned, allowNull:false*
 - *account: STRING(128), unique*
 - *secret: STRING(128), set(val){this.setDataValue('secret', pwd)}*
 - *nick_name: STRING(128), allowNull:true,*
-- *created_by: INTERGER(11), unsigned*
+- *created_by: INTEGER(11), unsigned*
 - *state_code: TINYINT, unsigned, defaultValue:1*
-- *sms_code: INTERGER(6), allowNull:true*
+- *sms_code: INTEGER(6), allowNull:true*
 
 #### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by | state_code 
@@ -236,14 +236,14 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 20	|	| YF0307 | M | |			直销员1	| 24	| 1 | 1
 21	|	| YF0337 | M | |			直销员2	| 24	| 1 | 1
 22	|	| YF0590 | S2 | |			直销员3	| 24	| 1 | 1
-- *org_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *org_id: INTEGER(11), unsigned, autoIncrement, primaryKey*
 - *channel_id: STRING(64), unique, allowNull:true*
 - *yf_code: STRING(64), allowNull:true*
 - *is_market_group: STRING(8), allowNull:true*
-- *parent_manager_id: INTERGER(11), unsigned*
-- *org_desc: STRING(256)*
+- *parent_manager_id: INTEGER(11), unsigned*
+- *org_desc: STRING(128)*
 - *scope: TINYINT, unsigned*
-- *created_by: INTERGER(11), unsigned*
+- *created_by: INTEGER(11), unsigned*
 - *state_code: TINYINT, unsigned, defaultValue:1*
 
 说明：用户表中取出org_id，在organizations表中使用**递归查询**查找org_id对应的所有子节点，子节点关联的channel_id就是用户权限下所有可查看的渠道列表。具体过程：取users表user_id对应的org_id, 用org_id关联organizations表中的parent_manager_id取**其对应的**org_id，即取出指定父节点的所有org_id。递归该过程直到parent_manager_id中没有指定的org_id,此时关联出channel_id即用户权限下所有的渠道列表。
@@ -257,23 +257,23 @@ file_id | file_name | path | size | create_by
 -- | -- | -- | -- | -- |
 1 | B2I2C号码20200505 | cloud://dev-b93ee9 | 96696.32 | 1
 2 | B2I2C号码20200201 | cloud://dev-b93ee9 | 658 | 1
-- *file_id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *file_id: INTEGER(11), unsigned, autoIncrement, primaryKey*
 - *file_name: STRING(256)*
 - *path: STRING(256)*
-- *size: INTERGER(11), unsigned, unique*
-- *create_by: INTERGER(11), unsigned*
+- *size: INTEGER(11), unsigned, unique*
+- *create_by: INTEGER(11), unsigned*
 
 #### 日志信息
 id | logo_date | account | api | status_code | error_code | error_message
 -- | -- | --| --| --| --| --|
 1 | 2020-05-01 12:20:01 | 15600000001 | /file/upload | 200 | | |
 2 | 2020-05-01 12:20:01 | 15600000001 | /file/upload | 500 | 10000| abcdefg|
-- *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *id: INTEGER(11), unsigned, autoIncrement, primaryKey*
 - *logo_date: STRING(256)*
 - *account: STRING(256)*
 - *api: STRING(256)*
-- *status_code: INTERGER(11), unsigned*
-- *error_code: INTERGER(11), unsigned*
+- *status_code: INTEGER(11), unsigned*
+- *error_code: INTEGER(11), unsigned*
 - *error_message: STRING(256)*
 
 #### 证件号码
@@ -281,9 +281,9 @@ id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
 --| --| --| --| --| --|
 1 | 4205251988 | 25
 
-- *id: INTERGER(11), unsigned, autoIncrement, primaryKey*
+- *id: INTEGER(11), unsigned, autoIncrement, primaryKey*
 - *serial: STRING(20), unique*
-- *fee: INTERGER(11), unsigned*
+- *fee: INTEGER(11), unsigned*
 - *pdlevel20: STRING(256)*
 - *pdlevel30: STRING(256)*
 - *pdlevel40: STRING(256)*
