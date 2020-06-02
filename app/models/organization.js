@@ -1,4 +1,4 @@
-const { Sequelize, Model } = require('sequelize')
+const { Sequelize, Model, Sequelize: { Op } } = require('sequelize')
 
 const { sequelize } = require('../../core/db')
 
@@ -56,6 +56,7 @@ OrganizationModel.init({
 })
 
 module.exports = {
-    OrganizationModel
+    OrganizationModel,
+    Op
 }
 

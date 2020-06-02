@@ -66,7 +66,7 @@ class UserService {
 
     async userVerify() {
         // 获取用户的user_id,org_id,roles数组,scope数组,scope_top值,channels数组 并以此生成token
-        let user, permissionArray, scopeArray, scopeTop
+        let user, permissionArray, scopeArray, scopeTop, channelArray
         try {
             // 查询user
             user = await UserModel.findOne({
@@ -81,8 +81,8 @@ class UserService {
             scopeArray = result['scopeArray']
             scopeTop = result['scopeTop']
 
-            // 查询user的channels
-            let abc = await new OrganizationService(user).findChannels()
+            // 查询user的channels, 传入节点scope值用来判断节点是否渠道级或直销人员级的末梢节点
+            channelArray = await new OrganizationService({ org_id: user.org_id, scope: scopeTop }).findChannels()
         } catch (error) {
             throw new global.errs.HttpException(error.message, 10006, 500);
         }
@@ -92,12 +92,14 @@ class UserService {
                 secretUtile.decodedSecret(this.secret, user.secret)
             if (correct) {
                 let accessToken = tokenUtile.generateToken(
+                    // 将用户user_id,org_id,权限内的channels加密生成token
                     user.user_id,
                     user.org_id,
+                    channelArray,
                     tokenSecurity.accessExpiresIn
                 );
                 let refreshToken = tokenUtile.generateToken(
-                    undefined, undefined,
+                    undefined, undefined, undefined,
                     tokenSecurity.refreshExpiresIn,
                     user.account,
                     this.secret
