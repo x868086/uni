@@ -474,7 +474,7 @@ POST /users/verify
 - accessToken: 权限令牌 [type: string]
 - refreshToken: 刷新令牌 [type: string]
 
-说明: 账号密码校验通过后签发accessToken,账号密码校验通过后签发accessToken包含通过account关联查询users表中的user_id，org_id,有效期2小时。同时签发refreshToken，有效期1个月。
+说明: 账号密码校验通过后签发accessToken,账号密码校验通过后签发accessToken包含通过account关联查询users表中的user_id，org_id,channels有效期2小时。同时签发refreshToken，有效期1个月。
 
 
 #### 刷新令牌
