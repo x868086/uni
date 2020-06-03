@@ -536,7 +536,7 @@ POST /users/userinfo
 - loginType: 用户登录类型 [type: string]
 
 ### 用户
-#### 用户权限内渠道列表
+#### 用户权限内渠道列表 ?
 ##### URL
 ```js
 POST /users/channels

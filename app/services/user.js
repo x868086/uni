@@ -114,14 +114,18 @@ class UserService {
     }
 
     async tokenRefresh() {
-        try {
-            let decoded = await tokenUtile.decodedToken(this.refreshToken)
-            let account = decoded[0]
-            let secret = decoded[1]
-            return await new UserService({ account, secret }).userVerify()
-        } catch (error) {
-            throw new global.errs.HttpException(error.message, 10006, 500)
-        }
+        // try {
+        //     let decoded = await tokenUtile.decodedToken(this.refreshToken)
+        //     let account = decoded[0]
+        //     let secret = decoded[1]
+        //     return await new UserService({ account, secret }).userVerify()
+        // } catch (error) {
+        //     throw new global.errs.HttpException(error.message, 10006, 500)
+        // }
+        let decoded = await tokenUtile.decodedToken(this.refreshToken)
+        let account = decoded[0]
+        let secret = decoded[1]
+        return await new UserService({ account, secret }).userVerify()
     }
 
     async userEnable() {
