@@ -11,7 +11,9 @@ app.use(accessLogger())
 app.use(applicationLogger())
 app.use(bodyParser())
 app.use(catchError())
-// app.use(scopeVerify())
+app.use(scopeVerify())
+
+
 InitManager.initCore(app)
 
 app.listen(3000)

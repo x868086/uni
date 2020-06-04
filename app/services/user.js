@@ -65,7 +65,7 @@ class UserService {
     }
 
     async userVerify() {
-        // 获取用户的user_id,org_id,roles数组,scope数组,scope_top值,channels数组 并以此生成token
+        // 获取用户的user_id,org_id,roles数组,scope数组,scopeTop值,channels数组 并以此生成token
         let user, permissionArray, scopeArray, scopeTop, channelArray
         try {
             // 查询user
@@ -92,14 +92,15 @@ class UserService {
                 secretUtile.decodedSecret(this.secret, user.secret)
             if (correct) {
                 let accessToken = tokenUtile.generateToken(
-                    // 将用户user_id,org_id,权限内的channels加密生成token
+                    // 将用户user_id,org_id,scopTop,权限内的channels加密生成token
                     user.user_id,
                     user.org_id,
+                    scopeTop,
                     channelArray,
                     tokenSecurity.accessExpiresIn
                 );
                 let refreshToken = tokenUtile.generateToken(
-                    undefined, undefined, undefined,
+                    undefined, undefined, undefined, undefined,
                     tokenSecurity.refreshExpiresIn,
                     user.account,
                     this.secret
@@ -114,14 +115,6 @@ class UserService {
     }
 
     async tokenRefresh() {
-        // try {
-        //     let decoded = await tokenUtile.decodedToken(this.refreshToken)
-        //     let account = decoded[0]
-        //     let secret = decoded[1]
-        //     return await new UserService({ account, secret }).userVerify()
-        // } catch (error) {
-        //     throw new global.errs.HttpException(error.message, 10006, 500)
-        // }
         let decoded = await tokenUtile.decodedToken(this.refreshToken)
         let account = decoded[0]
         let secret = decoded[1]
