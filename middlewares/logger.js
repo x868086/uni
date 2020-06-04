@@ -19,14 +19,14 @@ log4js.configure({
             type: 'dateFile',
             filename: path.join(__dirname, '../logs/accessdate.log'),
             // filename: __dirname + '/logsdate/accessdate.log',
-            pattern: 'yyyy-MM-dd-hh',
+            pattern: 'yyyy-MM-dd',
             compress: false
         },
         application: {
             type: 'dateFile',
             // filename: __dirname + '/logsdate/applicationdate.log',
             filename: path.join(__dirname, '../logs/applicationdate.log'),
-            pattern: 'yyyy-MM-dd-hh',
+            pattern: 'yyyy-MM-dd',
             compress: false
         },
         out: {
@@ -37,9 +37,9 @@ log4js.configure({
         // default: { appenders: ['file', 'dateFile', 'out'], level: 'info' },
         // application: { appenders: ['file'], level: 'info' },
         // accessdate: { appenders: ['dateFile'], level: 'trace' }
-        default: { appenders: ['file', 'dateFile', 'out'], level: 'all' },
-        application: { appenders: ['file'], level: 'all' },
-        accessdate: { appenders: ['dateFile'], level: 'all' }
+        default: { appenders: ['file', 'dateFile', 'out'], level: 'ALL' },
+        application: { appenders: ['file'], level: 'ALL' },
+        accessdate: { appenders: ['dateFile'], level: 'ALL' }
     }
 })
 

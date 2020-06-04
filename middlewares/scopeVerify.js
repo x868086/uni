@@ -23,6 +23,7 @@ const scopeVerify = () => {
             if (!token || !token.name) {
                 throw new global.errs.Forbidden('token信息不合法')
             }
+            // 用户的token和后端API接口的scope值对比校验权限
             let decoded = await tokenUtile.decodedToken(token.name, apiScope)
             ctx.auth = {
                 userId: decoded.userId,

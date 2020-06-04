@@ -474,7 +474,7 @@ POST /users/verify
 - accessToken: 权限令牌 [type: string]
 - refreshToken: 刷新令牌 [type: string]
 
-说明: 账号密码校验通过后签发accessToken,账号密码校验通过后签发accessToken包含通过account关联查询users表中的user_id，org_id,channels有效期2小时。同时签发refreshToken，有效期1个月。
+说明: 账号密码校验通过后签发accessToken,账号密码校验通过后签发accessToken包含通过account关联查询users表中的user_id，org_id，channels，scopeTop有效期2小时。同时签发refreshToken，有效期1个月。
 
 
 #### 刷新令牌
@@ -499,7 +499,7 @@ GET /users/tokenrefresh
 - accessToken: 权限令牌 [type: string]
 - refreshToken: 刷新令牌 [type: string]
 
-说明: Koa全局中间件判断accessToken是否过期后，如果过期了使用refreshToken获取新的accessToken(有效期2小时)和新的refreshToken(有效期3天)。
+说明: Koa全局中间件判断accessToken是否过期后，如果过期了使用refreshToken获取新的accessToken(有效期2小时)和新的refreshToken(有效期3天)。refreshToken中存放用户的account，用户密码密文。
 
 
 

@@ -88,8 +88,12 @@ class UserService {
         }
 
         if (user) {
+            let userSecretCiphertext = secretUtile.generateSecret(user.secret)
             let correct =
-                secretUtile.decodedSecret(this.secret, user.secret)
+                // 用户输入的密码明文和加密后的密码比对(适用账号密码登录时验证密码的准确性)
+                secretUtile.decodedSecret(this.secret, user.secret) ||
+                // 或者是以用户的密码为明文，和用户密码二次加密后的密文对比(适用通过refreshToken获取续期时验证用户密码和用户二次加密密码的准确性)
+                secretUtile.decodedSecret(this.secret, userSecretCiphertext)
             if (correct) {
                 let accessToken = tokenUtile.generateToken(
                     // 将用户user_id,org_id,scopTop,权限内的channels加密生成token
@@ -103,7 +107,8 @@ class UserService {
                     undefined, undefined, undefined, undefined,
                     tokenSecurity.refreshExpiresIn,
                     user.account,
-                    this.secret
+                    // 存用户密码再次加密后的密文
+                    user.secret
                 );
                 return { accessToken, refreshToken };
             } else {
@@ -116,7 +121,9 @@ class UserService {
 
     async tokenRefresh() {
         let decoded = await tokenUtile.decodedToken(this.refreshToken)
+        // 用户账号
         let account = decoded[0]
+        // 取用户密码再次加密后的密文
         let secret = decoded[1]
         return await new UserService({ account, secret }).userVerify()
     }
@@ -140,6 +147,14 @@ class UserService {
 
     }
 }
+
+/**密码验证：
+ * 数据库中存储的密码是明文加密后的密码
+ * 用户使用账号密码登录时，用户输入的明文密码和后端加密后的密文对比，通过则下发accessToken和refreshToken，
+ * 其中refreshToken中存放有密码。
+ * 用户通过refreshToken获取续期时，实例化一个UserService，传入的secret是上次下发refreshToken时的密码，
+ * 在UserVerify方法中校验密码时将refreshToken中的密码和用户后端的密码二次加密后的密文做对比。
+ */
 
 module.exports = {
     UserService
