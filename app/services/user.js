@@ -1,8 +1,9 @@
 const { UserModel } = require("../models/user");
+const { StateModel } = require('../models/state');
 
 const { PermissionService } = require("../services/permission");
-const { RoleService } = require("../services/role")
-const { OrganizationService } = require("../services/organization")
+const { RoleService } = require("../services/role");
+const { OrganizationService } = require("../services/organization");
 
 const { tokenUtile, secretUtile } = require("../../core/utile");
 
@@ -144,7 +145,33 @@ class UserService {
             state_code: 0
         })
         throw new global.errs.Success("用户信息已更新")
+    }
 
+    async userList(offset, limit) {
+        let users = await UserModel.findAll({
+            offset: offset,
+            limit: limit
+        })
+        if (!users.length) {
+            throw new global.errs.HttpException('用户信息未找到')
+        }
+        let usersArray = []
+
+        for (let { account, nick_name, user_id, org_id, state_code } of users) {
+            let roles_name = await new PermissionService(user_id).permissionFind()
+            let org_desc = await new OrganizationService({ org_id }).findOrgDesc()
+            let { state_name } = await StateModel.findOne({ where: { state_code: state_code } })
+
+            usersArray.push(Object.assign({}, {
+                account: account,
+                roleName: roles_name,
+                orgDesc: org_desc,
+                nickname: nick_name,
+                stateName: state_name
+            }))
+        }
+
+        return usersArray
     }
 }
 

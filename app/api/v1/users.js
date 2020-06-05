@@ -8,7 +8,9 @@ const router = new Router({
 
 const { UserService } = require("../../services/user");
 
-const { AccountValidator } = require("../../validators/validators");
+const { AccountValidator,
+    PositiveIntegerValidator
+} = require("../../validators/validators");
 
 router.post("/create", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
@@ -36,6 +38,12 @@ router.get("/tokenrefresh", async (ctx, next) => {
 router.get("/:account/enable", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
     await new UserService(ctx.params).userEnable()
+})
+
+router.get("/list", async (ctx, next) => {
+    const v = await new PositiveIntegerValidator().validate(ctx)
+    let userList = await new UserService(ctx).userList(v.get("query.offset"), v.get("query.limit"))
+    ctx.body = { userList }
 })
 
 module.exports = {

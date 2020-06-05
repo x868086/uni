@@ -24,6 +24,15 @@ class AccountValidator extends LinValidator {
   }
 }
 
+class PositiveIntegerValidator extends LinValidator {
+  constructor() {
+    super()
+    this.offset = [new Rule("isInt", "分页参数为正整数", { min: 0, max: 100 })]
+    this.limit = [new Rule("isInt", "分页参数为正整数", { min: 1, max: 100 })]
+  }
+}
+
 module.exports = {
   AccountValidator,
+  PositiveIntegerValidator
 };

@@ -579,7 +579,8 @@ POST /users/channels
 GET /users/list
 ````
 ##### Parameters
-- 
+- offset: 查询时跳过的个数 [type: number]
+- limit: 查询时需要返回的个数 [type: number]
 ##### Response 200
 ```js
 [{

@@ -63,6 +63,15 @@ class OrganizationService {
 
         return channelArray
     }
+
+    async findOrgDesc() {
+        let { org_desc } = await OrganizationModel.findOne({
+            where: {
+                org_id: this.orgId
+            }
+        })
+        return org_desc
+    }
 }
 
 module.exports = {

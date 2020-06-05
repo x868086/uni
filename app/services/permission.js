@@ -1,4 +1,5 @@
 const { PermissionModel } = require("../models/permission");
+const { RoleModel } = require('../models/role')
 
 class PermissionService {
   constructor(userId, roles) {
@@ -15,6 +16,21 @@ class PermissionService {
         },
       });
     }
+  }
+
+  async permissionFind() {
+    return await PermissionModel.findAll({
+      where: {
+        user_id: this.userId,
+      },
+    }).map(async e => {
+      let { role_name } = await RoleModel.findOne({
+        where: {
+          role_id: e.role_id
+        }
+      })
+      return role_name
+    });
   }
 }
 
