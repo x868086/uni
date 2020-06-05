@@ -18,7 +18,7 @@ class PermissionService {
     }
   }
 
-  async permissionFind() {
+  async permissionNames() {
     return await PermissionModel.findAll({
       where: {
         user_id: this.userId,
@@ -31,6 +31,14 @@ class PermissionService {
       })
       return role_name
     });
+  }
+
+  async permissionArray() {
+    return await PermissionModel.findAll({
+      where: {
+        user_id: this.userId
+      }
+    }).map(e => e.role_id)
   }
 }
 

@@ -12,12 +12,6 @@ const { AccountValidator,
     PositiveIntegerValidator
 } = require("../../validators/validators");
 
-router.post("/create", async (ctx, next) => {
-    const v = await new AccountValidator().validate(ctx);
-    let account = await new UserService(ctx.request.body).userCreate();
-    throw new global.errs.Success("user created", 0, 201);
-});
-
 
 router.post("/verify", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
@@ -35,6 +29,13 @@ router.get("/tokenrefresh", async (ctx, next) => {
     ctx.body = { accessToken, refreshToken }
 })
 
+
+router.post("/create", async (ctx, next) => {
+    const v = await new AccountValidator().validate(ctx);
+    let account = await new UserService(ctx.request.body).userCreate();
+    throw new global.errs.Success("用户信息已创建", 0, 201);
+});
+
 router.get("/:account/enable", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
     await new UserService(ctx.params).userEnable()
@@ -43,6 +44,13 @@ router.get("/:account/enable", async (ctx, next) => {
 router.get("/:account/remove", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
     await new UserService(ctx.params).userRemove()
+})
+
+router.post("/:account/modify", async (ctx, next) => {
+    let result = await new UserService(ctx.params).userInfo()
+
+    // const v = await new AccountValidator().validate(ctx);
+    // await new UserService(ctx.params).userRemove()
 })
 
 

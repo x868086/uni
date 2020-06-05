@@ -445,7 +445,6 @@ id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
 10004 | error_forbidden | 禁止访问
 10005 | error_unauthorized | 未授权
 10006 | error_server | 内部错误
-10007 | error_modify | 不可重复操作
 
 
 
@@ -503,7 +502,7 @@ GET /users/tokenrefresh
 
 
 
-#### 获取用户信息
+#### 获取用户信息 ?
 ##### URL
 ```js
 POST /users/userinfo

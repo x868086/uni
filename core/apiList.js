@@ -3,6 +3,7 @@ const apiList = [
     { requestRegexp: /\/v1\/users\/create/, apiScope: 66 },
     { requestRegexp: /\/v1\/users\/\w*\/enable/, apiScope: 66 },
     { requestRegexp: /\/v1\/users\/\w*\/remove/, apiScope: 66 },
+    { requestRegexp: /\/v1\/users\/\w*\/modify/, apiScope: 66 },
     { requestRegexp: /\/v1\/users\/list/, apiScope: 66 }
 ]
 

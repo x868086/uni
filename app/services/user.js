@@ -152,13 +152,14 @@ class UserService {
             offset: offset,
             limit: limit
         })
+
         if (!users.length) {
             throw new global.errs.HttpException('用户信息未找到')
         }
         let usersArray = []
 
         for (let { account, nick_name, user_id, org_id, state_code } of users) {
-            let roles_name = await new PermissionService(user_id).permissionFind()
+            let roles_name = await new PermissionService(user_id).permissionNames()
             let org_desc = await new OrganizationService({ org_id }).findOrgDesc()
             let { state_name } = await StateModel.findOne({ where: { state_code: state_code } })
 
@@ -185,6 +186,35 @@ class UserService {
         }
         let { account, nick_name } = await user.destroy()
         throw new global.errs.Success(`${account}-${nick_name} 的用户信息已删除`)
+    }
+
+    async userInfo() {
+        let users = await UserModel.findOne({
+            where: {
+                account: this.account
+            }
+        })
+
+        if (!users) {
+            throw new global.errs.HttpException('用户信息未找到')
+        }
+
+        let { account, nick_name, user_id, org_id, secret, state_code } = users
+        let roles_name = await new PermissionService(user_id).permissionNames()
+        let roles = await new PermissionService(user_id).permissionArray()
+        let org_desc = await new OrganizationService({ org_id }).findOrgDesc()
+        let { state_name } = await StateModel.findOne({ where: { state_code: state_code } })
+
+
+        return Object.assign({}, {
+            account: account,
+            secret: secret,
+            rolesName: roles_name,
+            roles: roles,
+            orgDesc: org_desc,
+            nickname: nick_name,
+            stateName: state_name,
+        })
     }
 }
 
