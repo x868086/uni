@@ -40,6 +40,12 @@ router.get("/:account/enable", async (ctx, next) => {
     await new UserService(ctx.params).userEnable()
 })
 
+router.get("/:account/remove", async (ctx, next) => {
+    const v = await new AccountValidator().validate(ctx);
+    await new UserService(ctx.params).userRemove()
+})
+
+
 router.get("/list", async (ctx, next) => {
     const v = await new PositiveIntegerValidator().validate(ctx)
     let userList = await new UserService(ctx).userList(v.get("query.offset"), v.get("query.limit"))

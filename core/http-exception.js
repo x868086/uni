@@ -36,7 +36,7 @@ class Forbidden extends HttpException {
 }
 
 class ModifyError extends HttpException {
-    constructor(msg = '不可重复操作', errorCode = 10007, code = 400) {
+    constructor(msg = '不可重复操作', errorCode = 10004, code = 400) {
         super()
         this.msg = msg
         this.errorCode = errorCode

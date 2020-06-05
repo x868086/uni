@@ -173,6 +173,19 @@ class UserService {
 
         return usersArray
     }
+
+    async userRemove() {
+        let user = await UserModel.findOne({
+            where: {
+                account: this.account
+            }
+        })
+        if (!user) {
+            throw new global.errs.HttpException("用户不存在")
+        }
+        let { account, nick_name } = await user.destroy()
+        throw new global.errs.Success(`${account}-${nick_name} 的用户信息已删除`)
+    }
 }
 
 /**密码验证：
