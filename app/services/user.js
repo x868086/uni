@@ -223,10 +223,10 @@ class UserService {
 
 
     async userModify() {
-        await sequelize.transaction(async (t) => {
+        // 事务 先修改用户的org_id,nick_name 后再删除用户的role_id再新增role_id
+        return sequelize.transaction(async (t) => {
             // let resetSecret = this.secret ? { secret: this.secret } : null
             // 如果修改用户的信息中不包含改密码则secret选项为空
-            // 事务 先修改用户的org_id,nick_name 后再删除用户的role_id再新增role_id
             await UserModel.update({
                 org_id: this.orgId,
                 nick_name: this.nickName,
@@ -235,8 +235,9 @@ class UserService {
             }, {
                 where: {
                     account: this.account
-                }
-            }, { transaction: t })
+                },
+                transaction: t
+            })
 
             let { user_id } = await UserModel.findOne({
                 where: {

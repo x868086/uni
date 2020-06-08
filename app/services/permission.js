@@ -7,6 +7,7 @@ class PermissionService {
     this.roles = roles;
   }
 
+  // 参数t 可选参数 是在使用事务的时候传入的{ transaction: t }
   async permissionCreate(t) {
     for (let role of this.roles) {
       await PermissionModel.findOrCreate({
@@ -43,12 +44,11 @@ class PermissionService {
 
   // 参数t 可选参数 是在使用事务的时候传入的{ transaction: t }
   async permissionDestroy(t) {
-    throw Error('abc')
     return await PermissionModel.destroy({
       where: {
         user_id: this.userId
-      }
-    }, { ...t })
+      }, t
+    })
   }
 }
 
