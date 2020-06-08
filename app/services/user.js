@@ -1,3 +1,5 @@
+const { sequelize } = require("../../core/db")
+
 const { UserModel } = require("../models/user");
 const { StateModel } = require('../models/state');
 
@@ -209,11 +211,44 @@ class UserService {
         return Object.assign({}, {
             account: account,
             secret: secret,
-            rolesName: roles_name,
             roles: roles,
+            rolesName: roles_name,
+            orgId: org_id,
             orgDesc: org_desc,
-            nickname: nick_name,
+            nickName: nick_name,
+            stateCode: state_code,
             stateName: state_name,
+        })
+    }
+
+
+    async userModify() {
+        await sequelize.transaction(async (t) => {
+            // let resetSecret = this.secret ? { secret: this.secret } : null
+            // 如果修改用户的信息中不包含改密码则secret选项为空
+            // 事务 先修改用户的org_id,nick_name 后再删除用户的role_id再新增role_id
+            await UserModel.update({
+                org_id: this.orgId,
+                nick_name: this.nickName,
+                // ...resetSecret
+                secret: this.secret
+            }, {
+                where: {
+                    account: this.account
+                }
+            }, { transaction: t })
+
+            let { user_id } = await UserModel.findOne({
+                where: {
+                    account: this.account
+                }
+            })
+
+
+            // 事务！先删除现有的user_id对应的role_id
+            await new PermissionService(user_id, this.roles).permissionDestroy({ transaction: t })
+            // 新增user_id对应的role_id组
+            await new PermissionService(user_id, this.roles).permissionCreate({ transaction: t })
         })
     }
 }

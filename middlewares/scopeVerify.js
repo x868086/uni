@@ -9,7 +9,7 @@ const scopeVerify = () => {
         let findApiScop = async (path) => {
             let result = apiList.find(e => e.requestRegexp.test(path))
             if (!result) {
-                // 如果请求地址没在apiList中则证明是白名单API请求，返回false
+                // 如果请求地址没在apiList中则是白名单api，直接放过
                 return false
             }
             //如果请求地址在apiList中则返回apiList中的scope

@@ -44,7 +44,7 @@ class ModifyError extends HttpException {
     }
 }
 
-class NotFount extends HttpException {
+class NotFound extends HttpException {
     constructor(msg = '资源未找到', errorCode = 10002, code = 404) {
         super()
         this.msg = msg
@@ -59,5 +59,5 @@ module.exports = {
     ParametersException,
     Forbidden,
     ModifyError,
-    NotFount
+    NotFound
 }

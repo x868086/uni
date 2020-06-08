@@ -8,8 +8,9 @@ const router = new Router({
 
 const { UserService } = require("../../services/user");
 
-const { AccountValidator,
-    PositiveIntegerValidator
+const { PositiveIntegerValidator,
+    AccountValidator,
+    UserModifyValidator,
 } = require("../../validators/validators");
 
 
@@ -31,7 +32,7 @@ router.get("/tokenrefresh", async (ctx, next) => {
 
 
 router.post("/create", async (ctx, next) => {
-    const v = await new AccountValidator().validate(ctx);
+    const v = await new UserModifyValidator().validate(ctx);
     let account = await new UserService(ctx.request.body).userCreate();
     throw new global.errs.Success("用户信息已创建", 0, 201);
 });
@@ -46,11 +47,27 @@ router.get("/:account/remove", async (ctx, next) => {
     await new UserService(ctx.params).userRemove()
 })
 
-router.post("/:account/modify", async (ctx, next) => {
-    let result = await new UserService(ctx.params).userInfo()
+router.get("/:account/search", async (ctx, next) => {
+    const v = await new AccountValidator().validate(ctx);
+    let userInfo = await new UserService(ctx.params).userInfo()
+    ctx.body = userInfo
+})
 
-    // const v = await new AccountValidator().validate(ctx);
-    // await new UserService(ctx.params).userRemove()
+router.post("/:account/modify", async (ctx, next) => {
+    const v = await new UserModifyValidator().validate(ctx)
+    let userInfo = await new UserService({
+        account: v.get("path.account"),
+        nickName: v.get("body.nickName"),
+        orgId: v.get("body.orgId"),
+        secret: v.get("body.secret"),
+        roles: v.get("body.roles")
+    }).userModify()
+
+    // nickName,
+    // orgId,
+    // secret,
+    // roles
+    // let userInfo = await new UserService(ctx.params).userModify()
 })
 
 
