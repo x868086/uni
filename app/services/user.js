@@ -33,38 +33,63 @@ class UserService {
     }
 
     async userCreate() {
-        let user
-        try {
-            user = await UserModel.findOne({
-                where: {
-                    account: this.account,
-                },
-            });
-        } catch (error) {
-            throw new global.errs.HttpException(error.message, 10006, 500);
-        }
-
+        let user = await UserModel.findOne({
+            where: {
+                account: this.account,
+            },
+        });
         if (user) {
             throw new global.errs.HttpException("用户已存在");
         }
 
-        try {
-            let [{ user_id }, created] = await UserModel.findOrCreate({
-                where: {
-                    account: this.account,
-                    secret: this.secret,
-                    org_id: this.orgId,
-                    nick_name: this.nickName,
-                    create_by: this.createBy
-                },
-            });
-            if (user_id) {
-                await new PermissionService(user_id, this.roles).permissionCreate();
-                return this.account;
+
+        return sequelize.transaction(async (t) => {
+            try {
+                let [{ user_id }, created] = await UserModel.findOrCreate({
+                    where: {
+                        account: this.account,
+                        secret: this.secret,
+                        org_id: this.orgId,
+                        nick_name: this.nickName,
+                        create_by: this.createBy
+                    }, transaction: t
+                })
+                if (user_id) {
+                    await new PermissionService(user_id, this.roles).permissionCreate({ transaction: t });
+                    return { account: this.account, nickName: this.nickName }
+                }
+            } catch (error) {
+                throw new global.errs.HttpException(`${error.message} 创建用户信息创建权限失败`, 10006)
             }
-        } catch (error) {
-            throw new global.errs.HttpException(error.message, 10006, 500);
-        }
+        })
+        // let user
+        // try {
+        //     user = await UserModel.findOne({
+        //         where: {
+        //             account: this.account,
+        //         },
+        //     });
+        // } catch (error) {
+        //     throw new global.errs.HttpException(error.message, 10006, 500);
+        // }
+
+        // try {
+        //     let [{ user_id }, created] = await UserModel.findOrCreate({
+        //         where: {
+        //             account: this.account,
+        //             secret: this.secret,
+        //             org_id: this.orgId,
+        //             nick_name: this.nickName,
+        //             create_by: this.createBy
+        //         },
+        //     });
+        //     if (user_id) {
+        //         await new PermissionService(user_id, this.roles).permissionCreate();
+        //         return this.account;
+        //     }
+        // } catch (error) {
+        //     throw new global.errs.HttpException(error.message, 10006, 500);
+        // }
     }
 
     async userVerify() {
@@ -87,7 +112,7 @@ class UserService {
             // 查询user的channels, 传入节点scope值用来判断节点是否渠道级或直销人员级的末梢节点
             channelArray = await new OrganizationService({ org_id: user.org_id, scope: scopeTop }).findChannels()
         } catch (error) {
-            throw new global.errs.HttpException(error.message, 10006, 500);
+            throw new global.errs.HttpException(`${error.message} 查询用户节点权限信息失败`, 10006, 500);
         }
 
         if (user) {
@@ -132,21 +157,30 @@ class UserService {
     }
 
     async userEnable() {
-        let user = await UserModel.findOne({
-            where: {
-                account: this.account
+        return sequelize.transaction(async (t) => {
+            try {
+                let user = await UserModel.findOne({
+                    paranoid: false,
+                    where: {
+                        account: this.account
+                    }, transaction: t
+                })
+
+                await user.restore({ transaction: t })
+
+                await UserModel.update({
+                    state_code: 1
+                }, {
+                    where: {
+                        account: this.account
+                    }, transaction: t
+                })
+
+                return { account: user.account, nickName: user.nick_name }
+            } catch (error) {
+                throw new global.errs.HttpException(`${error.message} 账户启用失败`, 10006)
             }
         })
-        if (!user) {
-            throw new global.errs.HttpException("用户不存在")
-        }
-        if (user.state_code === 0) {
-            throw new global.errs.ModifyError("不可重复操作")
-        }
-        await user.update({
-            state_code: 0
-        })
-        throw new global.errs.Success("用户信息已更新")
     }
 
     async userList(offset, limit) {
@@ -186,8 +220,22 @@ class UserService {
         if (!user) {
             throw new global.errs.HttpException("用户不存在")
         }
-        let { account, nick_name } = await user.destroy()
-        throw new global.errs.Success(`${account}-${nick_name} 的用户信息已删除`)
+
+        return sequelize.transaction(async (t) => {
+            try {
+                await UserModel.update({
+                    state_code: 0
+                }, {
+                    where: {
+                        account: this.account
+                    }, transaction: t
+                })
+                let { account, nick_name } = await user.destroy({ transaction: t })
+                return { account: user.account, nickName: user.nick_name }
+            } catch (error) {
+                throw new global.errs.HttpException(`${error.message} 账户停用失败`, 10006)
+            }
+        })
     }
 
     async userInfo() {
@@ -207,7 +255,6 @@ class UserService {
         let org_desc = await new OrganizationService({ org_id }).findOrgDesc()
         let { state_name } = await StateModel.findOne({ where: { state_code: state_code } })
 
-
         return Object.assign({}, {
             account: account,
             secret: secret,
@@ -225,32 +272,63 @@ class UserService {
     async userModify() {
         // 事务 先修改用户的org_id,nick_name 后再删除用户的role_id再新增role_id
         return sequelize.transaction(async (t) => {
-            // let resetSecret = this.secret ? { secret: this.secret } : null
-            // 如果修改用户的信息中不包含改密码则secret选项为空
+
+            try {
+                // let resetSecret = this.secret ? { secret: this.secret } : null
+                // 如果修改用户的信息中不包含改密码则secret选项为空
+                await UserModel.update({
+                    org_id: this.orgId,
+                    nick_name: this.nickName,
+                    // ...resetSecret
+                    secret: this.secret
+                }, {
+                    where: {
+                        account: this.account
+                    },
+                    transaction: t
+                })
+
+                let { user_id } = await UserModel.findOne({
+                    where: {
+                        account: this.account
+                    }
+                })
+
+                // throw new global.errs.Success("用户信息更新成功!")
+                // 事务！先删除现有的user_id对应的role_id
+                await new PermissionService(user_id, this.roles).permissionDestroy({ transaction: t })
+                // 新增user_id对应的role_id组
+                await new PermissionService(user_id, this.roles).permissionCreate({ transaction: t })
+                return { account: this.account, nickName: this.nickName }
+            } catch (error) {
+                throw new global.errs.ParametersException(`${error.message} 用户信息更新失败`)
+            }
+
+        })
+    }
+
+    async userSecurity() {
+        let user = await UserModel.findOne({
+            where: {
+                account: this.account
+            }
+        })
+        if (!user) {
+            throw new global.errs.HttpException("用户不存在")
+        }
+        try {
             await UserModel.update({
-                org_id: this.orgId,
-                nick_name: this.nickName,
-                // ...resetSecret
                 secret: this.secret
             }, {
                 where: {
                     account: this.account
-                },
-                transaction: t
-            })
-
-            let { user_id } = await UserModel.findOne({
-                where: {
-                    account: this.account
                 }
             })
+            return { account: this.account }
+        } catch (error) {
+            throw new global.errs.ParametersException(`${error.message} 用户密码修改失败`)
+        }
 
-
-            // 事务！先删除现有的user_id对应的role_id
-            await new PermissionService(user_id, this.roles).permissionDestroy({ transaction: t })
-            // 新增user_id对应的role_id组
-            await new PermissionService(user_id, this.roles).permissionCreate({ transaction: t })
-        })
     }
 }
 

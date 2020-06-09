@@ -20,6 +20,7 @@ UserModel.init(
     account: {
       type: Sequelize.STRING(128),
       unique: true,
+      allowNull: false,
     },
     secret: {
       type: Sequelize.STRING(128),

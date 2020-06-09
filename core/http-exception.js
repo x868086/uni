@@ -35,15 +35,6 @@ class Forbidden extends HttpException {
     }
 }
 
-class ModifyError extends HttpException {
-    constructor(msg = '不可重复操作', errorCode = 10004, code = 400) {
-        super()
-        this.msg = msg
-        this.errorCode = errorCode
-        this.code = code
-    }
-}
-
 class NotFound extends HttpException {
     constructor(msg = '资源未找到', errorCode = 10002, code = 404) {
         super()
@@ -58,6 +49,5 @@ module.exports = {
     Success,
     ParametersException,
     Forbidden,
-    ModifyError,
     NotFound
 }

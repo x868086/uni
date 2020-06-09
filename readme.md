@@ -129,7 +129,7 @@ role_id | role | role_name | scope
 - *scope: TINYINT, unsigned, unique*
 
 说明：**后端API权限控制**，在API接口中增加scope值限制，读取请求中附带的scope值和API接口中的scope值比较，小于等于scope值的请求允许，大于scope值的请求抛出错误。
-[^_^]: M：manage；是管理序列。
+[^_^]: M：manage；是管理序列。user_id
 [^_^]: P：profession是专业序列 比如财务、人力资源等。
 [^_^]: T：technology是技术序列，诸如工程师等。
 [^_^]: S：strikingly；是营销序列。
@@ -659,7 +659,7 @@ POST /users/create
 GET /users/<str:account>/enable
 ````
 ##### Parameters
-- account: 用户id [type: string]
+- account: 用户账号 [type: string]
 
 ##### Response 202
 ```js 
@@ -679,7 +679,7 @@ GET /users/<str:account>/enable
 GET /users/<str:account>/remove
 ````
 ##### Parameters
-- account: 用户id [type: string]
+- account: 用户账号 [type: string]
 
 ##### Response 204
 ```js 
@@ -699,7 +699,7 @@ GET /users/<str:account>/remove
 POST /users/<str:account>/modify
 ````
 ##### Parameters
-- account: 用户id [type: string]
+- account: 用户账号 [type: string]
 - nick_name: 用户昵称 [type: string]
 - secret: 用户密码 [type: string]
 - org_id: 用户组织节点id [type: number]
@@ -752,7 +752,7 @@ POST /users/search
 POST /users/security
 ````
 ##### Parameters
-- account: 账号 [type: string]
+- account: 用户账号 [type: string]
 - secret: 用户密码 [type: string]
 
 ##### Response 202
@@ -769,7 +769,7 @@ POST /users/security
 - account: 账号 [type: string]
 - secret: 密码 [type: string]
 
-#### 短信验证码
+#### 短信验证码 ?!!!
 ##### URL
 ```js
 POST /users/smscode
