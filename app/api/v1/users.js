@@ -7,9 +7,11 @@ const router = new Router({
 });
 
 const { UserService } = require("../../services/user");
+const { SmsService } = require("../../services/sms")
 
 const { PositiveIntegerValidator,
     AccountValidator,
+    UserSecurityValidator,
     UserModifyValidator,
 } = require("../../validators/validators");
 
@@ -74,9 +76,14 @@ router.get("/list", async (ctx, next) => {
 })
 
 router.post("/security", async (ctx, next) => {
-    const v = await new AccountValidator().validate(ctx)
+    const v = await new UserSecurityValidator().validate(ctx)
     let { account } = await new UserService(ctx.request.body).userSecurity()
     throw new global.errs.Success(`${account} 用户密码修改成功`)
+})
+
+router.post("/smsCode", async (ctx, next) => {
+    const v = await new AccountValidator().validate(ctx)
+    await new SmsService(ctx.request.body).getSmsCode()
 })
 
 

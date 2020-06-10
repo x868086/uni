@@ -185,6 +185,7 @@ class UserService {
 
     async userList(offset, limit) {
         let users = await UserModel.findAll({
+            paranoid: false,
             offset: offset,
             limit: limit
         })
@@ -240,6 +241,7 @@ class UserService {
 
     async userInfo() {
         let users = await UserModel.findOne({
+            paranoid: false,
             where: {
                 account: this.account
             }
@@ -328,7 +330,6 @@ class UserService {
         } catch (error) {
             throw new global.errs.ParametersException(`${error.message} 用户密码修改失败`)
         }
-
     }
 }
 

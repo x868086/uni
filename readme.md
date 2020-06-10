@@ -194,7 +194,7 @@ id | role_id | route_id
 
 
 #### users
-user_id	| org_id	| account	| secret	| nick_name	| created_by	| state_code | sms_code
+user_id	| org_id	| account	| secret	| nick_name	| created_by	| state_code 
 -- | -- |-- | -- |-- |-- | -- |-- |-- |
 1	| 1	| 18600000001	| abcdef123de	| Json	| 1	| 1
 2	| 3	| 18600000003	| abcdef123de	| Penny	| 1	| 1
@@ -209,7 +209,6 @@ user_id	| org_id	| account	| secret	| nick_name	| created_by	| state_code | sms_
 - *nick_name: STRING(128), allowNull:true,*
 - *created_by: INTEGER(11), unsigned*
 - *state_code: TINYINT, unsigned, defaultValue:1*
-- *sms_code: INTEGER(6), allowNull:true*
 
 #### organizations
 org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	| scope	| created_by | state_code 
@@ -250,6 +249,16 @@ org_id	| channel_id | yf_code	| is_market_group	| parent_manager_id	| org_desc	|
 
 **role_id决定用户权限内的可访问路由信息，scope值决定用户后端API接口的最高权限，org_id和scope值同时使用决定用户在ornanizations表中其org_id下所有子节点对应的channel_id**
 
+
+#### SMS验证码
+sms_id | user_id | sms_code | expires_time
+--| --| --| --|
+1 | 24 | 666666 | 1591778708054
+2 | 24 | 666666 | 1592037984389
+- *sms_id: INTEGER(11), unsigned, autoIncrement, primaryKey*
+- *user_id: INTEGER(11), unsigned, allowNull:false*
+- *sms_code: INTEGER(6), unsigned, allowNull:false*
+- *expires_time: STRING(32), allowNull:false*
 
 
 #### OSS文件

@@ -31,8 +31,39 @@ class AccountValidator extends LinValidator {
       new Rule("isInt", "登陆类型码为3位整数", { min: 100, max: 600 }),
     ];
   }
+
+
 }
 
+
+class UserSecurityValidator extends LinValidator {
+  constructor() {
+    super()
+    this.account = [
+      new Rule("isLength", "账号长度不符合规范", { min: 11, max: 128 }),
+    ];
+    this.smsCode = [
+      new Rule("isOptional"),
+      new Rule("isInt", "验证码为6位数字", { min: 100000, max: 999999 }),
+    ];
+    this.secret = [
+      new Rule("isOptional"),
+      new Rule("isLength", "密码长度最少6位，最大128位", { min: 6, max: 128 }),
+      new Rule('matches', '密码组合不符合规范', '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]')
+    ];
+    this.secretConfirm = this.secret
+  }
+
+  validatePassword(val) {
+    const pw1 = val.body.secret
+    const pw2 = val.body.secretConfirm
+    if (pw1 !== pw2) {
+      throw new global.errs.ParametersException('两次输入密码不一致')
+    } else {
+      return true
+    }
+  }
+}
 
 class UserModifyValidator extends AccountValidator {
   constructor() {
@@ -57,8 +88,10 @@ class UserModifyValidator extends AccountValidator {
 
 
 
+
 module.exports = {
   AccountValidator,
+  UserSecurityValidator,
   UserModifyValidator,
   PositiveIntegerValidator
 };
