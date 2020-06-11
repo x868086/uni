@@ -85,6 +85,28 @@ class UserModifyValidator extends AccountValidator {
   }
 }
 
+class RoleValidator extends LinValidator {
+  constructor() {
+    super()
+    this.role = [
+      new Rule("isLength", "角色标识不符合规范,最少三位字符", { min: 3, max: 128 })
+    ]
+    this.roleName = [
+      new Rule("isLength", "角色名称不符合规范,最少三位字符", { min: 3, max: 128 })
+    ]
+    this.scope = [
+      new Rule("isInt", "角色权限级别标识不符合规范，区间(0,54]", { min: 1, max: 54 })
+    ]
+  }
+  validateRoleRoute(val) {
+    if ((val.body.roleRoute.length) && val.body.roleRoute instanceof Array) {
+      return true
+    } else {
+      throw new global.errs.ParametersException('角色组为必备参数且为数组类型')
+    }
+  }
+}
+
 
 
 
@@ -93,5 +115,6 @@ module.exports = {
   AccountValidator,
   UserSecurityValidator,
   UserModifyValidator,
-  PositiveIntegerValidator
+  PositiveIntegerValidator,
+  RoleValidator
 };

@@ -6,8 +6,10 @@ const apiList = [
     { requestRegexp: /\/v1\/users\/\w*\/search/, apiScope: 66 },
     { requestRegexp: /\/v1\/users\/\w*\/modify/, apiScope: 66 },
     { requestRegexp: /\/v1\/users\/security/, apiScope: 1 },
-    { requestRegexp: /\/v1\/users\/smsCode/, apiScope: 1 },
-    { requestRegexp: /\/v1\/users\/list/, apiScope: 66 }
+    { requestRegexp: /\/v1\/users\/smscode/, apiScope: 1 },
+    { requestRegexp: /\/v1\/users\/list/, apiScope: 66 },
+
+    { requestRegexp: /\/v1\/role\/create/, apiScope: 66 },
 ]
 
 const whiteList = [

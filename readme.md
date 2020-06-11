@@ -778,7 +778,7 @@ POST /users/security
 - account: 账号 [type: string]
 - secret: 密码 [type: string]
 
-#### 短信验证码 ?!!!
+#### 短信验证码
 ##### URL
 ```js
 POST /users/smscode
@@ -789,13 +789,15 @@ POST /users/smscode
 ##### Response 200
 ```js
 {
-    "smsCode" "12051"
+    "error_code": 0,
+    "msg": "验证码:455825, 有效期5分钟",
+    "request": "POST /users/smscode"
 }
+
 ````
 
 ##### Response_description
 - data: [type: object]
--smsCode: 短信验证码 [type: number]
 
 
 ### 角色
@@ -905,7 +907,7 @@ POST /role/create
 - role: 角色描述 [type: string]
 - role_name: 角色名称 [type: string]
 - scope: 后端API接口权限级别 [type: number]
-- routes: 角色路由数组 [type: array]
+- roleroute: 角色路由数组 [type: array]
 
 ##### Response 201
 ```js 

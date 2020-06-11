@@ -104,7 +104,7 @@ class UserService {
             });
 
             // 查询user的roles和scope
-            let result = await new RoleService(user.user_id).findScope()
+            let result = await new RoleService({ userId: user.user_id }).findScope()
             permissionArray = result['permissionArray'].map((e) => e.role_id)
             scopeArray = result['scopeArray']
             scopeTop = result['scopeTop']

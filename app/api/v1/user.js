@@ -81,7 +81,7 @@ router.post("/security", async (ctx, next) => {
     throw new global.errs.Success(`${account} 用户密码修改成功`, 0, 202)
 })
 
-router.post("/smsCode", async (ctx, next) => {
+router.post("/smscode", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx)
     let { sms_code } = await new SmsService(ctx.request.body).getSmsCode()
     throw new global.errs.Success(`验证码:${sms_code}, 有效期5分钟`, 0, 200)
