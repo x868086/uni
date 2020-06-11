@@ -52,7 +52,7 @@ OrganizationModel.init({
     }
 }, {
     sequelize,
-    tableName: "organizations"
+    tableName: "organization"
 })
 
 module.exports = {

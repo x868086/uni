@@ -19,8 +19,7 @@ SmsModel.init({
         allowNull: false
     },
     sms_code: {
-        type: Sequelize.INTEGER(11),
-        unsigned: true,
+        type: Sequelize.STRING(8),
         allowNull: false
     },
     expires_time: {
@@ -29,7 +28,7 @@ SmsModel.init({
     }
 }, {
     sequelize,
-    tableName: 'smslists'
+    tableName: 'sms'
 })
 
 module.exports = {

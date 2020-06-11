@@ -10,7 +10,13 @@ const apiList = [
     { requestRegexp: /\/v1\/users\/list/, apiScope: 66 }
 ]
 
+const whiteList = [
+    { requestRegexp: /\/v1\/users\/verify/ },
+    { requestRegexp: /\/v1\/users\/tokenrefresh/ }
+]
+
 
 module.exports = {
-    apiList
+    apiList,
+    whiteList
 }

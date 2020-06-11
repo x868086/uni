@@ -256,8 +256,8 @@ sms_id | user_id | sms_code | expires_time
 1 | 24 | 666666 | 1591778708054
 2 | 24 | 666666 | 1592037984389
 - *sms_id: INTEGER(11), unsigned, autoIncrement, primaryKey*
-- *user_id: INTEGER(11), unsigned, allowNull:false*
-- *sms_code: INTEGER(6), unsigned, allowNull:false*
+- *account: STRING(128), allowNull:false*
+- *sms_code: STRING(8), allowNull:false*
 - *expires_time: STRING(32), allowNull:false*
 
 

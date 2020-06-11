@@ -23,10 +23,15 @@ const tokenSecurity = {
     refreshExpiresIn: '3 days'
 }
 
+const smsExpireTime = {
+    expire: 5 * 60 * 1000
+}
+
 
 module.exports = {
     apiDirectory,
     environment,
     dbconfig,
-    tokenSecurity
+    tokenSecurity,
+    smsExpireTime
 }

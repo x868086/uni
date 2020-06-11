@@ -13,7 +13,7 @@ const { PositiveIntegerValidator,
     AccountValidator,
     UserSecurityValidator,
     UserModifyValidator,
-} = require("../../validators/validators");
+} = require("../../validators/validator");
 
 
 router.post("/verify", async (ctx, next) => {
@@ -42,13 +42,13 @@ router.post("/create", async (ctx, next) => {
 router.get("/:account/enable", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
     let { account, nickName } = await new UserService(ctx.params).userEnable()
-    throw new global.errs.Success(`${account}-${nickName} 的用户已启用`)
+    throw new global.errs.Success(`${account}-${nickName} 的用户已启用`, 0, 202)
 })
 
 router.get("/:account/remove", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
     let { account, nickName } = await new UserService(ctx.params).userRemove()
-    throw new global.errs.Success(`${account}-${nickName} 的用户已停用`)
+    throw new global.errs.Success(`${account}-${nickName} 的用户已停用`, 0, 202)
 })
 
 router.get("/:account/search", async (ctx, next) => {
@@ -66,24 +66,25 @@ router.post("/:account/modify", async (ctx, next) => {
         secret: v.get("body.secret"),
         roles: v.get("body.roles")
     }).userModify()
-    throw new global.errs.Success(`${account}-${nickName} 用户信息已更新`)
+    throw new global.errs.Success(`${account}-${nickName} 用户信息已更新`, 0, 202)
 })
 
 router.get("/list", async (ctx, next) => {
     const v = await new PositiveIntegerValidator().validate(ctx)
-    let userList = await new UserService(ctx).userList(v.get("query.offset"), v.get("query.limit"))
-    ctx.body = { userList }
+    let result = await new UserService(ctx).userList(v.get("query.offset"), v.get("query.limit"))
+    ctx.body = { result }
 })
 
 router.post("/security", async (ctx, next) => {
     const v = await new UserSecurityValidator().validate(ctx)
     let { account } = await new UserService(ctx.request.body).userSecurity()
-    throw new global.errs.Success(`${account} 用户密码修改成功`)
+    throw new global.errs.Success(`${account} 用户密码修改成功`, 0, 202)
 })
 
 router.post("/smsCode", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx)
-    await new SmsService(ctx.request.body).getSmsCode()
+    let { sms_code } = await new SmsService(ctx.request.body).getSmsCode()
+    throw new global.errs.Success(`验证码:${sms_code}, 有效期5分钟`, 0, 200)
 })
 
 

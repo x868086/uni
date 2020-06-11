@@ -52,7 +52,7 @@ UserModel.init(
   },
   {
     sequelize,
-    tableName: "users",
+    tableName: "user",
   }
 );
 

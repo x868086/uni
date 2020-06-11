@@ -25,7 +25,7 @@ StateModel.init({
     }
 }, {
     sequelize,
-    tableName: 'states'
+    tableName: 'state'
 })
 
 module.exports = {

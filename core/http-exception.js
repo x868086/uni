@@ -25,9 +25,18 @@ class ParametersException extends HttpException {
     }
 }
 
+class Unauthorized extends HttpException {
+    constructor(msg = '未授权', errorCode = 10005, code = 401) {
+        super()
+        this.msg = msg
+        this.errorCode = errorCode
+        this.code = code
+    }
+}
+
 
 class Forbidden extends HttpException {
-    constructor(msg = '未授权', errorCode = 10005, code = 401) {
+    constructor(msg = '禁止访问', errorCode = 10004, code = 403) {
         super()
         this.msg = msg
         this.errorCode = errorCode
@@ -44,10 +53,21 @@ class NotFound extends HttpException {
     }
 }
 
+class EmptyResult extends HttpException {
+    constructor(msg = '查找结果为空', errorCode = 10002, code = 404) {
+        super()
+        this.msg = msg
+        this.errorCode = errorCode
+        this.code = code
+    }
+}
+
 module.exports = {
     HttpException,
     Success,
     ParametersException,
+    Unauthorized,
     Forbidden,
-    NotFound
+    NotFound,
+    EmptyResult
 }

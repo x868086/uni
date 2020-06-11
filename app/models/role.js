@@ -29,7 +29,7 @@ RoleModel.init({
     }
 }, {
     sequelize,
-    tableName: 'roles'
+    tableName: 'role'
 })
 
 module.exports = {

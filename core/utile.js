@@ -5,7 +5,7 @@ const { tokenSecurity: {
     secret,
     accessExpiresIn,
     refreshExpiresIn
-} } = require('../config/config')
+}, smsExpireTime } = require('../config/config')
 
 // tokenType传入时，必须为'accessExpiresIn'或者'refreshExpiresIn'，用来区分accessToken和refreshToken
 const generateToken = (userId, orgId, scopeTop, channelArray, tokenType, ...restToken) => {
@@ -20,7 +20,7 @@ const generateToken = (userId, orgId, scopeTop, channelArray, tokenType, ...rest
         }
         )
     } catch (error) {
-        throw new global.errs.HttpException(error.message, 10003, 500)
+        throw new global.errs.ParametersException(`${error.message} token校验错误`, 10003, 500)
     }
 
     return token
@@ -42,9 +42,9 @@ const decodedToken = async (token, apiScope) => {
         decoded = await jwt.verify(token, secret)
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            throw new global.errs.Forbidden('token已过期')
+            throw new global.errs.Unauthorized('token已过期')
         }
-        throw new global.errs.Forbidden(error.message)
+        throw new global.errs.Unauthorized(error.message)
     }
     if (decoded.scopeTop < apiScope) {
         throw new global.errs.Forbidden('权限不足')
@@ -61,6 +61,16 @@ const decodedSecret = (plaintext, ciphertext) => {
     return bcrypt.compareSync(plaintext, ciphertext)
 }
 
+
+const generateSms = {
+    get smsCode() {
+        return Math.random().toString(10).slice(2, 8)
+    },
+    get smsExpireTime() {
+        return new Date().getTime() + smsExpireTime.expire
+    }
+}
+
 module.exports = {
     tokenUtile: {
         generateToken,
@@ -70,5 +80,6 @@ module.exports = {
     secretUtile: {
         generateSecret,
         decodedSecret
-    }
+    },
+    generateSms
 }

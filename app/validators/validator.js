@@ -23,7 +23,7 @@ class AccountValidator extends LinValidator {
 
     this.smsCode = [
       new Rule("isOptional"),
-      new Rule("isInt", "验证码为6位数字", { min: 100000, max: 999999 }),
+      new Rule("isLength", "验证码为6位数字", { min: 6, max: 6 }),
     ];
 
     this.loginType = [
@@ -44,7 +44,7 @@ class UserSecurityValidator extends LinValidator {
     ];
     this.smsCode = [
       new Rule("isOptional"),
-      new Rule("isInt", "验证码为6位数字", { min: 100000, max: 999999 }),
+      new Rule("isLength", "验证码为6位数字", { min: 6, max: 6 }),
     ];
     this.secret = [
       new Rule("isOptional"),
