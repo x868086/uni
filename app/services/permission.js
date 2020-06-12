@@ -2,19 +2,19 @@ const { PermissionModel } = require("../models/permission");
 const { RoleModel } = require('../models/role')
 
 class PermissionService {
-  constructor(userId, roles) {
+  constructor({ userId, roles }) {
     this.userId = userId;
     this.roles = roles;
   }
 
-  // 参数t 可选参数 是在使用事务的时候传入的{ transaction: t }
-  async permissionCreate(t) {
+  // 参数transaction 可选参数 是在使用事务的时候传入的{ transaction: t }
+  async permissionCreate({ transaction }) {
     for (let role of this.roles) {
       await PermissionModel.findOrCreate({
         where: {
           user_id: this.userId,
           role_id: role,
-        }, t
+        }, transaction
       });
     }
   }
@@ -42,12 +42,20 @@ class PermissionService {
     }).map(e => e.role_id)
   }
 
-  // 参数t 可选参数 是在使用事务的时候传入的{ transaction: t }
-  async permissionDestroy(t) {
+  // 参数transaction 可选参数 是在使用事务的时候传入的{ transaction: t }
+  async permissionDestroy({ transaction }) {
     return await PermissionModel.destroy({
       where: {
         user_id: this.userId
-      }, t
+      }, transaction
+    })
+  }
+
+  async permissionEable({ transaction }) {
+    return await PermissionModel.restore({
+      where: {
+        user_id: this.userId
+      }, transaction
     })
   }
 }

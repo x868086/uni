@@ -9,7 +9,7 @@ const router = new Router({
 const { UserService } = require("../../services/user");
 const { SmsService } = require("../../services/sms")
 
-const { PositiveIntegerValidator,
+const { PaginationValidator,
     AccountValidator,
     UserSecurityValidator,
     UserModifyValidator,
@@ -48,7 +48,7 @@ router.get("/:account/enable", async (ctx, next) => {
 router.get("/:account/remove", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
     let { account, nickName } = await new UserService(ctx.params).userRemove()
-    throw new global.errs.Success(`${account}-${nickName} 的用户已停用`, 0, 202)
+    throw new global.errs.Success(`${account}-${nickName} 的用户已删除`, 0, 202)
 })
 
 router.get("/:account/search", async (ctx, next) => {
@@ -70,7 +70,7 @@ router.post("/:account/modify", async (ctx, next) => {
 })
 
 router.get("/list", async (ctx, next) => {
-    const v = await new PositiveIntegerValidator().validate(ctx)
+    const v = await new PaginationValidator().validate(ctx)
     let result = await new UserService(ctx).userList(v.get("query.offset"), v.get("query.limit"))
     ctx.body = { result }
 })

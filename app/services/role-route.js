@@ -6,12 +6,28 @@ class RoleRouteService {
         this.routeId = routeId
     }
 
-    async roleRouteCreate(t) {
+    async roleRouteCreate({ transaction }) {
         await RoleRouteModel.findOrCreate({
             where: {
                 role_id: this.roleId,
                 route_id: this.routeId
-            }, t
+            }, transaction
+        })
+    }
+
+    async roleRouteRemove({ transaction }) {
+        return await RoleRouteModel.destroy({
+            where: {
+                role_id: this.roleId
+            }, transaction
+        })
+    }
+
+    async roleRouteEnable({ transaction }) {
+        return await RoleRouteModel.restore({
+            where: {
+                role_id: this.roleId
+            }, transaction
         })
     }
 }

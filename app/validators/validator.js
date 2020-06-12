@@ -3,6 +3,13 @@ const { LinValidator, Rule } = require("../../core/validator/lin-validator");
 class PositiveIntegerValidator extends LinValidator {
   constructor() {
     super()
+    this.int = [new Rule("isInt", "参数必须为正整数", { min: 0, max: 100000 })]
+  }
+}
+
+class PaginationValidator extends LinValidator {
+  constructor() {
+    super()
     this.offset = [new Rule("isInt", "分页参数为正整数", { min: 0, max: 100 })]
     this.limit = [new Rule("isInt", "分页参数为正整数", { min: 1, max: 100 })]
   }
@@ -112,9 +119,10 @@ class RoleValidator extends LinValidator {
 
 
 module.exports = {
+  PositiveIntegerValidator,
   AccountValidator,
   UserSecurityValidator,
   UserModifyValidator,
-  PositiveIntegerValidator,
+  PaginationValidator,
   RoleValidator
 };

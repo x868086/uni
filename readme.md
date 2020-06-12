@@ -905,9 +905,9 @@ POST /role/create
 ````
 ##### Parameters
 - role: 角色描述 [type: string]
-- role_name: 角色名称 [type: string]
+- roleName: 角色名称 [type: string]
 - scope: 后端API接口权限级别 [type: number]
-- roleroute: 角色路由数组 [type: array]
+- roleRoute: 角色路由数组 [type: array]
 
 ##### Response 201
 ```js 

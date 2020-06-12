@@ -8,8 +8,9 @@ const { RoleRouteService } = require("../services/role-route")
 
 
 class RoleService {
-    constructor({ userId, role, roleName, scope, roleRoute }) {
+    constructor({ userId, roleId, role, roleName, scope, roleRoute }) {
         this.userId = userId
+        this.roleId = roleId
         this.role = role
         this.roleName = roleName
         this.scope = scope
@@ -38,6 +39,7 @@ class RoleService {
     async roleCreate() {
         return sequelize.transaction(async (t) => {
             let result = await RoleModel.findOne({
+                paranoid: false,
                 where: {
                     scope: this.scope
                 }
@@ -56,11 +58,63 @@ class RoleService {
                 for (let e of this.roleRoute) {
                     await new RoleRouteService({ roleId: role_id, routeId: e }).roleRouteCreate({ transaction: t })
                 }
+                return { role: this.role, roleName: this.roleName }
             } catch (error) {
                 throw new global.errs.ParametersException(`${error.message} 创建角色失败`, 10006)
             }
         })
 
+    }
+
+    async roleRemove() {
+        return sequelize.transaction(async (t) => {
+            let result = await RoleModel.findOne({
+                where: {
+                    role_id: this.roleId
+                }
+            })
+            if (!result) {
+                throw new global.errs.HttpException("角色不存在")
+            }
+
+            try {
+                await new RoleRouteService({ roleId: this.roleId }).roleRouteRemove({ transaction: t })
+                await RoleModel.destroy({
+                    where: {
+                        role_id: this.roleId
+                    }, transaction: t
+                })
+                return { roleName: result.role_name }
+            } catch (error) {
+                throw new global.errs.HttpException(`${error.message} 角色删除失败`, 10006)
+            }
+
+        })
+    }
+
+    async roleEnable() {
+        return sequelize.transaction(async (t) => {
+            let result = await RoleModel.findOne({
+                paranoid: false,
+                where: {
+                    role_id: this.roleId
+                }
+            })
+            if (!result) {
+                throw new global.errs.HttpException("角色不存在")
+            }
+            if (!result.deleted_at) {
+                throw new global.errs.HttpException("当前角色信息为有效状态")
+            }
+
+            try {
+                let { role_id } = await result.restore({ transaction: t })
+                await new RoleRouteService({ roleId: role_id }).roleRouteEnable({ transaction: t })
+                return { roleName: result.role_name }
+            } catch (error) {
+                throw new global.errs.HttpException(`${error.message} 角色启用失败`, 10006)
+            }
+        })
     }
 
 }
