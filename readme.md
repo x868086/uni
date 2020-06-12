@@ -859,19 +859,20 @@ GET /roles/<int:role_id>/enable
 #### 分组编辑
 ##### URL
 ```js
-POST /roles/modify
+POST /roles/<int:role_id>/modify
 ````
 ##### Parameters
 - role_id: 角色id [type: number]
 - role: 角色描述 [type: string]
 - role_name: 角色名称 [type: number]
+- roleRoute: 角色路由数组 [type: array]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
     "msg": "role updated",
-    "request": "POST /roles/modify"
+    "request": "POST /roles/<int:role_id>/modify"
 }
 ````
 

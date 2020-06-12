@@ -117,6 +117,47 @@ class RoleService {
         })
     }
 
+    async roleModify() {
+        return sequelize.transaction(async (t) => {
+            let result = await RoleModel.findOne({
+                where: {
+                    role_id: this.roleId
+                }
+            })
+            let newScope = await RoleModel.findOne({
+                where: {
+                    scope: this.scope
+                }
+            })
+            if (!result) {
+                throw new global.errs.HttpException("角色不存在")
+            }
+            if (newScope) {
+                throw new global.errs.ParametersException("角色已存在且具有唯一性,无法继续修改")
+            }
+
+            try {
+                await RoleModel.update({
+                    role: this.role,
+                    role_name: this.roleName,
+                    scope: this.scope
+                }, {
+                    where: {
+                        role_id: this.roleId
+                    }, transaction: t
+                })
+
+                await new RoleRouteService({ roleId: this.roleId }).roleRouteRemove({ transaction: t })
+                for (let e of this.roleRoute) {
+                    await new RoleRouteService({ roleId: this.roleId, routeId: e }).roleRouteCreate({ transaction: t })
+                }
+                return { roleName: this.roleName }
+            } catch (error) {
+
+            }
+        })
+    }
+
 }
 
 
