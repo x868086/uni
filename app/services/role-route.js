@@ -30,6 +30,14 @@ class RoleRouteService {
             }, transaction
         })
     }
+
+    async roleRouteSearch({ transaction }) {
+        return await RoleRouteModel.findAll({
+            where: {
+                role_id: this.roleId
+            }, transaction
+        })
+    }
 }
 
 module.exports = {

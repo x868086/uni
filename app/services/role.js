@@ -1,14 +1,32 @@
-const { sequelize } = require("../../core/db")
+const {
+    sequelize
+} = require("../../core/db")
 
-const { RoleModel } = require('../models/role')
-const { PermissionModel } = require("../models/permission")
+const {
+    RoleModel
+} = require('../models/role')
+const {
+    PermissionModel
+} = require("../models/permission")
+const {
+    RouteModel
+} = require('../models/route')
 
-const { RoleRouteService } = require("../services/role-route")
+const {
+    RoleRouteService
+} = require("../services/role-route")
 
 
 
 class RoleService {
-    constructor({ userId, roleId, role, roleName, scope, roleRoute }) {
+    constructor({
+        userId,
+        roleId,
+        role,
+        roleName,
+        scope,
+        roleRoute
+    }) {
         this.userId = userId
         this.roleId = roleId
         this.role = role
@@ -24,7 +42,9 @@ class RoleService {
             }
         })
         let scopeArray = []
-        for (let { role_id } of permissionArray) {
+        for (let {
+            role_id
+        } of permissionArray) {
             let result = await RoleModel.findOne({
                 where: {
                     role_id: role_id
@@ -33,7 +53,11 @@ class RoleService {
             scopeArray.push(result.scope)
         }
         let scopeTop = scopeArray.sort((a, b) => b - a)[0]
-        return { permissionArray, scopeArray, scopeTop }
+        return {
+            permissionArray,
+            scopeArray,
+            scopeTop
+        }
     }
 
     async roleCreate() {
@@ -48,17 +72,28 @@ class RoleService {
                 throw new global.errs.HttpException('角色已存在，请勿重复创建')
             }
             try {
-                let { role_id } = await RoleModel.create({
+                let {
+                    role_id
+                } = await RoleModel.create({
                     role: this.role,
                     role_name: this.roleName,
                     scope: this.scope
-                }, { transaction: t }
-                )
+                }, {
+                    transaction: t
+                })
 
                 for (let e of this.roleRoute) {
-                    await new RoleRouteService({ roleId: role_id, routeId: e }).roleRouteCreate({ transaction: t })
+                    await new RoleRouteService({
+                        roleId: role_id,
+                        routeId: e
+                    }).roleRouteCreate({
+                        transaction: t
+                    })
                 }
-                return { role: this.role, roleName: this.roleName }
+                return {
+                    role: this.role,
+                    roleName: this.roleName
+                }
             } catch (error) {
                 throw new global.errs.ParametersException(`${error.message} 创建角色失败`, 10006)
             }
@@ -78,13 +113,20 @@ class RoleService {
             }
 
             try {
-                await new RoleRouteService({ roleId: this.roleId }).roleRouteRemove({ transaction: t })
+                await new RoleRouteService({
+                    roleId: this.roleId
+                }).roleRouteRemove({
+                    transaction: t
+                })
                 await RoleModel.destroy({
                     where: {
                         role_id: this.roleId
-                    }, transaction: t
+                    },
+                    transaction: t
                 })
-                return { roleName: result.role_name }
+                return {
+                    roleName: result.role_name
+                }
             } catch (error) {
                 throw new global.errs.HttpException(`${error.message} 角色删除失败`, 10006)
             }
@@ -108,9 +150,19 @@ class RoleService {
             }
 
             try {
-                let { role_id } = await result.restore({ transaction: t })
-                await new RoleRouteService({ roleId: role_id }).roleRouteEnable({ transaction: t })
-                return { roleName: result.role_name }
+                let {
+                    role_id
+                } = await result.restore({
+                    transaction: t
+                })
+                await new RoleRouteService({
+                    roleId: role_id
+                }).roleRouteEnable({
+                    transaction: t
+                })
+                return {
+                    roleName: result.role_name
+                }
             } catch (error) {
                 throw new global.errs.HttpException(`${error.message} 角色启用失败`, 10006)
             }
@@ -144,17 +196,95 @@ class RoleService {
                 }, {
                     where: {
                         role_id: this.roleId
-                    }, transaction: t
+                    },
+                    transaction: t
                 })
 
-                await new RoleRouteService({ roleId: this.roleId }).roleRouteRemove({ transaction: t })
+                await new RoleRouteService({
+                    roleId: this.roleId
+                }).roleRouteRemove({
+                    transaction: t
+                })
                 for (let e of this.roleRoute) {
-                    await new RoleRouteService({ roleId: this.roleId, routeId: e }).roleRouteCreate({ transaction: t })
+                    await new RoleRouteService({
+                        roleId: this.roleId,
+                        routeId: e
+                    }).roleRouteCreate({
+                        transaction: t
+                    })
                 }
-                return { roleName: this.roleName }
+                return {
+                    roleName: this.roleName
+                }
             } catch (error) {
 
             }
+        })
+    }
+
+    async roleSearch() {
+        return sequelize.transaction(async (t) => {
+            let result = await RoleModel.findOne({
+                where: {
+                    role_id: this.roleId
+                },
+                transaction: t
+            })
+            if (!result) {
+                throw new global.errs.HttpException("角色不存在")
+            }
+
+            let roleRoute = await new RoleRouteService({
+                roleId: this.roleId
+            }).roleRouteSearch({
+                transaction: t
+            })
+
+            let routeArray = []
+            for (let r of roleRoute) {
+                let { path, name } = await RouteModel.findOne({
+                    where: {
+                        route_id: r.route_id
+                    }, transaction: t
+                })
+                routeArray.push({ path: path, name: name })
+            }
+            return { role: result.role, role_name: result.role_name, routeArray: routeArray }
+        })
+    }
+
+    async roleList(offset, limit) {
+        return sequelize.transaction(async (t) => {
+            let roleArray = await RoleModel.findAll({
+                paranoid: false,
+                offset: offset,
+                limit: limit,
+                transaction: t
+            })
+
+            let roleList = []
+            for (let { role_id, role, role_name, } of roleArray) {
+                let routeArray = await new RoleRouteService({ roleId: role_id }).roleRouteSearch({ transaction: t })
+                let roleRoute = []
+                for (let e of routeArray) {
+                    let { path, name } = await RouteModel.findOne({
+                        where: {
+                            route_id: e.route_id
+                        }, transaction: t
+                    })
+                    roleRoute.push({
+                        path: path,
+                        name: name
+                    })
+                }
+                roleList.push({
+                    role_id: role_id,
+                    role: role,
+                    role_name: role_name,
+                    roleRoute
+                })
+            }
+            return { offset: offset, limit: limit, result: roleList }
         })
     }
 

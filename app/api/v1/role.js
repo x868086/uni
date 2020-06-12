@@ -4,9 +4,10 @@ const router = new Router({
     prefix: "/v1/role"
 })
 
-const { PositiveIntegerValidator, RoleValidator } = require("../../validators/validator")
+const { PositiveIntegerValidator, RoleValidator, PaginationValidator } = require("../../validators/validator")
 
 const { RoleService } = require("../../services/role")
+const route = require('../../models/route')
 
 router.post("/create", async (ctx, next) => {
     const v = await new RoleValidator().validate(ctx)
@@ -39,6 +40,19 @@ router.post("/:roleid/modify", async (ctx, next) => {
     }).roleModify()
     throw new global.errs.Success(`${roleName} 角色信息已更新`, 0, 202)
 })
+
+router.get("/:roleid/search", async (ctx, next) => {
+    const v = await new PositiveIntegerValidator().validate(ctx, { int: "roleid" })
+    let result = await new RoleService({ roleId: v.get("path.roleid") }).roleSearch()
+    ctx.body = result
+})
+
+router.get("/list", async (ctx, next) => {
+    const v = await new PaginationValidator().validate(ctx)
+    let roleList = await new RoleService({ undefined }).roleList(v.get("query.offset"), v.get("query.limit"))
+    ctx.body = roleList
+})
+
 
 module.exports = {
     role: router
