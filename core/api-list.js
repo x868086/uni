@@ -17,6 +17,14 @@ const apiList = [
     { requestRegexp: /\/v1\/role\/\w*\/modify/, apiScope: 66 },
     { requestRegexp: /\/v1\/role\/\w*\/search/, apiScope: 66 },
     { requestRegexp: /\/v1\/role\/list/, apiScope: 66 },
+
+    // b2iserial
+    { requestRegexp: /\/v1\/b2iserial\/list/, apiScope: 24 },
+    { requestRegexp: /\/v1\/b2iserial\/\w*\/search/, apiScope: 24 },
+    { requestRegexp: /\/v1\/b2iserial\/\w*\/modify/, apiScope: 24 },
+    { requestRegexp: /\/v1\/b2iserial\/\w*\/allocate/, apiScope: 48 },
+    { requestRegexp: /\/v1\/b2iserial\/\w*\/reject/, apiScope: 48 },
+    { requestRegexp: /\/v1\/b2iserial\/\w*\/remove/, apiScope: 48 },
 ]
 
 const whiteList = [

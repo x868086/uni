@@ -299,40 +299,29 @@ id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
 
 
 
-
-
-### 2. TCB 云数据库
 #### b2i2c 二次销售号码
-```js
-[
-    {"serial_number": '15607200000',
-    "product_name": "腾讯大网卡",
-    "belong": "YF0307",
-    "fee": 15,
-    "dev_name": "张三",
-    "contact_phone": "15607200000",
-    "operate_time": 1589185965494,
-    "operate": "已处理"},
+id | serial_number | product_name | yf_code | id_desc | fee | dev_name | dev_phone | contact_phone | operate_time | operate
+-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |
+1 | 15607200000 | 腾讯大王卡 | YF0307 | 西陵营服中心 | 15 | John | 15600000001 | 15600000002 | 1589185965494 | 待提交
+2 | 15607200010 | 腾讯大王卡 | YF0307 | 西陵营服中心 | 25 | Lily | 15600000011 | 15600000012 | 1589185965494 | 待处理
+3 | 15607200020 | 腾讯小王卡 | YF0337 | 五峰城西营服中心 | 35 | Kitty | 15600000021 | 15600000022 | 1589185965494 | 已处理
+3 | 15607200030 | 腾讯小王卡 | YF0590 | 城区校园营服中心 | 25 | Json | 15600000031 | 15600000032 | 1589185965494 | 已驳回
+4 | 15607200040 | QQ卡 | YF0307 | 西陵营服中心 | 15 | Json | 15600000041 | 15600000042 | 1589185965494 | 已删除
 
-    {"serial_number": '15607200000',
-    "product_name": "腾讯大网卡",
-    "belong": "YF0307",
-    "fee": 15,
-    "dev_name": "张三",
-    "contact_phone": "15607200000",
-    "operate_time": 1589185965494,
-    "operate": "驳回"},
+- *id: SMALLINT(11), unsigned, autoIncrement, primaryKey*
+- *serial_number: STRING(20), unique, allowNull:false*
+- *product_name: STRING(32), allowNull:false*
+- *yf_code: yf_code: STRING(64), allowNull:true*
+- *id_desc: STRING(128), allowNull:true*
+- *fee: TINYINT, unsigned,*
+- *dev_name: STRING(128), allowNull:true*
+- *dev_phone: STRING(20), allowNull:true*
+- *contact_phone: STRING(20), allowNull:true*
+- *operate_time: STRING(32), allowNull:true*
+- *operate: STRING(32), allowNull:false, defaultValue: 待提交*
 
-    {"serial_number": '15607200000',
-    "product_name": "腾讯大网卡",
-    "belong": "YF0307",
-    "fee": 15,
-    "dev_name": "张三",
-    "contact_phone": "15607200000",
-    "operate_time": 1589185965494,
-    "operate": "删除"}   
-]
-```
+
+### 2. TCB 云数据库？
 
 #### thresholds 阈值列表
 ```js
@@ -810,23 +799,52 @@ GET /roles/list
 - 
 
 ##### Response 200
-```js 
+```js
+{
+    "offset": 0,
+    "limit": 10,
 [
     {"role_id": 1,
+    "role":"Admin",
     "role_name": "管理员",
     "state_name": "启用",
-    "paths": ['首页','权限管理','信息发布']
+    "role_route": [
+                {
+                    "path": "/edit",
+                    "name": "信息发布"
+                },
+                {
+                    "path": "/dashboard",
+                    "name": "面板"
+                }
+            ]
     },
     {"role_id": 3,
-    "role_name": "部门经理",
+    "role":"DepartmentChief",
+    "role_name": "业务主管",
     "state_name": "启用",
-    "paths": ['信息发布','面板']
+    "role_route": [
+                {
+                    "path": "/",
+                    "name": "首页"
+                },
+                {
+                    "path": "/permission",
+                    "name": "权限管理"
+                },
+                {
+                    "path": "/edit",
+                    "name": "信息发布"
+                }
+            ]
     },
     {"role_id": 7,
-    "role_name": "店长",
+    "role":"MarketDirector",
+    "role_name": "营服经理",
     "state_name": "启用",
-    "paths": ['B2I2C运营']}
-]
+    "role_route": [}
+]       
+} 
 ````
 
 ##### Response_description
@@ -928,7 +946,7 @@ POST /role/create
 #### 号码列表获取
 ##### URL
 ```js
-GET /serial/list
+GET /b2iserial/list
 ````
 ##### Parameters
 - 
@@ -941,6 +959,7 @@ GET /serial/list
     "belong": "YF0307",
     "fee": 15,
     "dev_name": "Jack",
+    "dev_phone":"18600000001",
     "contact_phone": "18600000001",
     "operate":""
 },{
@@ -949,6 +968,7 @@ GET /serial/list
     "belong": "YF0307",
     "fee": 15,
     "dev_name": "Jack",
+    "dev_phone":"18600000001",
     "contact_phone": "18600000001",
     "operate":""  
 }] 
@@ -960,13 +980,35 @@ GET /serial/list
 - product_name: 产品名称 [type: string]
 - fee: 月租 [type: number]
 - dev_name: 派送人 [type: string]
-- contact_phone: 联系电话 [type: string]
+- dev_phone: 派送人联系电话 [type: string]
+- contact_phone: 客户联系电话 [type: string]
 - operate: 当前处理环节 [type: string]
+
+#### 号码提交
+##### URL
+```js
+GET /b2iserial/<string:serial_number>/modify
+````
+##### Parameters
+- serial_number: 号码 [type: string]
+- dev_name: 发展人名称 [type: string]
+- dev_phone: 发展人联系电话 [type: string]
+- contact_phone: 用户联系电话 [type: string]
+
+##### Response 202
+```js 
+{
+    "error_code": 0,
+    "msg": "serial_number modify Success",
+    "request": "POST /b2iserial/<string:serial_number>/modify"
+}
+````
+
 
 #### 号码分配
 ##### URL
 ```js
-GET /serial/<string:serial_number>/allocate
+POST /b2iserial/<string:serial_number>/allocate
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
@@ -976,7 +1018,7 @@ GET /serial/<string:serial_number>/allocate
 {
     "error_code": 0,
     "msg": "serial_number allocated",
-    "request": "GET /serial/<string:serial_number>/allocate"
+    "request": "GET /b2iserial/<string:serial_number>/allocate"
 }
 ````
 
@@ -986,7 +1028,7 @@ GET /serial/<string:serial_number>/allocate
 #### 号码驳回
 ##### URL
 ```js
-GET /serial/<string:serial_number>/reject
+GET /b2iserial/<string:serial_number>/reject
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
@@ -996,7 +1038,7 @@ GET /serial/<string:serial_number>/reject
 {
     "error_code": 0,
     "msg": "serial_number rejected",
-    "request": "GET /serial/<string:serial_number>/reject"    
+    "request": "GET /b2iserial/<string:serial_number>/reject"    
 }
 ````
 
@@ -1006,7 +1048,7 @@ GET /serial/<string:serial_number>/reject
 #### 号码删除
 ##### URL
 ```js
-GET /serial/<string:serial_number>/remove
+GET /b2iserial/<string:serial_number>/remove
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
@@ -1016,7 +1058,7 @@ GET /serial/<string:serial_number>/remove
 {
     "error_code": 0,
     "msg": "serial_number removed",
-    "request": "GET /serial/<string:serial_number>/remove" 
+    "request": "GET /b2iserial/<string:serial_number>/remove" 
 }
 ````
 
@@ -1026,7 +1068,7 @@ GET /serial/<string:serial_number>/remove
 #### 号码搜索
 ##### URL
 ```js
-GET /serial/<string:serial_number>/search
+GET /b2iserial/<string:serial_number>/search
 ````
 ##### Parameters
 - serial: 手机号码 [type: string]
@@ -1039,6 +1081,7 @@ GET /serial/<string:serial_number>/search
     "belong": "YF0307",
     "fee": 15,
     "dev_name": "Jack",
+    "dev_phone": "18600000001",
     "contact_phone": "18600000001",
     "operate":"已处理"    
 }
@@ -1049,6 +1092,7 @@ GET /serial/<string:serial_number>/search
 - product_name: 产品名称 [type: string]
 - fee: 月租 [type: number]
 - dev_name: 派送人 [type: string]
+- dev_phone: 派送人联系电话 [type: string]
 - contact_phone: 联系电话 [type: string]
 - operate: 当前处理环节 [type: string]
 
