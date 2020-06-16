@@ -114,6 +114,44 @@ class RoleValidator extends LinValidator {
   }
 }
 
+class B2iserialValidator extends LinValidator {
+  constructor() {
+    super()
+    this.serialnumber = [
+      new Rule("isLength", "用户手机号码不符合规范,11位字符", { min: 11, max: 11 })
+    ]
+    this.operate = [
+      new Rule("isOptional"),
+      new Rule("isIn", "操作类型必须是['待处理','已处理','驳回','删除']选项中的某一项", ['待处理', '已处理', '驳回', '删除'])
+    ]
+    this.operateTime = [
+      new Rule("isOptional"),
+      new Rule("isInt", "操作时间必须是时间戳格式", { min: 1000000000000 })
+    ]
+  }
+}
+
+class B2iserialModifyValidator extends B2iserialValidator {
+  constructor() {
+    super()
+    this.devName = [
+      new Rule("isLength", "发展人名称不符合标识,最小3位字符，最大16位字符", { min: 3, max: 16 })
+    ]
+    this.devPhone = [
+      new Rule("isLength", "发展人手机号码不符合规范,11位字符", { min: 11, max: 11 })
+    ]
+    this.contactPhone = [
+      new Rule("isLength", "用户联系号码不符合规范,11位字符", { min: 11, max: 11 })
+    ]
+    this.operate = [
+      new Rule("isIn", "操作类型必须是['待处理','驳回','删除']选项中的某一项", ['待处理', '驳回', '删除'])
+    ]
+    this.operateTime = [
+      new Rule("isInt", "操作时间必须是时间戳格式", { min: 1000000000000 })
+    ]
+  }
+}
+
 
 
 
@@ -124,5 +162,7 @@ module.exports = {
   UserSecurityValidator,
   UserModifyValidator,
   PaginationValidator,
-  RoleValidator
+  RoleValidator,
+  B2iserialValidator,
+  B2iserialModifyValidator
 };

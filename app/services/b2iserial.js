@@ -10,19 +10,19 @@ class B2iserialService {
         devName = undefined,
         devPhone = undefined,
         contactPhone = undefined,
-        operateTime = undefined,
-        operate = undefined
+        operate = undefined,
+        operateTime = undefined
     }) {
-        this.serial_number = serialNumber
-        this.product_name = productName
-        this.yf_code = yfCode
-        this.id_desc = idDesc
+        this.serialNumber = serialNumber
+        this.productName = productName
+        this.yfCode = yfCode
+        this.idDesc = idDesc
         this.fee = fee
-        this.dev_name = devName
-        this.dev_phone = devPhone
-        this.contact_phone = contactPhone
-        this.operate_time = operateTime
+        this.devName = devName
+        this.devPhone = devPhone
+        this.contactPhone = contactPhone
         this.operate = operate
+        this.operateTime = operateTime
     }
 
     async serialList(offset, limit) {
@@ -50,7 +50,32 @@ class B2iserialService {
             result
         }
     }
+
+    async serialModify(operateArray) {
+        let serial = await B2iserialModel.findOne({
+            where: {
+                serial_number: this.serialNumber
+            }
+        })
+        if (operateArray.findIndex(e => e === serial.operate) > -1) {
+            throw new global.errs.ParametersException('信息已提交请勿重复操作')
+        }
+        await B2iserialModel.update({
+            dev_name: this.devName,
+            dev_phone: this.devPhone,
+            contact_phone: this.contactPhone,
+            operate: this.operate,
+            operate_time: this.operateTime
+        }, {
+            where: {
+                serial_number: this.serialNumber
+            }
+        })
+        throw new global.errs.Success(`二次销售信息已${this.operate.substr(-2, 2)}`, 0, 202)
+    }
 }
+
+
 
 
 module.exports = {

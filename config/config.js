@@ -19,7 +19,7 @@ const dbconfig = {
 
 const tokenSecurity = {
     secret: 'NEYKR37jCFEH0o5tsbmxvemR7KQv3oZY0yAo',
-    accessExpiresIn: '3h',
+    accessExpiresIn: '2h',
     refreshExpiresIn: '3 days'
 }
 

@@ -49,14 +49,16 @@ B2iserialModel.init({
         type: Sequelize.STRING(64),
         allowNull: true,
         get() {
+            if (!this.getDataValue('operate_time')) {
+                return ''
+            }
             const t = parseInt(this.getDataValue('operate_time'))
             return new Date(t).toLocaleString()
         }
     },
     operate: {
         type: Sequelize.STRING(20),
-        allowNull: true,
-        defaultValue: '已处理'
+        allowNull: true
     }
 
 }, {

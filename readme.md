@@ -302,11 +302,11 @@ id | serial | fee | pdlevel20 | pdlevel30 | pdlevel40
 #### b2i2c 二次销售号码
 id | serial_number | product_name | yf_code | id_desc | fee | dev_name | dev_phone | contact_phone | operate_time | operate
 -- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |
-1 | 15607200000 | 腾讯大王卡 | YF0307 | 西陵营服中心 | 15 | John | 15600000001 | 15600000002 | 1589185965494 | 待提交
-2 | 15607200010 | 腾讯大王卡 | YF0307 | 西陵营服中心 | 25 | Lily | 15600000011 | 15600000012 | 1589185965494 | 待处理
-3 | 15607200020 | 腾讯小王卡 | YF0337 | 五峰城西营服中心 | 35 | Kitty | 15600000021 | 15600000022 | 1589185965494 | 已处理
-3 | 15607200030 | 腾讯小王卡 | YF0590 | 城区校园营服中心 | 25 | Json | 15600000031 | 15600000032 | 1589185965494 | 已驳回
-4 | 15607200040 | QQ卡 | YF0307 | 西陵营服中心 | 15 | Json | 15600000041 | 15600000042 | 1589185965494 | 已删除
+1 | 15607200000 | 腾讯大王卡 | YF0307 | 西陵营服中心 | 15 | John | 15600000001 | 15600000002 | 1589185965494 | 
+2 | 15607200010 | 腾讯大王卡 | YF0307 | 西陵营服中心 | 25 | Lily | 15600000011 | 15600000012 | 1589185965494 | 已处理
+3 | 15607200020 | 腾讯小王卡 | YF0337 | 五峰城西营服中心 | 35 | Kitty | 15600000021 | 15600000022 | 1589185965494 | 待处理
+3 | 15607200030 | 腾讯小王卡 | YF0590 | 城区校园营服中心 | 25 | Json | 15600000031 | 15600000032 | 1589185965494 | 驳回
+4 | 15607200040 | QQ卡 | YF0307 | 西陵营服中心 | 15 | Json | 15600000041 | 15600000042 | 1589185965494 | 删除
 
 - *id: SMALLINT(11), unsigned, autoIncrement, primaryKey*
 - *serial_number: STRING(20), unique, allowNull:false*
@@ -987,20 +987,22 @@ GET /b2iserial/list
 #### 号码提交
 ##### URL
 ```js
-GET /b2iserial/<string:serial_number>/modify
+GET /b2iserial/<string:serialnumber>/modify
 ````
 ##### Parameters
-- serial_number: 号码 [type: string]
-- dev_name: 发展人名称 [type: string]
-- dev_phone: 发展人联系电话 [type: string]
-- contact_phone: 用户联系电话 [type: string]
+- serialnumber: 号码 [type: string]
+- devName: 发展人名称 [type: string]
+- devPhone: 发展人联系电话 [type: string]
+- contactPhone: 用户联系电话 [type: string]
+- operate: 操作类型 [type: string]
+- operateTime: 操作时间 [type: string]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg": "serial_number modify Success",
-    "request": "POST /b2iserial/<string:serial_number>/modify"
+    "msg": "二次销售信息提交成功",
+    "request": "POST /b2iserial/<string:serialnumber>/modify"
 }
 ````
 
@@ -1012,13 +1014,15 @@ POST /b2iserial/<string:serial_number>/allocate
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
+- operate: 操作类型 [type: string]
+- operateTime: 操作时间 [type: string]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg": "serial_number allocated",
-    "request": "GET /b2iserial/<string:serial_number>/allocate"
+    "msg": "二次销售信息处理成功",
+    "request": "POST /b2iserial/<string:serial_number>/allocate"
 }
 ````
 
@@ -1028,17 +1032,19 @@ POST /b2iserial/<string:serial_number>/allocate
 #### 号码驳回
 ##### URL
 ```js
-GET /b2iserial/<string:serial_number>/reject
+POST /b2iserial/<string:serial_number>/reject
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
+- operate: 操作类型 [type: string]
+- operateTime: 操作时间 [type: string]
 
 ##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg": "serial_number rejected",
-    "request": "GET /b2iserial/<string:serial_number>/reject"    
+    "msg": "二次销售信息已驳回",
+    "request": "POST /b2iserial/<string:serial_number>/reject"    
 }
 ````
 
@@ -1048,17 +1054,19 @@ GET /b2iserial/<string:serial_number>/reject
 #### 号码删除
 ##### URL
 ```js
-GET /b2iserial/<string:serial_number>/remove
+POST /b2iserial/<string:serial_number>/remove
 ````
 ##### Parameters
 - serial_number: 号码 [type: string]
+- operate: 操作类型 [type: string]
+- operateTime: 操作时间 [type: string]
 
-##### Response 204
+##### Response 202
 ```js 
 {
     "error_code": 0,
-    "msg": "serial_number removed",
-    "request": "GET /b2iserial/<string:serial_number>/remove" 
+    "msg": "二次销售信息已删除",
+    "request": "POST /b2iserial/<string:serial_number>/remove" 
 }
 ````
 
