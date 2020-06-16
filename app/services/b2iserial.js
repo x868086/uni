@@ -73,6 +73,29 @@ class B2iserialService {
         })
         throw new global.errs.Success(`二次销售信息已${this.operate.substr(-2, 2)}`, 0, 202)
     }
+
+    async serialSearch() {
+        let serial = await B2iserialModel.findOne({
+            where: {
+                serial_number: this.serialNumber
+            }
+        })
+        if (!serial) {
+            throw new global.errs.ParametersException('二次销售号码不存在')
+        }
+
+        return {
+            serialNumber: serial.serial_number,
+            productName: serial.product_name,
+            idDesc: serial.id_desc,
+            fee: serial.fee,
+            devName: serial.dev_name,
+            devPhone: serial.dev_phone,
+            contactPhone: serial.contact_phone,
+            operate: serial.operate,
+            operateTime: serial.operate_time
+        }
+    }
 }
 
 

@@ -15,6 +15,14 @@ router.get("/list", async (ctx, next) => {
     ctx.body = serialList
 })
 
+router.get("/:serialnumber/search", async (ctx, next) => {
+    const v1 = await new B2iserialValidator().validate(ctx)
+    let serial = await new B2iserialService({
+        serialNumber: v1.get("path.serialnumber")
+    }).serialSearch()
+    ctx.body = serial
+})
+
 router.post("/:serialnumber/modify", async (ctx, next) => {
     const v1 = await new B2iserialValidator().validate(ctx)
     const v2 = await new B2iserialModifyValidator().validate(ctx)
