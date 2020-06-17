@@ -1,9 +1,9 @@
 const Router = require('koa-router')
-const { B2iserialService } = require("../services/b2iserial")
+const { B2iserialService } = require("../../services/b2iserial")
 
 const { PaginationValidator,
     B2iserialValidator,
-    B2iserialModifyValidator } = require("../validators/validator")
+    B2iserialModifyValidator } = require("../../validators/validator")
 
 const router = new Router({
     prefix: "/v1/b2iserial"

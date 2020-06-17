@@ -8,12 +8,12 @@ const { tokenSecurity: {
 }, smsExpireTime } = require('../config/config')
 
 // tokenType传入时，必须为'accessExpiresIn'或者'refreshExpiresIn'，用来区分accessToken和refreshToken
-const generateToken = (userId, orgId, scopeTop, channelArray, tokenType, ...restToken) => {
+const generateToken = (userId, orgId, scopeTop, role, channelArray, tokenType, ...restToken) => {
     let token
     try {
         token = jwt.sign({
             // 复用generateToken方法生成refreshToken,剩余参数为accout,secret收敛到...restToken中 
-            userId, orgId, scopeTop, channelArray, ...restToken
+            userId, orgId, scopeTop, role, channelArray, ...restToken
         },
             secret, {
             expiresIn: tokenType

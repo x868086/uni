@@ -34,6 +34,7 @@ const scopeVerify = () => {
                 userId: decoded.userId,
                 orgId: decoded.orgId,
                 scopeTop: decoded.scopeTop,
+                role: decoded.role,
                 channelArray: decoded.channelArray
             }
         }

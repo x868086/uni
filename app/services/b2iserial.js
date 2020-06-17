@@ -57,7 +57,7 @@ class B2iserialService {
                 serial_number: this.serialNumber
             }
         })
-        if (operateArray.findIndex(e => e === serial.operate) > -1) {
+        if (operateArray.indexOf(serial.operate) > -1) {
             throw new global.errs.ParametersException('信息已提交请勿重复操作')
         }
         await B2iserialModel.update({

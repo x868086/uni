@@ -25,6 +25,16 @@ const apiList = [
     { requestRegexp: /\/v1\/b2iserial\/\w*\/allocate/, apiScope: 48 },
     { requestRegexp: /\/v1\/b2iserial\/\w*\/reject/, apiScope: 48 },
     { requestRegexp: /\/v1\/b2iserial\/\w*\/remove/, apiScope: 48 },
+
+    // threshold
+    { requestRegexp: /\/v1\/threshold\/list/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/\w*\/bingo/, apiScope: 24 },
+    { requestRegexp: /\/v1\/threshold\/\w*\/search/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/\w*\/create/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/\w*\/modify/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/\w*\/enable/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/\w*\/remove/, apiScope: 48 },
+
 ]
 
 const whiteList = [

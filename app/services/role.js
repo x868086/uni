@@ -53,10 +53,16 @@ class RoleService {
             scopeArray.push(result.scope)
         }
         let scopeTop = scopeArray.sort((a, b) => b - a)[0]
+        let { role } = await RoleModel.findOne({
+            where: {
+                scope: scopeTop
+            }
+        })
         return {
             permissionArray,
             scopeArray,
-            scopeTop
+            scopeTop,
+            role
         }
     }
 

@@ -321,46 +321,27 @@ id | serial_number | product_name | yf_code | id_desc | fee | dev_name | dev_pho
 - *operate: STRING(32), allowNull:false, defaultValue: 待提交*
 
 
+
+
+#### threshold 阈值列表
+id | config_name | state_code | start_date | end_date | operator | gt | lte | title |
+--| --| --| --| --| --| --| --| --|
+1 | 花呗红包20%赠费 | 1 | 1589185965494 | 1589185965494 | 林艳 | 20 | 30 | 低消48元，赠送红包10元，赠送时长24月
+2 | 花呗红包20%赠费 | 1 | 1589185965494 | 1589185965494 | 林艳 | 30 | 40 | 低消58元，赠送红包14元，赠送时长24月
+3 | 花呗红包30%赠费 | 1 | 1589185965494 | 1589185965494 | 林艳 | 50 | 69 | 低消98元,赠送红包29元,赠送时长24月
+4 | 花呗红包30%赠费 | 1 | 1589185965494 | 1589185965494 | 林艳 | 69 | 79 | 低消108元,赠送红包29元,赠送时长24月
+- *id SMALLINT(11), unsigned, autoIncrement, primaryKey*
+- *config_name STRING(128), allowNull:false*
+- *state_code TINYINT,unsigned,allowNull:false,default:1*
+- *start_date STRING(64), allowNull:true*
+- *end_date STRING(64), allowNull:true*
+- *operator STRING(128), allowNull:false*
+- *gt INTEGER(11), unsigned, allowNull:false*
+- *lte INTEGER(11), unsigned, allowNull:false*
+- *title STRING(128), unique,allowNull:false*
+
+
 ### 2. TCB 云数据库？
-
-#### thresholds 阈值列表
-```js
-[
-    {"id":1,
-    "config_name": "5G折扣资费推荐",
-    "state_code": 1,
-    "start_date": 1589185965494,
-    "end_date": 1589185965494,
-    "operator: "林艳",
-    "items": [{"gte":70.3,"lt":91.3,"title":"129元档打7折"},
-    {"gte":91.3,"lt":119.3,"title":"159元档打7折"},
-    {"gte":399.3,"lt":Infinity,"title":"599元档打7折"}]
-    },
-
-    {"id":2,
-    "config_name": "花呗分期推荐20%赠费",
-    "state_code": 0,
-    "start_date": 1589185965494,
-    "end_date": 1589185965494,    
-    "operator: "林艳",
-    "items": [{"gte":0,"lt":15,"title":"ARPU值低于45元,请查询单卡弹窗结果"},
-    {"gte":45,"lt":50,"title":"低消78元,赠送红包23元,赠送时长24月"},
-    {"gte":50,"lt":Infinity,"title":"ARPU值超过50,不予推荐20%赠费花呗分期活动"}]
-    },
-
-    {"id":3,
-    "config_name": "花呗分期推荐30%赠费",
-    "state_code": 1,
-    "start_date": 1589185965494,
-    "end_date": 1589185965494,    
-    "operator: "林艳",
-    "items": [{"gte":50,"lt":69,"title":"低消98元,赠送红包29元,赠送时长24月"},
-    {"gte":69,"lt":79,"title":"低消108元,赠送红包29元,赠送时长24月"},
-    {"gte":278,"lt":Infinity,"title":"低消超过278,不予推荐花呗分期活动"}]
-    }
-]
-```
-
 #### articles 文章
 ```js
 [
@@ -1086,7 +1067,7 @@ GET /b2iserial/<string:serial_number>/search
 {
     "serial_number": "15607200000",
     "product_name": "腾讯大王卡",
-    "belong": "YF0307",
+    "id_desc": "YF0307",
     "fee": 15,
     "dev_name": "Jack",
     "dev_phone": "18600000001",
@@ -1110,7 +1091,7 @@ GET /b2iserial/<string:serial_number>/search
 #### 配置列表获取
 ##### URL
 ```js
-GET /thresholds/list
+GET /threshold/list
 ````
 ##### Parameters
 - 
@@ -1155,7 +1136,7 @@ GET /thresholds/list
 #### 配置启用
 ##### URL
 ```js
-GET /thresholds/<int:id>/enable
+GET /threshold/<int:id>/enable
 ````
 ##### Parameters
 - id: 阈值规则id [type: number]
@@ -1164,8 +1145,8 @@ GET /thresholds/<int:id>/enable
 ```js 
 {
     "error_code": 0,
-    "msg": "thresholds updated",
-    "request": "GET /thresholds/<int:id>/enable" 
+    "msg": "threshold updated",
+    "request": "GET /threshold/<int:id>/enable" 
 }
 ````
 
@@ -1175,7 +1156,7 @@ GET /thresholds/<int:id>/enable
 #### 配置删除
 ##### URL
 ```js
-GET /thresholds/<int:id>/remove
+GET /threshold/<int:id>/remove
 ````
 ##### Parameters
 - 
@@ -1184,8 +1165,8 @@ GET /thresholds/<int:id>/remove
 ```js
 {
     "error_code": 0,
-    "msg": "thresholds removed",
-    "request": "GET /thresholds/<int:id>/remove" 
+    "msg": "threshold removed",
+    "request": "GET /threshold/<int:id>/remove" 
 }
 ````
 
@@ -1195,7 +1176,7 @@ GET /thresholds/<int:id>/remove
 #### 配置提交
 ##### URL
 ```js
-POST /thresholds/create
+POST /threshold/create
 ````
 ##### Parameters
 - config_name: 阈值规则名称 [type: string]
@@ -1208,8 +1189,8 @@ POST /thresholds/create
 ```js
 {
     "error_code": 0,
-    "msg": "thresholds created",
-    "request": "POST /thresholds/create"     
+    "msg": "threshold created",
+    "request": "POST /threshold/create"     
 }
 ````
 
