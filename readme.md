@@ -1242,13 +1242,16 @@ POST /threshold/create
 - start_date: 开始时间 [type: number] [timestamp]
 - end_date: 结束时间 [type: number] [timestamp]
 - operator: 操作人 [type: string]
-- items: 配置详情，数组，区间值 [type: array]
+- gt: 区间值最小值 [type: number]
+- lte: 去兼职最大值 [type: number]
+- title: 阈值信息 [type: string]
+
 
 ##### Response 201
 ```js
 {
     "error_code": 0,
-    "msg": "threshold created",
+    "msg": "弹窗规则:测试规则--阈值信息新增成功",
     "request": "POST /threshold/create"     
 }
 ````

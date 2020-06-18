@@ -156,11 +156,61 @@ class B2iserialModifyValidator extends B2iserialValidator {
 class ThresholdValidator extends LinValidator {
   constructor() {
     super()
-    this.configName = [new Rule("isLength", "阈值名称不符合规范,最小3个字符", { min: 3, max: 64 })]
+    this.configName = [new Rule("isLength", "阈值名称不符合规范,最少3个字符", { min: 3, max: 64 })]
   }
 }
 
+class ThresholdCreateValidator extends ThresholdValidator {
+  constructor() {
+    super()
+    this.startDate = [new Rule("isInt", "创建时间必须是时间戳格式", { min: 1000000000000 })]
+    this.endDate = this.startDate
+    this.operator = [new Rule("isLength", "创建者信息,最少2个字符,最大16个字符", { min: 2, max: 16 })]
+    this.gt = [new Rule("isInt", "阈值规则区间最小值必须为整数", { min: 0 })]
+    this.lte = this.gt
+    this.title = [new Rule("isLength", "阈值规则信息最少5个字符,最大64个字符", { min: 5, max: 64 })]
+  }
+  validateLte(val) {
+    if (Number(val.body.lte) <= Number(val.body.gt)) {
+      throw new global.errs.ParametersException('阈值规则区间最大值必须大于最小值')
+    } else {
+      return true
+    }
+  }
+}
 
+class ThresholdModifyValidator extends ThresholdValidator {
+  constructor() {
+    super()
+    this.startDate = [new Rule("isInt", "创建时间必须是时间戳格式", { min: 1000000000000 })]
+    this.endDate = this.startDate
+    this.operator = [new Rule("isLength", "创建者信息,最少2个字符,最大16个字符", { min: 2, max: 16 })]
+  }
+  validateItems(val) {
+    let { items } = val.body
+    let condition1 = items.every(e => {
+      return typeof (e.gt) === 'number' && typeof (e.lte) === 'number' && e.title.length > 5
+    })
+    let condition2 = items.every(e => {
+      return e.lte > e.gt
+    })
+
+    // 判断提交的阈值规则信息是否重复
+    let arr = []
+    let condition3 = items.reduce((result, e) => {
+      arr.includes(e.title) ? result.push(e.title) : ''
+      arr.push(e.title)
+      return result
+    }, [])
+
+
+    if (condition1 && condition2 && (condition3.length === 0)) {
+      return true
+    } else {
+      throw new global.errs.ParametersException('阈值规则区间值为整数,阈值规则区间最大值必须大于最小值,阈值规则信息最少5个字符,阈值规则信息不能重复')
+    }
+  }
+}
 
 
 
@@ -174,5 +224,7 @@ module.exports = {
   RoleValidator,
   B2iserialValidator,
   B2iserialModifyValidator,
-  ThresholdValidator
+  ThresholdValidator,
+  ThresholdCreateValidator,
+  ThresholdModifyValidator
 };

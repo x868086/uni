@@ -11,7 +11,8 @@ class ThresholdService {
         gt = undefined,
         lte = undefined,
         title = undefined,
-        arpu = undefined }) {
+        arpu = undefined,
+        items = undefined }) {
         this.configName = configName
         this.stateCode = stateCode
         this.startDate = startDate
@@ -21,6 +22,7 @@ class ThresholdService {
         this.lte = lte
         this.title = title
         this.arpu = arpu
+        this.items = items
     }
 
     async thresholdList() {
@@ -174,6 +176,88 @@ class ThresholdService {
             } catch (error) {
                 throw new global.errs.ParametersException(`${error.message} 启用弹窗规则失败`, 10006)
             }
+        })
+    }
+
+    async thresholdCreate() {
+        let result = await ThresholdModel.findAll({
+            paranoid: false,
+            where: {
+                title: this.title
+            }
+        })
+        if (result) {
+            throw new global.errs.HttpException("弹窗规则已存在,无法重复新增")
+        }
+
+        try {
+            let { config_name = undefined, title = undefined } = await ThresholdModel.create({
+                config_name: this.configName,
+                start_date: this.startDate,
+                end_date: this.endDate,
+                operator: this.operator,
+                gt: this.gt,
+                lte: this.lte,
+                title: this.title
+            })
+            return { config_name, title }
+        } catch (error) {
+            throw new global.errs.ParametersException(`${error.message} 新增弹窗规则失败`, 10006)
+        }
+
+    }
+
+    async thresholdModify(conditions) {
+        return sequelize.transaction(async (t) => {
+            let result = await ThresholdModel.findAll({
+                paranoid: false,
+                where: {
+                    config_name: conditions
+                }
+            })
+            if (result.every(e => e.deleted_at)) {
+                throw new global.errs.HttpException("弹窗规则不存在")
+            }
+
+            try {
+                return sequelize.transaction(async (t) => {
+                    await ThresholdModel.destroy({
+                        where: {
+                            config_name: conditions
+                        }, transaction: t
+                    })
+
+                    for (let e of this.items) {
+                        let result = await ThresholdModel.findAll({
+                            paranoid: false,
+                            where: {
+                                title: e.title
+                            }
+                        })
+                        if (result.length) {
+                            throw new global.errs.HttpException("需要修改的新规则已存在,无法继续")
+                        }
+
+
+                        await ThresholdModel.create({
+                            config_name: this.configName,
+                            start_date: this.startDate,
+                            end_date: this.endDate,
+                            operator: this.operator,
+                            gt: e.gt,
+                            lte: e.lte,
+                            title: e.title
+                        }, {
+                            transaction: t
+                        })
+                    }
+
+                    return { configName: this.configName }
+                })
+            } catch (error) {
+                throw new global.errs.ParametersException(`${error.message} 修改弹窗规则失败`, 10006)
+            }
+
         })
     }
 }
