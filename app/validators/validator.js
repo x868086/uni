@@ -153,6 +153,15 @@ class B2iserialModifyValidator extends B2iserialValidator {
 }
 
 
+class ThresholdValidator extends LinValidator {
+  constructor() {
+    super()
+    this.configName = [new Rule("isLength", "阈值名称不符合规范,最小3个字符", { min: 3, max: 64 })]
+  }
+}
+
+
+
 
 
 
@@ -164,5 +173,6 @@ module.exports = {
   PaginationValidator,
   RoleValidator,
   B2iserialValidator,
-  B2iserialModifyValidator
+  B2iserialModifyValidator,
+  ThresholdValidator
 };

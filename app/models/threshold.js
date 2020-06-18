@@ -1,4 +1,4 @@
-const { Sequelize, Model } = require('sequelize')
+const { Sequelize, Model, Sequelize: { Op } } = require('sequelize')
 const { sequelize } = require('../../core/db')
 
 class ThresholdModel extends Model {
@@ -69,5 +69,6 @@ ThresholdModel.init({
 })
 
 module.exports = {
-    ThresholdModel
+    ThresholdModel,
+    Op
 }

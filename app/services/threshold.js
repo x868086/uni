@@ -1,4 +1,6 @@
-const { ThresholdModel } = require('../models/threshold')
+const { sequelize } = require('../../core/db')
+const { ThresholdModel, Op } = require('../models/threshold')
+const { StateModel } = require('../models/state')
 
 class ThresholdService {
     constructor({ configName = undefined,
@@ -21,29 +23,157 @@ class ThresholdService {
         this.arpu = arpu
     }
 
-    async thresholdList(offset, limit) {
-        let result = await ThresholdModel.findAll({
-            paranoid: false,
-            offset: offset,
-            limit: limit,
-            attributes: ['id', 'config_name', 'state_code', 'start_date', 'end_date', 'operator']
-        }).map(e => {
-            return {
-                config_name: e.config_name,
-                state_code: e.state_code,
-                start_date: e.start_date,
-                end_date: e.end_date,
-                operator: e.operator
+    async thresholdList() {
+        try {
+            // 根据ThresholdServer实例化时的configName属性来区分是查询列表还是查询单个
+            // configName的属性不同生成不同的查询条件conditionStr
+            let conditionStr
+            if (!this.configName) {
+                conditionStr = {}
+            } else {
+                conditionStr = { config_name: this.configName }
             }
-        })
-        let thresholdResult = Array.from(new Set(result))
-        thresholdResult.map(async ({ config_name }) => {
-            let items = await ThresholdModel.findAll({
+
+            let result = await ThresholdModel.findAll({
                 paranoid: false,
-                where: {
-                    config_name: config_name
+                attributes: ['id', 'config_name', 'state_code', 'start_date', 'end_date', 'operator'],
+                where: conditionStr
+            }).map(async (e) => {
+                let { state_name } = await StateModel.findOne({
+                    where: {
+                        state_code: e.state_code
+                    }
+                })
+                return {
+                    config_name: e.config_name,
+                    state_name: state_name,
+                    start_date: e.start_date,
+                    end_date: e.end_date,
+                    operator: e.operator
                 }
             })
+
+            // 首次查询阈值，剔除重复 group by
+            let obj = []
+            let thresholdResult = []
+            thresholdResult = result.reduce((arr, e) => {
+                obj[e.config_name] ? '' : obj[e.config_name] = true && arr.push(e)
+                return arr
+            }, [])
+
+            // 通过阈值config_name查询阈值详情
+            for (let e of thresholdResult) {
+                let items = await ThresholdModel.findAll({
+                    paranoid: false,
+                    where: {
+                        config_name: e.config_name
+                    },
+                    attributes: ['gt', 'lte', 'title']
+                })
+                e['items'] = items
+            }
+            return thresholdResult
+        } catch (error) {
+            throw new global.errs.ParametersException(`${error.message} 查询弹窗规则列表失败`, 10006)
+        }
+
+    }
+
+    async thresholdBingo() {
+        try {
+            let threshold = await ThresholdModel.findAll({
+                where: {
+                    gt: {
+                        [Op.lt]: this.arpu
+                    },
+                    lte: {
+                        [Op.gte]: this.arpu
+                    }
+                }
+            }).map(e => {
+                return {
+                    config_name: e.config_name,
+                    gt: e.gt,
+                    lte: e.lte,
+                    title: e.title,
+                    start_date: e.start_date,
+                    end_date: e.end_date
+                }
+            })
+            return threshold
+        } catch (error) {
+            throw new global.errs.ParametersException(`${error.message} 匹配弹窗规则失败`, 10006)
+        }
+    }
+
+    async thresholdRemove() {
+        let result = await ThresholdModel.findAll({
+            paranoid: false,
+            where: {
+                config_name: this.configName
+            }
+        })
+        if (result.every(e => e.deleted_at)) {
+            throw new global.errs.HttpException("弹窗规则不存在")
+        }
+
+        try {
+            return sequelize.transaction(async (t) => {
+                await ThresholdModel.update({
+                    state_code: 0
+                }, {
+                    where: {
+                        config_name: this.configName
+                    }, transcation: t
+                })
+
+                await ThresholdModel.destroy({
+                    where: {
+                        config_name: this.configName
+                    }, transaction: t
+                })
+                return result
+            })
+        } catch (error) {
+            throw new global.errs.ParametersException(`${error.message} 删除弹窗规则失败`, 10006)
+        }
+    }
+
+    async thresholdEable() {
+        return sequelize.transaction(async (t) => {
+            let result = await ThresholdModel.findAll({
+                paranoid: false,
+                where: {
+                    config_name: this.configName
+                }
+            })
+            if (!result.length) {
+                throw new global.errs.HttpException("弹窗规则不存在")
+            }
+            if (!result.every(e => e.deleted_at)) {
+                throw new global.errs.HttpException("当前弹窗规则为有效状态")
+            }
+
+            try {
+                return sequelize.transaction(async (t) => {
+                    await ThresholdModel.restore({
+                        where: {
+                            config_name: this.configName
+                        }, transaction: t
+                    })
+
+                    await ThresholdModel.update({
+                        state_code: 1
+                    }, {
+                        where: {
+                            config_name: this.configName
+                        }, transaction: t
+                    })
+                    return result
+                })
+            } catch (error) {
+                throw new global.errs.ParametersException(`${error.message} 启用弹窗规则失败`, 10006)
+            }
         })
     }
 }

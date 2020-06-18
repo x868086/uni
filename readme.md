@@ -1088,7 +1088,7 @@ GET /b2iserial/<string:serial_number>/search
 
 
 #### 2. 存量经营
-#### 配置列表获取
+#### 阈值列表获取
 ##### URL
 ```js
 GET /threshold/list
@@ -1105,25 +1105,51 @@ GET /threshold/list
     "state_name": "生效",
     "start_date": 1589185965494,
     "end_date": 1589185965494,
-    "operator:"林艳"
+    "operator:"林艳",
+    "items":[{"gt":1,"lte":5,"title":"低消48元，赠送红包10元，赠送时长24月"}]
     },{
     "id":2,
     "config_name":"花呗分期推荐20%赠费",
     "state_name": "失效",
     "start_date": 1589185965494,
     "end_date": 1589185965494,    
-    "operator:"林艳"
+    "operator:"林艳",
+    "items":[{"gt":1,"lte":5,"title":"低消48元，赠送红包10元，赠送时长24月"}]
     },{
     "id":3,
     "config_name":"花呗分期推荐30%赠费",
     "state_name": "失效",
     "start_date": 1589185965494,
     "end_date": 1589185965494,    
-    "operator:"林艳"        
+    "operator:"林艳",
+    "items":[{"gt":1,"lte":5,"title":"低消48元，赠送红包10元，赠送时长24月"}]        
     }
 ]
 ````
 
+
+#### 单个阈值获取
+##### URL
+```js
+POST /threshold/list
+````
+##### Parameters
+- configName: 阈值名称 [type: string]
+
+##### Response 200
+```js 
+[
+    {
+    "id":1,
+    "config_name": "5G折扣资费推荐",
+    "state_name": "生效",
+    "start_date": 1589185965494,
+    "end_date": 1589185965494,
+    "operator:"林艳",
+    "items":[{"gt":1,"lte":5,"title":"低消48元，赠送红包10元，赠送时长24月"}]
+    }
+]
+````
 ##### Response_description
 - data: [type: array]
 - id: 阈值规则id [type: number]
@@ -1132,11 +1158,44 @@ GET /threshold/list
 - start_date: 开始时间, 时间戳 [type: number] [timestamp]
 - end_date: 结束时间, 时间戳 [type: number] [timestamp]
 - operator: 操作人 [type: string]
+- items: 阈值详情 [type: Array]
+
+
+
+#### 阈值匹配
+##### URL
+```js
+GET /threshold/<int:arpu>/bingo
+````
+##### Parameters
+- arpu: 月均消费值 [type: number]
+##### Response 200
+```js
+[{
+        "config_name": "花呗红包30%赠费",
+        "gt": 196,
+        "lte": 212,
+        "title": "低消298元,赠送红包86元,赠送时长24月",
+        "start_date": "2020-6-17 15:24:49",
+        "end_date": "2020-6-17 15:24:49"
+    },
+    {
+        "config_name": "花呗分期推荐40%赠费",
+        "gt": 208,
+        "lte": 313,
+        "title": "5G套餐599元,赠送286元,赠送时长24月",
+        "start_date": "2020-6-17 15:24:49",
+        "end_date": "2020-6-17 15:24:49"
+}]
+```
+
+
+
 
 #### 配置启用
 ##### URL
 ```js
-GET /threshold/<int:id>/enable
+GET /threshold/<str:configname>/enable
 ````
 ##### Parameters
 - id: 阈值规则id [type: number]
@@ -1146,7 +1205,7 @@ GET /threshold/<int:id>/enable
 {
     "error_code": 0,
     "msg": "threshold updated",
-    "request": "GET /threshold/<int:id>/enable" 
+    "request": "GET /threshold/<str:configname>/enable" 
 }
 ````
 
@@ -1156,7 +1215,7 @@ GET /threshold/<int:id>/enable
 #### 配置删除
 ##### URL
 ```js
-GET /threshold/<int:id>/remove
+GET /threshold/<str:configname>/remove
 ````
 ##### Parameters
 - 
@@ -1166,7 +1225,7 @@ GET /threshold/<int:id>/remove
 {
     "error_code": 0,
     "msg": "threshold removed",
-    "request": "GET /threshold/<int:id>/remove" 
+    "request": "GET /threshold/<str:configname>/remove" 
 }
 ````
 

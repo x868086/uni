@@ -29,11 +29,11 @@ const apiList = [
     // threshold
     { requestRegexp: /\/v1\/threshold\/list/, apiScope: 48 },
     { requestRegexp: /\/v1\/threshold\/\w*\/bingo/, apiScope: 24 },
-    { requestRegexp: /\/v1\/threshold\/\w*\/search/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/search/, apiScope: 48 },
     { requestRegexp: /\/v1\/threshold\/\w*\/create/, apiScope: 48 },
-    { requestRegexp: /\/v1\/threshold\/\w*\/modify/, apiScope: 48 },
-    { requestRegexp: /\/v1\/threshold\/\w*\/enable/, apiScope: 48 },
-    { requestRegexp: /\/v1\/threshold\/\w*\/remove/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/modify/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/enable/, apiScope: 48 },
+    { requestRegexp: /\/v1\/threshold\/remove/, apiScope: 48 },
 
 ]
 
