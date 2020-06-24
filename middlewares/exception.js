@@ -5,7 +5,7 @@ const catchError = () => {
         try {
             await next()
         } catch (error) {
-            let isDev = global.environment === 'dev'
+            let isDev = global.environment === 'development'
             let isHttpException = error instanceof HttpException
             if (isDev && !isHttpException) {
                 throw error
