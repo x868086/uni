@@ -64,17 +64,10 @@ class UserService {
         })
     }
 
-    async userVerify() {
+    async getUserInfo(user) {
         // 获取用户的user_id,org_id,roles数组,scope数组,scopeTop值,channels数组 并以此生成token
-        let user, permissionArray, scopeArray, scopeTop, role, channelArray
+        let permissionArray, scopeArray, scopeTop, role, channelArray
         try {
-            // 查询user
-            user = await UserModel.findOne({
-                where: {
-                    account: this.account,
-                },
-            });
-
             // 查询user的roles和scope
             let result = await new RoleService({ userId: user.user_id }).findScope()
             permissionArray = result['permissionArray'].map((e) => e.role_id)
@@ -84,9 +77,22 @@ class UserService {
 
             // 查询user的channels, 传入节点scope值用来判断节点是否渠道级或直销人员级的末梢节点
             channelArray = await new OrganizationService({ org_id: user.org_id, scope: scopeTop }).findChannels()
+
+            return {
+                scopeTop, role, channelArray
+            }
         } catch (error) {
             throw new global.errs.HttpException(`${error.message} 查询用户节点权限信息失败`, 10006, 500);
         }
+    }
+
+    async userVerify() {
+        // 查询user
+        let user = await UserModel.findOne({
+            where: {
+                account: this.account,
+            },
+        });
 
         if (user) {
             let userSecretCiphertext = secretUtile.generateSecret(user.secret)
@@ -96,6 +102,7 @@ class UserService {
                 // 或者是以用户的密码为明文，和用户密码二次加密后的密文对比(适用通过refreshToken获取续期时验证用户密码和用户二次加密密码的准确性)
                 secretUtile.decodedSecret(this.secret, userSecretCiphertext)
             if (correct) {
+                let { scopeTop, role, channelArray } = await this.getUserInfo(user)
                 let accessToken = tokenUtile.generateToken(
                     // 将用户user_id,org_id,scopTop,权限内的channels加密生成token
                     user.user_id,
@@ -226,7 +233,7 @@ class UserService {
         })
     }
 
-    async userInfo() {
+    async userSearch() {
         let users = await UserModel.findOne({
             paranoid: false,
             where: {

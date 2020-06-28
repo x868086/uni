@@ -53,7 +53,7 @@ router.get("/:account/remove", async (ctx, next) => {
 
 router.get("/:account/search", async (ctx, next) => {
     const v = await new AccountValidator().validate(ctx);
-    let userInfo = await new UserService(ctx.params).userInfo()
+    let userInfo = await new UserService(ctx.params).userSearch()
     ctx.body = userInfo
 })
 
