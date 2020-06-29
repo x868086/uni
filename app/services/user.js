@@ -13,14 +13,15 @@ const { tokenSecurity } = require("../../config/config");
 
 class UserService {
     constructor({
-        account,
-        secret,
-        orgId,
-        nickName,
-        roles,
-        createBy,
-        loginType,
-        refreshToken
+        account = undefined,
+        secret = undefined,
+        orgId = undefined,
+        nickName = undefined,
+        roles = undefined,
+        createBy = undefined,
+        loginType = undefined,
+        accessToken = undefined,
+        refreshToken = undefined
     }) {
         this.account = account;
         this.secret = secret;
@@ -29,7 +30,8 @@ class UserService {
         this.roles = roles;
         this.createBy = createBy;
         this.loginType = loginType;
-        this.refreshToken = refreshToken
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     async userCreate() {
@@ -324,6 +326,33 @@ class UserService {
         } catch (error) {
             throw new global.errs.ParametersException(`${error.message} 用户密码修改失败`)
         }
+    }
+
+    async verifyToken() {
+        return sequelize.transaction(async (t) => {
+            try {
+                let { orgId = undefined, role = undefined, scopeTop = undefined, userId = undefined } = await tokenUtile.verifyToken(this.accessToken)
+                let { nick_name } = await UserModel.findOne({
+                    where: {
+                        user_id: userId
+                    }, transaction: t
+                })
+                let org_desc = await new OrganizationService({ org_id: orgId }).findOrgDesc()
+                return {
+                    role,
+                    nick_name,
+                    org_desc
+                }
+            } catch (error) {
+                throw new global.errs.ParametersException(`${error.message} token解析错误`)
+            }
+
+        })
+
+
+
+
+
     }
 }
 

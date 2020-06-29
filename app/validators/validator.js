@@ -212,6 +212,20 @@ class ThresholdModifyValidator extends ThresholdValidator {
   }
 }
 
+class TokenValidator extends LinValidator {
+  constructor() {
+    super()
+    this.accessToken = [
+      new Rule("isOptional"),
+      new Rule("isJWT", "非有效token信息")
+    ]
+    this.refreshToken = [
+      new Rule("isOptional"),
+      new Rule("isJWT", "非有效token信息")
+    ]
+  }
+}
+
 
 
 
@@ -226,5 +240,6 @@ module.exports = {
   B2iserialModifyValidator,
   ThresholdValidator,
   ThresholdCreateValidator,
-  ThresholdModifyValidator
+  ThresholdModifyValidator,
+  TokenValidator
 };

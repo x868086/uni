@@ -13,6 +13,7 @@ const { PaginationValidator,
     AccountValidator,
     UserSecurityValidator,
     UserModifyValidator,
+    TokenValidator
 } = require("../../validators/validator");
 
 
@@ -21,6 +22,12 @@ router.post("/verify", async (ctx, next) => {
     const { accessToken, refreshToken } = await new UserService(ctx.request.body).userVerify();
     ctx.body = { accessToken, refreshToken }
 });
+
+router.post("/tokenverify", async (ctx, next) => {
+    const v = await new TokenValidator().validate(ctx);
+    let { role, nick_name, org_desc } = await new UserService(ctx.request.body).verifyToken();
+    ctx.body = { role, nick_name, org_desc }
+})
 
 
 router.get("/tokenrefresh", async (ctx, next) => {

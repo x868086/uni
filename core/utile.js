@@ -28,10 +28,9 @@ const generateToken = (userId, orgId, scopeTop, role, channelArray, tokenType, .
 
 const verifyToken = async (token) => {
     try {
-        await jwt.verify(token, secret)
-        return true
+        return await jwt.verify(token, secret)
     } catch (error) {
-        return false
+        throw new global.errs.Unauthorized(`${error.message} token验证出错`)
     }
 }
 

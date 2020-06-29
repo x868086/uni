@@ -39,7 +39,9 @@ const apiList = [
 
 const whiteList = [
     { requestRegexp: /\/v1\/users\/verify/ },
-    { requestRegexp: /\/v1\/users\/tokenrefresh/ }
+    { requestRegexp: /\/v1\/users\/tokenrefresh/ },
+    { requestRegexp: /\/v1\/users\/tokenverify/ },
+
 ]
 
 
