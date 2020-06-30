@@ -1,5 +1,14 @@
 <template>
   <div class="app-container">
+    <el-input
+      v-model="inputSerial"
+      placeholder="请输入待销售号码"
+      size="large"
+      suffix-icon="el-icon-search"
+      class="serial-search"
+      @blur="serialSearch"
+    >
+    </el-input>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -9,26 +18,43 @@
       style="width: 100%"
       height="550"
     >
-      <el-table-column align="center" label="ID" prop="id">
-        <template slot-scope="{row}">
+      <el-table-column align="center" label="ID" prop="id" fixed>
+        <template slot-scope="{ row }">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="110px" align="center" prop="serial_number" label="号码">
-        <template slot-scope="{row}">
-          <span>{{ row.serial_number}}</span>
+      <el-table-column
+        width="110px"
+        align="center"
+        prop="serial_number"
+        label="号码"
+        fixed
+      >
+        <template slot-scope="{ row }">
+          <span>{{ row.serial_number }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="100px" align="center" prop="product_name" label="套餐名称">
-        <template slot-scope="{row}">
+      <el-table-column
+        width="100px"
+        align="center"
+        prop="product_name"
+        label="套餐名称"
+        fixed="left"
+      >
+        <template slot-scope="{ row }">
           <span>{{ row.product_name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="营服名称" prop="id_desc">
-        <template slot-scope="{row}">
+      <el-table-column
+        width="120px"
+        align="center"
+        label="营服名称"
+        prop="id_desc"
+      >
+        <template slot-scope="{ row }">
           <!-- <svg-icon
             v-for="n in + row.importance"
             :key="n"
@@ -48,7 +74,7 @@
         :sortable="true"
         :sort-method="sortByFee"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
           <span>{{ row.fee }}</span>
         </template>
@@ -61,9 +87,9 @@
         width="110"
         prop="contact_phone"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
-          <span>{{ row. contact_phone}}</span>
+          <span>{{ row.contact_phone }}</span>
         </template>
       </el-table-column>
 
@@ -74,7 +100,7 @@
         width="90"
         prop="dev_name"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
           <span>{{ row.dev_name }}</span>
         </template>
@@ -87,7 +113,7 @@
         width="110"
         prop="dev_phone"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
           <span>{{ row.dev_phone }}</span>
         </template>
@@ -102,7 +128,7 @@
         :sortable="true"
         :sort-method="sortByOperateTime"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
           <span>{{ row.operate_time }}</span>
         </template>
@@ -117,7 +143,7 @@
         :sortable="true"
         :sort-method="sortByOperateAction"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
           <span>{{ row.operate }}</span>
         </template>
@@ -140,44 +166,57 @@
       </el-table-column>-->
 
       <el-table-column align="center" label="操作" width="230">
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <el-button
             v-if="row.edit"
             type="success"
-            :disabled="row.operate!=='待处理'"
+            :disabled="row.operate !== '待处理'"
             size="mini"
             icon="el-icon-circle-check-outline"
             @click="serialAllocate(row.serial_number)"
-          >释放</el-button>
+            >释放</el-button
+          >
 
           <el-button
             v-if="row.edit"
             type="warning"
-            :disabled="row.operate!=='待处理'"
+            :disabled="row.operate !== '待处理'"
             size="mini"
             icon="el-icon-circle-check-outline"
             @click="serialReject(row.serial_number)"
-          >驳回</el-button>
+            >驳回</el-button
+          >
 
           <el-button
             v-if="row.edit"
             type="danger"
-            :disabled="['删除','已处理'].includes(row.operate) "
+            :disabled="['删除', '已处理'].includes(row.operate)"
             size="mini"
             icon="el-icon-circle-check-outline"
             @click="serialRemove(row.serial_number)"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      layout="prev, pager, next"
+      background
+      :page-size="listQuery.limit"
+      :total="listLength"
+      @prev-click="getPrevPage"
+      @next-click="getNextPage"
+      @current-change="getCurrentPage"
+      class="serial-pagination"
+    >
+    </el-pagination>
   </div>
 </template>
 
 <script>
 // import { fetchList } from '@/api/article'
-import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c'
-
-import axios from 'axios'
+import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c';
 
 export default {
   name: 'InlineEditTable',
@@ -186,10 +225,10 @@ export default {
       const statusMap = {
         published: 'success',
         draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+        deleted: 'danger',
+      };
+      return statusMap[status];
+    },
   },
   data() {
     return {
@@ -197,94 +236,110 @@ export default {
       listLoading: true,
       listQuery: {
         offset: 0,
-        limit: 10
-      }
-    }
+        limit: 10,
+      },
+      inputSerial: '',
+      listLength: 0,
+      currentPage: 0,
+    };
   },
   created() {
-    this.getList()
+    this.getList(this.listQuery.offset, this.listQuery.limit);
   },
   methods: {
-    async getList() {
-      this.listLoading = true
+    async getList(offset, limit) {
+      this.listLoading = true;
       // const { data = undefined } = await fetchList(this.listQuery)
 
-      const { offset, limit, result } = await getb2iserial({
-        offset: this.listQuery.offset,
-        limit: this.listQuery.limit
-      })
-      const items = result
+      const { result, total } = await getb2iserial({
+        offset: offset,
+        limit: limit,
+      });
+      this.listLength = total;
+      const items = result;
       this.list = items.map((v, i) => {
-        this.$set(v, 'edit', v.operate) // https://vuejs.org/v2/guide/reactivity.html
-        this.$set(v, 'id', i + 1)
+        this.$set(v, 'edit', v.operate); // https://vuejs.org/v2/guide/reactivity.html
+        this.$set(v, 'id', i);
         // v.originalTitle = v.title //  will be used when user click the cancel botton
-        return v
-      })
-      this.listLoading = false
+        return v;
+      });
+      this.listLoading = false;
     },
 
     async serialAllocate(serial) {
-      let operate = '已处理'
-      let operateTime = new Date().getTime()
+      let operate = '已处理';
+      let operateTime = new Date().getTime();
       try {
-        let result = await allocate(serial, { operate, operateTime })
-        await this.getList()
+        let result = await allocate(serial, { operate, operateTime });
+        await this.getList(
+          this.currentPage * parseInt(this.listQuery.limit),
+          this.listQuery.limit
+        );
       } catch (error) {
-        return false
+        return false;
       }
     },
 
     async serialReject(serial) {
-      let operate = '驳回'
-      let operateTime = new Date().getTime()
+      let operate = '驳回';
+      let operateTime = new Date().getTime();
       try {
-        let result = await reject(serial, { operate, operateTime })
-        await this.getList()
+        let result = await reject(serial, { operate, operateTime });
+        await this.getList(
+          this.currentPage * parseInt(this.listQuery.limit),
+          this.listQuery.limit
+        );
       } catch (error) {
-        return false
+        return false;
       }
     },
 
     async serialRemove(serial) {
-      let operate = '删除'
-      let operateTime = new Date().getTime()
+      let operate = '删除';
+      let operateTime = new Date().getTime();
       try {
-        let result = await remove(serial, { operate, operateTime })
-        await this.getList()
+        let result = await remove(serial, { operate, operateTime });
+        await this.getList(
+          this.currentPage * parseInt(this.listQuery.limit),
+          this.listQuery.limit
+        );
       } catch (error) {
-        return false
+        return false;
       }
     },
-    cancelEdit(row) {
-      // row.title = row.originalTitle
-      // row.edit = false
-      // this.$message({
-      //   message: 'The title has been restored to the original value',
-      //   type: 'warning'
-      // })
+    serialSearch() {
+      let index = this.list.findIndex(
+        (e) => e.serial_number === this.inputSerial
+      );
+      if (index === -1) {
+        this.$message({ message: '未查询到待销售号码信息', type: 'warning' });
+        return false;
+      }
+      return this.list.splice(0, 0, this.list.splice(index, 1)[0]);
     },
-    confirmEdit(row) {
-      // row.edit = false
-      // row.originalTitle = row.title
-      // this.$message({
-      //   message: 'The title has been edited',
-      //   type: 'success'
-      // })
+    getPrevPage(p) {},
+    getNextPage(p) {},
+    async getCurrentPage(p) {
+      await this.getList(
+        parseInt(p - 1) * parseInt(this.listQuery.limit),
+        this.listQuery.limit
+      );
+      this.currentPage = parseInt(p - 1);
     },
     sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
+      return a.operate_time - b.operate_time;
     },
     sortByOperateAction(a, b) {
-      return a.operate - b.operate
+      return a.operate - b.operate;
     },
     sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
+      return a.operate_time - b.operate_time;
     },
     sortByFee(a, b) {
-      return a.fee - b.fee
-    }
-  }
-}
+      return a.fee - b.fee;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -295,5 +350,13 @@ export default {
   position: absolute;
   right: 15px;
   top: 10px;
+}
+.serial-search {
+  width: 30%;
+  float: right;
+}
+.serial-pagination {
+  padding-top: 10px;
+  text-align: center;
 }
 </style>
