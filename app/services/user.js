@@ -337,11 +337,16 @@ class UserService {
                         user_id: userId
                     }, transaction: t
                 })
+
+                let roles = await new PermissionService({ userId: userId }).permissionRoles()
+                let roles_name = await new PermissionService({ userId: userId }).permissionNames()
                 let org_desc = await new OrganizationService({ org_id: orgId }).findOrgDesc()
                 return {
                     role,
                     nick_name,
-                    org_desc
+                    org_desc,
+                    roles,
+                    roles_name
                 }
             } catch (error) {
                 throw new global.errs.ParametersException(`${error.message} token解析错误`)

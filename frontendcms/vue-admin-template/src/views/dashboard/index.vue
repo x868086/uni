@@ -3,7 +3,11 @@
     <div class="dashboard-text">用户: {{ nickname }}</div>
     <div class="dashboard-text">
       角色:
-      <span v-for="role in roles" :key="role">{{ role }}</span>
+      <span v-for="role in roles" :key="role">{{ role }},</span>
+    </div>
+    <div class="dashboard-text">
+      角色属性:
+      <span v-for="rolename in rolesname" :key="rolename">{{ rolename }},</span>
     </div>
     <div class="dashboard-text">
       组织节点:
@@ -18,7 +22,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Dashboard',
   computed: {
-    ...mapGetters(['nickname', 'roles', 'orgdesc'])
+    ...mapGetters(['nickname', 'roles', 'rolesname', 'orgdesc'])
   }
 }
 </script>

@@ -25,8 +25,8 @@ router.post("/verify", async (ctx, next) => {
 
 router.post("/tokenverify", async (ctx, next) => {
     const v = await new TokenValidator().validate(ctx);
-    let { role, nick_name, org_desc } = await new UserService(ctx.request.body).verifyToken();
-    ctx.body = { role, nick_name, org_desc }
+    let { role, nick_name, org_desc, roles, roles_name } = await new UserService(ctx.request.body).verifyToken();
+    ctx.body = { role, nick_name, org_desc, roles, roles_name }
 })
 
 

@@ -34,6 +34,21 @@ class PermissionService {
     });
   }
 
+  async permissionRoles() {
+    return await PermissionModel.findAll({
+      where: {
+        user_id: this.userId,
+      },
+    }).map(async e => {
+      let { role } = await RoleModel.findOne({
+        where: {
+          role_id: e.role_id
+        }
+      })
+      return role
+    });
+  }
+
   async permissionArray() {
     return await PermissionModel.findAll({
       where: {

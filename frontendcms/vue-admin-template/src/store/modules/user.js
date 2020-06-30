@@ -41,6 +41,9 @@ const mutations = {
   SET_ROLES: (state, role) => {
     state.roles = role
   },
+  SET_ROLESNAME: (state, rolesname) => {
+    state.rolesname = rolesname
+  },
   SET_ORG: (state, orgdesc) => {
     state.orgdesc = orgdesc
   }
@@ -71,13 +74,12 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo({ accessToken: state.accessToken }).then(response => {
-        const { nick_name, org_desc, role } = response
-        if (!role) {
+        const { nick_name, org_desc, roles, roles_name } = response
+        if (!roles) {
           reject('登录过程出错,请重新登录.')
         }
 
-        let roles = []
-        roles.push(role)
+
         // 用户昵称截取最后一位字符，在前端用圆形元素内嵌名字最后一位字符实现
         let avatar = nick_name.substr(-1)
 
@@ -86,11 +88,13 @@ const actions = {
           reject('用户角色信息为非空数组.')
         }
 
-        commit('SET_ROLES', role)
+        commit('SET_ROLES', roles)
+        commit('SET_ROLESNAME', roles_name)
         commit('SET_NICKNAME', nick_name)
         commit('SET_ORG', org_desc)
         commit('SET_AVATAR', avatar)
         // resolve(data)
+        // resolve(response)
         resolve(response)
       }).catch(error => {
         reject(error)
