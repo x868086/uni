@@ -58,7 +58,7 @@ class B2iserialService {
             }
         })
         if (operateArray.indexOf(serial.operate) > -1) {
-            throw new global.errs.ParametersException('信息已提交请勿重复操作')
+            throw new global.errs.Forbidden('信息已提交请勿重复操作')
         }
         await B2iserialModel.update({
             dev_name: this.devName,
