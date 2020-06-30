@@ -10,7 +10,7 @@ const dbconfig = {
   database: 'uni',
   username: 'root',
   password: 'admin',
-  host: environment.env === 'development' ? '127.0.0.1' : '192.168.189.8',
+  host: environment.env === 'development' ? '192.168.189.8' : '192.168.189.8',
   port: '3306',
   dialect: 'mysql',
 };
