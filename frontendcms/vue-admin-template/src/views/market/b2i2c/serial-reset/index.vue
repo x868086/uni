@@ -6,7 +6,8 @@
       class="export-button"
       size="medium"
       @click.native="exportFile"
-    >导出CSV文件</el-button>
+      >导出CSV文件</el-button
+    >
     <el-input
       v-model="inputSerial"
       placeholder="请输入待销售号码"
@@ -30,7 +31,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="110px" align="center" prop="serial_number" label="号码" fixed>
+      <el-table-column
+        min-width="110px"
+        align="center"
+        prop="serial_number"
+        label="号码"
+        fixed
+      >
         <template slot-scope="{ row }">
           <span>{{ row.serial_number }}</span>
         </template>
@@ -48,7 +55,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="120px" align="center" label="营服名称" prop="id_desc">
+      <el-table-column
+        min-width="120px"
+        align="center"
+        label="营服名称"
+        prop="id_desc"
+      >
         <template slot-scope="{ row }">
           <!-- <svg-icon
             v-for="n in + row.importance"
@@ -169,7 +181,8 @@
             size="mini"
             icon="el-icon-circle-check-outline"
             @click="serialAllocate(row.serial_number)"
-          >释放</el-button>
+            >释放</el-button
+          >
 
           <el-button
             v-if="row.edit"
@@ -178,7 +191,8 @@
             size="mini"
             icon="el-icon-circle-check-outline"
             @click="serialReject(row.serial_number)"
-          >驳回</el-button>
+            >驳回</el-button
+          >
 
           <el-button
             v-if="row.edit"
@@ -187,7 +201,8 @@
             size="mini"
             icon="el-icon-circle-check-outline"
             @click="serialRemove(row.serial_number)"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -207,8 +222,8 @@
 
 <script>
 // import { fetchList } from '@/api/article'
-import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c'
-import { exportCsv } from '@/utils/export-csv'
+import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c';
+import { exportCsv } from '@/utils/export-csv';
 
 export default {
   name: 'InlineEditTable',
@@ -217,10 +232,10 @@ export default {
       const statusMap = {
         published: 'success',
         draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+        deleted: 'danger',
+      };
+      return statusMap[status];
+    },
   },
   data() {
     return {
@@ -228,102 +243,102 @@ export default {
       listLoading: true,
       listQuery: {
         offset: 0,
-        limit: 10
+        limit: 10,
       },
       inputSerial: null,
       listLength: 0,
-      currentPage: 0
-    }
+      currentPage: 0,
+    };
   },
   created() {
-    this.getList(this.listQuery.offset, this.listQuery.limit)
+    this.getList(this.listQuery.offset, this.listQuery.limit);
   },
   methods: {
     async getList(offset, limit) {
-      this.listLoading = true
+      this.listLoading = true;
       // const { data = undefined } = await fetchList(this.listQuery)
 
-      const { result, total } = await getb2iserial({
+      const { result = null, total = undefined } = await getb2iserial({
         offset: offset,
-        limit: limit
-      })
-      this.listLength = total
-      const items = result
+        limit: limit,
+      });
+      this.listLength = total;
+      const items = result;
       this.list = items.map((v, i) => {
-        this.$set(v, 'edit', v.operate) // https://vuejs.org/v2/guide/reactivity.html
-        this.$set(v, 'id', i)
+        this.$set(v, 'edit', v.operate); // https://vuejs.org/v2/guide/reactivity.html
+        this.$set(v, 'id', i);
         // v.originalTitle = v.title //  will be used when user click the cancel botton
-        return v
-      })
-      this.listLoading = false
+        return v;
+      });
+      this.listLoading = false;
     },
 
     async serialAllocate(serial) {
-      let operate = '已处理'
-      let operateTime = new Date().getTime()
+      let operate = '已处理';
+      let operateTime = new Date().getTime();
       try {
-        let result = await allocate(serial, { operate, operateTime })
+        let result = await allocate(serial, { operate, operateTime });
         await this.getList(
           this.currentPage * parseInt(this.listQuery.limit),
           this.listQuery.limit
-        )
+        );
       } catch (error) {
-        return false
+        return false;
       }
     },
 
     async serialReject(serial) {
-      let operate = '驳回'
-      let operateTime = new Date().getTime()
+      let operate = '驳回';
+      let operateTime = new Date().getTime();
       try {
-        let result = await reject(serial, { operate, operateTime })
+        let result = await reject(serial, { operate, operateTime });
         await this.getList(
           this.currentPage * parseInt(this.listQuery.limit),
           this.listQuery.limit
-        )
+        );
       } catch (error) {
-        return false
+        return false;
       }
     },
 
     async serialRemove(serial) {
-      let operate = '删除'
-      let operateTime = new Date().getTime()
+      let operate = '删除';
+      let operateTime = new Date().getTime();
       try {
-        let result = await remove(serial, { operate, operateTime })
+        let result = await remove(serial, { operate, operateTime });
         await this.getList(
           this.currentPage * parseInt(this.listQuery.limit),
           this.listQuery.limit
-        )
+        );
       } catch (error) {
-        return false
+        return false;
       }
     },
     async serialSearch() {
       if (!this.inputSerial || this.inputSerial.length !== 11) {
-        return false
+        return false;
       }
-      const { result, total } = await getb2iserial({
+      const { result = null, total = undefined } = await getb2iserial({
         offset: 0,
-        limit: 10000
-      })
+        limit: 10000,
+      });
 
       let remoteIndex = result.findIndex(
-        e => e.serial_number === this.inputSerial
-      )
+        (e) => e.serial_number === this.inputSerial
+      );
 
       if (remoteIndex === -1) {
-        this.$message({ message: '未查询到待销售号码信息', type: 'warning' })
-        return false
+        this.$message({ message: '未查询到待销售号码信息', type: 'warning' });
+        return false;
       }
 
-      let pageNumber = remoteIndex / this.listQuery.limit
-      await this.getCurrentPage(pageNumber + 1)
+      let pageNumber = remoteIndex / this.listQuery.limit;
+      await this.getCurrentPage(pageNumber + 1);
 
       let localIndex = this.list.findIndex(
-        e => e.serial_number === this.inputSerial
-      )
-      return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0])
+        (e) => e.serial_number === this.inputSerial
+      );
+      return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0]);
 
       // let index = this.list.findIndex(e => e.serial_number === this.inputSerial)
       // if (index === -1) {
@@ -338,27 +353,27 @@ export default {
       await this.getList(
         parseInt(p - 1) * parseInt(this.listQuery.limit),
         this.listQuery.limit
-      )
-      this.currentPage = parseInt(p - 1)
+      );
+      this.currentPage = parseInt(p - 1);
     },
     sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
+      return a.operate_time - b.operate_time;
     },
     sortByOperateAction(a, b) {
-      return a.operate - b.operate
+      return a.operate - b.operate;
     },
     sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
+      return a.operate_time - b.operate_time;
     },
     sortByFee(a, b) {
-      return a.fee - b.fee
+      return a.fee - b.fee;
     },
     async exportFile() {
-      let { result = undefined } = await getb2iserial({
+      let { result = null } = await getb2iserial({
         offset: 0,
-        limit: 10000
-      })
-      exportCsv(result)
+        limit: 10000,
+      });
+      exportCsv(result);
       // let { result = undefined } = await getb2iserial({
       //   offset: 0,
       //   limit: 10000
@@ -380,9 +395,9 @@ export default {
       // document.body.appendChild(link) // Required for FF
 
       // link.click()
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
