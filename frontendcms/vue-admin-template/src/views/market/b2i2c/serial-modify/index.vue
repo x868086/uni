@@ -1,13 +1,5 @@
 <template>
   <div class="app-container">
-    <el-button
-      type="primary"
-      icon="el-icon-document"
-      class="export-button"
-      size="medium"
-      @click.native="exportFile"
-      >导出CSV文件</el-button
-    >
     <el-input
       v-model="inputSerial"
       placeholder="请输入待销售号码"
@@ -151,61 +143,20 @@
         :sort-method="sortByOperateAction"
       >
         <template slot-scope="{ row }">
-          <!-- <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag> -->
           <span>{{ row.operate }}</span>
         </template>
       </el-table-column>
-
-      <!-- <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >cancel</el-button>
-          </template>
-          <span v-else>{{ row.title }}</span>
-        </template>
-      </el-table-column>-->
 
       <el-table-column align="center" label="操作" min-width="230">
         <template slot-scope="{ row }">
           <el-button
             v-if="row.edit"
-            type="success"
-            :disabled="
-              ['待提交', '已处理', '删除', '驳回'].includes(row.operate)
-            "
+            type="primary"
+            :disabled="['待处理', '已处理', '删除'].includes(row.operate)"
             size="mini"
             icon="el-icon-circle-check-outline"
-            @click="serialAllocate(row.serial_number)"
-            >释放</el-button
-          >
-
-          <el-button
-            v-if="row.edit"
-            type="warning"
-            :disabled="
-              ['待提交', '已处理', '删除', '驳回'].includes(row.operate)
-            "
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            @click="serialReject(row.serial_number)"
-            >驳回</el-button
-          >
-
-          <el-button
-            v-if="row.edit"
-            type="danger"
-            :disabled="['删除', '已处理'].includes(row.operate)"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            @click="serialRemove(row.serial_number)"
-            >删除</el-button
+            @click="serialModify(row.serial_number)"
+            >提交信息</el-button
           >
         </template>
       </el-table-column>
@@ -226,11 +177,10 @@
 
 <script>
 // import { fetchList } from '@/api/article'
-import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c';
-import { exportCsv } from '@/utils/export-csv';
+import { getb2iserial, modify } from '@/api/b2i2c';
 
 export default {
-  name: 'serialReset',
+  name: 'serialModify',
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -277,46 +227,18 @@ export default {
       this.listLoading = false;
     },
 
-    async serialAllocate(serial) {
-      let operate = '已处理';
-      let operateTime = new Date().getTime();
-      try {
-        let result = await allocate(serial, { operate, operateTime });
-        await this.getList(
-          this.currentPage * parseInt(this.listQuery.limit),
-          this.listQuery.limit
-        );
-      } catch (error) {
-        return false;
-      }
-    },
-
-    async serialReject(serial) {
-      let operate = '驳回';
-      let operateTime = new Date().getTime();
-      try {
-        let result = await reject(serial, { operate, operateTime });
-        await this.getList(
-          this.currentPage * parseInt(this.listQuery.limit),
-          this.listQuery.limit
-        );
-      } catch (error) {
-        return false;
-      }
-    },
-
-    async serialRemove(serial) {
-      let operate = '删除';
-      let operateTime = new Date().getTime();
-      try {
-        let result = await remove(serial, { operate, operateTime });
-        await this.getList(
-          this.currentPage * parseInt(this.listQuery.limit),
-          this.listQuery.limit
-        );
-      } catch (error) {
-        return false;
-      }
+    async serialModify(serial) {
+      // let operate = '待处理';
+      // let operateTime = new Date().getTime();
+      // try {
+      //   let result = await modify(serial, { operate, operateTime });
+      //   await this.getList(
+      //     this.currentPage * parseInt(this.listQuery.limit),
+      //     this.listQuery.limit
+      //   );
+      // } catch (error) {
+      //   return false;
+      // }
     },
     async serialSearch() {
       if (!this.inputSerial || this.inputSerial.length !== 11) {
@@ -343,13 +265,6 @@ export default {
         (e) => e.serial_number === this.inputSerial
       );
       return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0]);
-
-      // let index = this.list.findIndex(e => e.serial_number === this.inputSerial)
-      // if (index === -1) {
-      //   this.$message({ message: '未查询到待销售号码信息', type: 'warning' })
-      //   return false
-      // }
-      // return this.list.splice(0, 0, this.list.splice(index, 1)[0])
     },
     getPrevPage(p) {},
     getNextPage(p) {},
@@ -371,34 +286,6 @@ export default {
     },
     sortByFee(a, b) {
       return a.fee - b.fee;
-    },
-    async exportFile() {
-      let { result = null } = await getb2iserial({
-        offset: 0,
-        limit: 10000,
-      });
-      exportCsv(result);
-      // let { result = undefined } = await getb2iserial({
-      //   offset: 0,
-      //   limit: 10000
-      // })
-
-      // let csvContent = 'data:text/csv;charset=utf-8,\uFEFF'
-      // const tableHeader =
-      //   '号码,套餐名称,营服名称,月租,联系电话,发展人,发展人手机号,操作时间,状态\n'
-      // let str = tableHeader
-      // result.map(e => {
-      //   str += `${e.serial_number},${e.product_name},${e.id_desc},${e.fee},${e.contact_phone},${e.dev_name},${e.dev_phone},${e.operate_time},${e.operate}\n`
-      // })
-      // str = encodeURIComponent(str)
-      // csvContent += str
-
-      // var link = document.createElement('a')
-      // link.setAttribute('href', csvContent)
-      // link.setAttribute('download', 'my_data.csv')
-      // document.body.appendChild(link) // Required for FF
-
-      // link.click()
     },
   },
 };

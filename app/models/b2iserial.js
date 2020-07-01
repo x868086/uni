@@ -1,71 +1,72 @@
-const { Sequelize, Model } = require('sequelize')
-const { sequelize } = require('../../core/db')
+const { Sequelize, Model } = require('sequelize');
+const { sequelize } = require('../../core/db');
 
-class B2iserialModel extends Model {
+class B2iserialModel extends Model {}
 
-}
-
-B2iserialModel.init({
+B2iserialModel.init(
+  {
     id: {
-        type: Sequelize.SMALLINT(),
-        unsigned: true,
-        autoIncrement: true,
-        primaryKey: true
+      type: Sequelize.SMALLINT(),
+      unsigned: true,
+      autoIncrement: true,
+      primaryKey: true,
     },
     serial_number: {
-        type: Sequelize.STRING(20),
-        unique: true,
-        allowNull: false
+      type: Sequelize.STRING(20),
+      unique: true,
+      allowNull: false,
     },
     product_name: {
-        type: Sequelize.STRING(32),
-        allowNull: false
+      type: Sequelize.STRING(32),
+      allowNull: false,
     },
     yf_code: {
-        type: Sequelize.STRING(64),
-        allowNull: true
+      type: Sequelize.STRING(64),
+      allowNull: true,
     },
     id_desc: {
-        type: Sequelize.STRING(128),
-        allowNull: true
+      type: Sequelize.STRING(128),
+      allowNull: true,
     },
     fee: {
-        type: Sequelize.TINYINT(),
-        allowNull: true
+      type: Sequelize.TINYINT(),
+      allowNull: true,
     },
     dev_name: {
-        type: Sequelize.STRING(128),
-        allowNull: true
+      type: Sequelize.STRING(128),
+      allowNull: true,
     },
     dev_phone: {
-        type: Sequelize.STRING(20),
-        allowNull: true
+      type: Sequelize.STRING(20),
+      allowNull: true,
     },
     contact_phone: {
-        type: Sequelize.STRING(20),
-        allowNull: true
+      type: Sequelize.STRING(20),
+      allowNull: true,
     },
     operate_time: {
-        type: Sequelize.STRING(64),
-        allowNull: true,
-        get() {
-            if (!this.getDataValue('operate_time')) {
-                return ''
-            }
-            const t = parseInt(this.getDataValue('operate_time'))
-            return new Date(t).toLocaleString()
+      type: Sequelize.STRING(64),
+      allowNull: true,
+      get() {
+        if (!this.getDataValue('operate_time')) {
+          return '';
         }
+        const t = parseInt(this.getDataValue('operate_time'));
+        return new Date(t).toLocaleString();
+      },
     },
     operate: {
-        type: Sequelize.STRING(20),
-        allowNull: true
-    }
-
-}, {
+      type: Sequelize.STRING(20),
+      defaultValue: '待提交',
+      allowNull: true,
+    },
+  },
+  {
     sequelize,
-    tableName: 'b2iserial'
-})
+    tableName: 'b2iserial',
+  }
+);
 
 module.exports = {
-    B2iserialModel
-}
+  B2iserialModel,
+};
