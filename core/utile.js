@@ -41,7 +41,7 @@ const decodedToken = async (token, apiScope) => {
         decoded = await jwt.verify(token, secret)
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            throw new global.errs.Unauthorized('token已过期')
+            throw new global.errs.Unauthorized('token已过期', 50000)
         }
         throw new global.errs.Unauthorized(error.message)
     }

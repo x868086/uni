@@ -15,14 +15,25 @@ const dbconfig = {
   dialect: 'mysql',
 };
 
+// const tokenSecurity = {
+//   secret:
+//     environment.env === 'development'
+//       ? 'NEYKR37jCFEH0o5tsbmxvemR7KQv3oZY0yAo'
+//       : 'dW5pY21zc3lzdGVtKioq',
+//   accessExpiresIn: environment.env === 'development' ? '8h' : '2h',
+//   refreshExpiresIn: '3 days',
+// };
+
+
 const tokenSecurity = {
   secret:
     environment.env === 'development'
       ? 'NEYKR37jCFEH0o5tsbmxvemR7KQv3oZY0yAo'
       : 'dW5pY21zc3lzdGVtKioq',
-  accessExpiresIn: environment.env === 'development' ? '8h' : '2h',
-  refreshExpiresIn: '3 days',
+  accessExpiresIn: environment.env === 'development' ? 10 : '2h',
+  refreshExpiresIn: '2h',
 };
+
 
 const smsExpireTime = {
   expire: 5 * 60 * 1000,

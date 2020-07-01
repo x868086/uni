@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getAccessToken } from '@/utils/auth'
+import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken } from '@/utils/auth'
 import { _encode } from './encode-token'
+import { tokenRefresh } from '../api/user'
 
 // create an axios instance
 const service = axios.create({
@@ -113,13 +114,29 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    let message = JSON.parse(error.request.response).msg
-    Message({
-      message: message,
-      type: 'error',
-      duration: 5 * 1000
-    })
-    return Promise.reject(error)
+
+    // accessToken过期后通过refreshToken拉取新的accessToken和refreshToken
+    if (error.request.status === 401 && JSON.parse(error.request.response).error_code === 50000) {
+      tokenRefresh(_encode(getRefreshToken())).then(response => {
+        let { accessToken = undefined, refreshToken = undefined } = response.data
+        setAccessToken(accessToken)
+        setRefreshToken(refreshToken)
+      }).catch(error => {
+        console.log(error)
+      })
+
+    } else {
+      let message = JSON.parse(error.request.response).msg
+      Message({
+        message: message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(error)
+    }
+
+
+
   }
 )
 

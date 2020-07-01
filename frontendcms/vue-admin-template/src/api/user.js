@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import axios from 'axios'
 
 // export function login(data) {
 //   return request({
@@ -39,3 +40,14 @@ export function getInfo(data) {
 //     method: 'post'
 //   })
 // }
+
+export function tokenRefresh(token) {
+  return axios.get(`${process.env.VUE_APP_BASE_API}/users/tokenrefresh`, {
+    headers: { Authorization: token }
+  }).then(res => {
+    return res
+  }).catch(error => {
+    return error
+  })
+}
+
