@@ -233,7 +233,7 @@ export const asyncRoutes = [
     redirect: '/market/classic',
     name: 'market',
     meta: {
-      roles: ['DepartmentSupervisor'],
+      roles: ['DepartmentSupervisor', 'DirectSeller'],
       title: '市场运营',
       icon: 'nested',
     },
@@ -242,7 +242,7 @@ export const asyncRoutes = [
         path: 'classic',
         component: () => import('@/views/market/classic/index'), // Parent router-view
         name: 'classic',
-        meta: { title: '存量经营' },
+        meta: { roles: ['DepartmentSupervisor'], title: '存量经营' },
         children: [
           {
             path: 'threshold-config',
@@ -262,20 +262,20 @@ export const asyncRoutes = [
         path: 'b2i2c',
         component: () => import('@/views/market/b2i2c/index'),
         name: 'b2i2c',
-        meta: { title: 'B2I2C运营' },
+        meta: { roles: ['DepartmentSupervisor', 'DirectSeller'], title: 'B2I2C运营' },
         alwaysShow: true,
         children: [
           {
             path: 'serial-reset',
             component: () => import('@/views/market/b2i2c/serial-reset'),
             name: 'serial-reset',
-            meta: { title: '号码回收调度' },
+            meta: { roles: ['DepartmentSupervisor'], title: '号码回收调度' },
           },
           {
             path: 'serial-modify',
             component: () => import('@/views/market/b2i2c/serial-modify'),
             name: 'serial-modify',
-            meta: { title: '号码释放申请' },
+            meta: { roles: ['DirectSeller'], title: '号码释放申请' },
           },
         ],
       },

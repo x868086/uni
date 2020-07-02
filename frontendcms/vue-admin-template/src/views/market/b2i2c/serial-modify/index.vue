@@ -312,7 +312,6 @@ export default {
             throw error
           }
         } else {
-          console.log('error submit!!')
           return false
         }
       })
