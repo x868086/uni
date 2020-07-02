@@ -135,7 +135,7 @@ class B2iserialModifyValidator extends B2iserialValidator {
   constructor() {
     super()
     this.devName = [
-      new Rule("isLength", "发展人名称不符合标识,最小3位字符，最大16位字符", { min: 3, max: 16 })
+      new Rule("isLength", "发展人名称不符合标识,最小3位字符，最大16位字符", { min: 2, max: 16 })
     ]
     this.devPhone = [
       new Rule("isLength", "发展人手机号码不符合规范,11位字符", { min: 11, max: 11 })

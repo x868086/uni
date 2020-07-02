@@ -33,7 +33,7 @@ router.post("/:serialnumber/modify", async (ctx, next) => {
         contactPhone: v2.get("body.contactPhone"),
         operate: v2.get("body.operate"),
         operateTime: v2.get("body.operateTime")
-    }).serialModify(['待处理', '已处理', '驳回', '删除'])
+    }).serialModify(['待处理', '已处理', '删除'])
 })
 
 router.post("/:serialnumber/allocate", async (ctx, next) => {
@@ -42,7 +42,7 @@ router.post("/:serialnumber/allocate", async (ctx, next) => {
         serialNumber: v1.get("path.serialnumber"),
         operate: v1.get("body.operate"),
         operateTime: v1.get("body.operateTime")
-    }).serialModify(['已处理', '驳回', '删除'])
+    }).serialModify(['待提交', '已处理', '驳回', '删除'])
 })
 
 router.post("/:serialnumber/reject", async (ctx, next) => {
@@ -51,7 +51,7 @@ router.post("/:serialnumber/reject", async (ctx, next) => {
         serialNumber: v1.get("path.serialnumber"),
         operate: v1.get("body.operate"),
         operateTime: v1.get("body.operateTime")
-    }).serialModify(['驳回', '删除'])
+    }).serialModify(['待提交', '已处理', '驳回', '删除'])
 })
 
 router.post("/:serialnumber/remove", async (ctx, next) => {
@@ -60,7 +60,7 @@ router.post("/:serialnumber/remove", async (ctx, next) => {
         serialNumber: v1.get("path.serialnumber"),
         operate: v1.get("body.operate"),
         operateTime: v1.get("body.operateTime")
-    }).serialModify(['删除'])
+    }).serialModify(['已处理', '删除'])
 })
 
 
