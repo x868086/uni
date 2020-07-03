@@ -235,7 +235,7 @@ export const asyncRoutes = [
     meta: {
       roles: ['DepartmentSupervisor', 'DirectSeller'],
       title: '市场运营',
-      icon: 'nested',
+      icon: 'el-icon-shopping-bag-2',
     },
     children: [
       {
@@ -276,10 +276,44 @@ export const asyncRoutes = [
             component: () => import('@/views/market/b2i2c/serial-modify'),
             name: 'serial-modify',
             meta: { roles: ['DirectSeller'], title: '号码释放申请' },
-          },
+          }
         ],
       },
     ],
+  },
+
+  {
+
+    path: '/market',
+    component: Layout,
+    redirect: '/market/classic',
+    name: 'market',
+    meta: {
+      roles: ['DepartmentSupervisor', 'DirectSeller'],
+      title: '市场运营',
+      icon: 'el-icon-shopping-bag-2',
+    },
+
+    path: '/upload',
+    component: Layout,
+    redirect: '/upload/upload-file',
+    name: 'upload',
+    alwaysShow: true,
+    meta: { roles: ['DepartmentSupervisor'], title: '上传导入', icon: 'el-icon-upload' },
+    children: [
+      {
+        path: 'upload-file',
+        component: () => import('@/views/upload/upload-file'),
+        name: 'upload-file',
+        meta: { roles: ['DepartmentSupervisor'], title: '文件上传' },
+      },
+      {
+        path: 'upload-db',
+        component: () => import('@/views/upload/upload-db'),
+        name: 'upload-db',
+        meta: { roles: ['DepartmentSupervisor'], title: '数据导入' },
+      }
+    ]
   },
 
   // 404 page must be placed at the end !!!
