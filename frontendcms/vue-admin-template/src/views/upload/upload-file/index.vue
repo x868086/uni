@@ -6,8 +6,9 @@
       :action="uploadUrl"
       :headers="uploadSetHeaders"
       :multiple="false"
-      :on-success="test2"
-      :on-error="test3"
+      :on-success="uploadSuccess"
+      :on-error="uploadError"
+      :before-upload="uploadValidate"
       name="file"
     >
       <i class="el-icon-upload"></i>
@@ -16,7 +17,7 @@
         <em>点击上传</em>
       </div>
       <div class="el-upload__tip" slot="tip">
-        只能上传xlsx/csv/docx文件，且不超过5Mb
+        只能上传.xls/.xlsx/.csv文件，且大小不超过10Mb
       </div>
     </el-upload>
 
@@ -25,32 +26,33 @@
       fit
       highlight-current-row
       style="width: 100%"
-      height="500"
+      min-height="500"
       class="upload-display"
+      :default-sort="{ prop: 'uploadTime', order: 'descending' }"
     >
-      <el-table-column prop="fileName" label="文件名" min-width="100">
+      <el-table-column prop="fileName" label="文件名" min-width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.fileName }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="fileSize" label="大小" width="90">
+      <el-table-column prop="fileSize" label="大小" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.fileSize }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="filePath" label="路径" min-width="180">
+      <el-table-column prop="filePath" label="路径" min-width="280">
         <template slot-scope="scope">
           <span>{{ scope.row.filePath }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="uploadTime" label="时间">
+      <el-table-column prop="uploadTime" min-width="150" label="时间">
         <template slot-scope="scope">
           <span>{{ scope.row.uploadTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="author" label="作者">
+      <el-table-column prop="operateAuthor" min-width="90" label="作者">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.operateAuthor }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="actions" label="执行" min-width="230">
@@ -59,7 +61,7 @@
             type="danger"
             size="mini"
             icon="el-icon-circle-check-outline"
-            @click.native="test(scope)"
+            @click.native="function() {}"
             >删除</el-button
           >
 
@@ -70,14 +72,6 @@
             @click="true"
             >导入</el-button
           >
-
-          <el-button
-            type="primary"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            @click="true"
-            >下载</el-button
-          >
         </template>
       </el-table-column>
     </el-table>
@@ -87,6 +81,7 @@
 <script>
 import { getAccessToken } from '@/utils/auth';
 import { _encode } from '@/utils/encode-token';
+import { getUploadFileList } from '@/api/thomas';
 
 export default {
   name: 'upload',
@@ -96,37 +91,50 @@ export default {
       uploadSetHeaders: {
         Authorization: _encode(getAccessToken()),
       },
-      tableData: [
-        {
-          fileName: '文件1',
-          fileSize: '11M',
-          filePath: 'http://127.0.0.1/temp/文件1.xlsx',
-          uploadTime: '2020-7-2 14:46:41',
-          author: 'json',
-          remark: 'abdef',
-        },
-        {
-          fileName: '文件2',
-          fileSize: '12M',
-          filePath: 'http://127.0.0.1/temp/文件2.xlsx',
-          uploadTime: '2020-7-2 14:46:41',
-          author: 'json',
-          remark: 'abdef',
-        },
-      ],
+      tableData: [],
     };
   },
+  created() {
+    this.getList();
+  },
   methods: {
-    test(value) {
-      console.log(value);
+    async getList() {
+      let result = await getUploadFileList();
+      this.tableData = this.tableData.concat(result);
     },
-    test2(res, file, filelise) {
-      console.log(res);
-      console.log(file);
-      console.log(filelise);
+    uploadValidate(file) {
+      let extension = file.name.split('.').slice(-1)[0];
+      let extensionReg = new RegExp('\(csv|xls|xlsx)$', 'g');
+      if (!extensionReg.test(extension)) {
+        this.$message({
+          message: `不支持上传 .${extension} 类型文件`,
+          type: 'error',
+        });
+        return false;
+      }
+      if (file.size > 10485760) {
+        this.$message({
+          message: `文件大小 ${(file.size / 1024 / 1024).toFixed(
+            2
+          )}MB 超出上限`,
+          type: 'error',
+        });
+        return false;
+      }
     },
-    test3(file) {
-      console.log(file);
+    uploadSuccess(res, file, filelise) {
+      location.reload();
+      this.$message({
+        message: `${res.fileName} 导入成功,文件大小${res.fileSize}`,
+        type: 'success',
+      });
+    },
+    uploadError(err, file) {
+      let message = JSON.parse(err['message'])['msg'];
+      this.$message({
+        message: `${message}`,
+        type: 'error',
+      });
     },
   },
 };
