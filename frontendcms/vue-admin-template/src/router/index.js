@@ -235,7 +235,7 @@ export const asyncRoutes = [
     meta: {
       roles: ['DepartmentSupervisor', 'DirectSeller'],
       title: '市场运营',
-      icon: 'nested',
+      icon: 'el-icon-shopping-bag-2',
     },
     children: [
       {
@@ -262,7 +262,10 @@ export const asyncRoutes = [
         path: 'b2i2c',
         component: () => import('@/views/market/b2i2c/index'),
         name: 'b2i2c',
-        meta: { roles: ['DepartmentSupervisor', 'DirectSeller'], title: 'B2I2C运营' },
+        meta: {
+          roles: ['DepartmentSupervisor', 'DirectSeller'],
+          title: 'B2I2C运营',
+        },
         alwaysShow: true,
         children: [
           {
@@ -278,6 +281,37 @@ export const asyncRoutes = [
             meta: { roles: ['DirectSeller'], title: '号码释放申请' },
           },
         ],
+      },
+    ],
+  },
+
+  {
+    path: '/market',
+    component: Layout,
+    redirect: '/market/classic',
+    name: 'market',
+    meta: {
+      roles: ['DepartmentSupervisor', 'DirectSeller'],
+      title: '市场运营',
+      icon: 'el-icon-shopping-bag-2',
+    },
+
+    path: '/upload',
+    component: Layout,
+    redirect: '/upload/upload-file',
+    name: 'upload',
+    alwaysShow: true,
+    meta: {
+      roles: ['DepartmentSupervisor'],
+      title: '上传导入',
+      icon: 'el-icon-upload',
+    },
+    children: [
+      {
+        path: 'upload-file',
+        component: () => import('@/views/upload/upload-file'),
+        name: 'upload-file',
+        meta: { roles: ['DepartmentSupervisor'], title: '文件上传' },
       },
     ],
   },

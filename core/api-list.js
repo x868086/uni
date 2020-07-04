@@ -35,6 +35,9 @@ const apiList = [
     { requestRegexp: /\/v1\/threshold\/enable/, apiScope: 48 },
     { requestRegexp: /\/v1\/threshold\/remove/, apiScope: 48 },
 
+    //actions
+    { requestRegexp: /\/v1\/thomas\/uploadfile/, apiScope: 48 },
+
 ]
 
 const whiteList = [
