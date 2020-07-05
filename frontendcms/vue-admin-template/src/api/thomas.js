@@ -8,6 +8,14 @@ export function getUploadFileList() {
   });
 }
 
+export function removeFile(data) {
+  return request({
+    url: '/thomas/removefile',
+    method: 'post',
+    data,
+  });
+}
+
 // export function getb2iserial({ offset = 0, limit = 5 }) {
 //   return request({
 //     url: '/b2iserial/list',

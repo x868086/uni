@@ -15,6 +15,14 @@ router.get('/getlist', async (ctx, next) => {
   ctx.body = result;
 });
 
+router.post('/removefile', async (ctx, next) => {
+  let { fileName } = ctx.request.body;
+  let result = await new ThomasService({
+    originalname: fileName,
+  }).removeFile();
+  throw new global.errs.Success(`${fileName} 文件已成功删除`, 0, 202);
+});
+
 router.post('/uploadfile', upload.single('file'), async (ctx, next) => {
   let { userId = undefined } = ctx.auth;
   let { nick_name = undefined } = await UserModel.findOne({

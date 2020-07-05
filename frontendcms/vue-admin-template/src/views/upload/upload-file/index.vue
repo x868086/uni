@@ -61,7 +61,7 @@
             type="danger"
             size="mini"
             icon="el-icon-circle-check-outline"
-            @click.native="function() {}"
+            @click.native="removeFile(scope.row.fileName)"
             >删除</el-button
           >
 
@@ -81,7 +81,7 @@
 <script>
 import { getAccessToken } from '@/utils/auth';
 import { _encode } from '@/utils/encode-token';
-import { getUploadFileList } from '@/api/thomas';
+import { getUploadFileList, removeFile } from '@/api/thomas';
 
 export default {
   name: 'upload',
@@ -101,6 +101,13 @@ export default {
     async getList() {
       let result = await getUploadFileList();
       this.tableData = this.tableData.concat(result);
+    },
+    async removeFile(fileName) {
+      await removeFile({ fileName: fileName });
+      let t = setTimeout(() => {
+        location.reload();
+        clearTimeout(t);
+      }, 2000);
     },
     uploadValidate(file) {
       let extension = file.name.split('.').slice(-1)[0];

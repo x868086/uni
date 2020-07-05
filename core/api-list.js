@@ -38,6 +38,7 @@ const apiList = [
   //actions
   { requestRegexp: /\/v1\/thomas\/uploadfile/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/getlist/, apiScope: 48 },
+  { requestRegexp: /\/v1\/thomas\/removefile/, apiScope: 48 },
 ];
 
 const whiteList = [

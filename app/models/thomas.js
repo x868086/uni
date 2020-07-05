@@ -15,7 +15,6 @@ ThomasModel.init(
 
     file_name: {
       type: Sequelize.STRING(128),
-      unique: true,
       allowNull: false,
     },
     file_size: {
@@ -28,7 +27,6 @@ ThomasModel.init(
     },
     file_path: {
       type: Sequelize.STRING(128),
-      unique: true,
       allowNull: false,
     },
     upload_time: {

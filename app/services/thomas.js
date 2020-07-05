@@ -45,6 +45,27 @@ class ThomasService {
     return result;
   }
 
+  async removeFile() {
+    let file = await ThomasModel.findOne({
+      where: {
+        file_name: this.originalname,
+      },
+    });
+    if (!file) {
+      throw new global.errs.Forbidden('文件不存在,或已删除');
+    }
+    try {
+      let result = await ThomasModel.destroy({
+        where: {
+          file_name: this.originalname,
+        },
+      });
+      return result;
+    } catch (error) {
+      throw new global.errs.HttpException(`${error.message} 删除文件失败`);
+    }
+  }
+
   async writeFileStream() {
     const fileWrite = fs.createWriteStream(this.filePath, {
       encoding: 'utf-8', // 编码格式
@@ -73,26 +94,26 @@ class ThomasService {
     });
   }
 
-  async readFileStream() {
-    const fileRead = fs.createReadStream(this.filePath, {
-      encoding: 'utf-8', // 编码格式
-      autoClose: true, // 是否关闭读取文件操作系统内部使用的文件描述符
-      start: 0, // 开始读取的位置
-      highWaterMark: 1, // 每次读取的个数
-    });
-    let data = '';
-    fileRead.on('data', function (chunk) {
-      data += chunk;
-    });
+  // async readFileStream() {
+  //   const fileRead = fs.createReadStream(this.filePath, {
+  //     encoding: 'utf-8', // 编码格式
+  //     autoClose: true, // 是否关闭读取文件操作系统内部使用的文件描述符
+  //     start: 0, // 开始读取的位置
+  //     highWaterMark: 1, // 每次读取的个数
+  //   });
+  //   let data = '';
+  //   fileRead.on('data', function (chunk) {
+  //     data += chunk;
+  //   });
 
-    fileRead.on('end', function () {
-      console.log(data);
-    });
+  //   fileRead.on('end', function () {
+  //     console.log(data);
+  //   });
 
-    fileRead.on('error', function (err) {
-      console.log(err.stack);
-    });
-  }
+  //   fileRead.on('error', function (err) {
+  //     console.log(err.stack);
+  //   });
+  // }
 
   async createFileInfo() {
     let file = await ThomasModel.findOne({
