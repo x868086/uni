@@ -14,7 +14,7 @@
       suffix-icon="el-icon-search"
       class="serial-search"
       @blur="serialSearch"
-    ></el-input>
+    />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -30,7 +30,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="110px" align="center" prop="serial_number" label="号码" fixed>
+      <el-table-column
+        min-width="110px"
+        align="center"
+        prop="serial_number"
+        label="号码"
+        fixed
+      >
         <template slot-scope="{ row }">
           <span>{{ row.serial_number }}</span>
         </template>
@@ -48,7 +54,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="120px" align="center" label="营服名称" prop="id_desc">
+      <el-table-column
+        min-width="120px"
+        align="center"
+        label="营服名称"
+        prop="id_desc"
+      >
         <template slot-scope="{ row }">
           <!-- <svg-icon
             v-for="n in + row.importance"
@@ -201,11 +212,11 @@
       background
       :page-size="listQuery.limit"
       :total="listLength"
+      class="serial-pagination"
       @prev-click="getPrevPage"
       @next-click="getNextPage"
       @current-change="getCurrentPage"
-      class="serial-pagination"
-    ></el-pagination>
+    />
   </div>
 </template>
 
@@ -215,7 +226,7 @@ import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c'
 import { exportCsv } from '@/utils/export-csv'
 
 export default {
-  name: 'serialReset',
+  name: 'SerialReset',
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -263,10 +274,10 @@ export default {
     },
 
     async serialAllocate(serial) {
-      let operate = '已处理'
-      let operateTime = new Date().getTime()
+      const operate = '已处理'
+      const operateTime = new Date().getTime()
       try {
-        let result = await allocate(serial, { operate, operateTime })
+        await allocate(serial, { operate, operateTime })
         await this.getList(
           this.currentPage * parseInt(this.listQuery.limit),
           this.listQuery.limit
@@ -277,10 +288,10 @@ export default {
     },
 
     async serialReject(serial) {
-      let operate = '驳回'
-      let operateTime = new Date().getTime()
+      const operate = '驳回'
+      const operateTime = new Date().getTime()
       try {
-        let result = await reject(serial, { operate, operateTime })
+        await reject(serial, { operate, operateTime })
         await this.getList(
           this.currentPage * parseInt(this.listQuery.limit),
           this.listQuery.limit
@@ -291,10 +302,10 @@ export default {
     },
 
     async serialRemove(serial) {
-      let operate = '删除'
-      let operateTime = new Date().getTime()
+      const operate = '删除'
+      const operateTime = new Date().getTime()
       try {
-        let result = await remove(serial, { operate, operateTime })
+        await remove(serial, { operate, operateTime })
         await this.getList(
           this.currentPage * parseInt(this.listQuery.limit),
           this.listQuery.limit
@@ -307,13 +318,13 @@ export default {
       if (!this.inputSerial || this.inputSerial.length !== 11) {
         return false
       }
-      const { result = null, total = undefined } = await getb2iserial({
+      const { result = null } = await getb2iserial({
         offset: 0,
         limit: 10000
       })
 
-      let remoteIndex = result.findIndex(
-        e => e.serial_number === this.inputSerial
+      const remoteIndex = result.findIndex(
+        (e) => e.serial_number === this.inputSerial
       )
 
       if (remoteIndex === -1) {
@@ -321,11 +332,11 @@ export default {
         return false
       }
 
-      let pageNumber = remoteIndex / this.listQuery.limit
+      const pageNumber = remoteIndex / this.listQuery.limit
       await this.getCurrentPage(pageNumber + 1)
 
-      let localIndex = this.list.findIndex(
-        e => e.serial_number === this.inputSerial
+      const localIndex = this.list.findIndex(
+        (e) => e.serial_number === this.inputSerial
       )
       return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0])
 
@@ -351,14 +362,11 @@ export default {
     sortByOperateAction(a, b) {
       return a.operate - b.operate
     },
-    sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
-    },
     sortByFee(a, b) {
       return a.fee - b.fee
     },
     async exportFile() {
-      let { result = null } = await getb2iserial({
+      const { result = null } = await getb2iserial({
         offset: 0,
         limit: 10000
       })

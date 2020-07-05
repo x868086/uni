@@ -13,11 +13,9 @@ export function getAccessToken() {
   return Cookies.get(accessToken)
 }
 
-
 export function getRefreshToken() {
   return Cookies.get(refreshToken)
 }
-
 
 // export function setToken(token) {
 //   return Cookies.set(TokenKey, token)

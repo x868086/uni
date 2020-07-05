@@ -79,9 +79,8 @@ const actions = {
           reject('登录过程出错,请重新登录.')
         }
 
-
         // 用户昵称截取最后一位字符，在前端用圆形元素内嵌名字最后一位字符实现
-        let avatar = nick_name.substr(-1)
+        const avatar = nick_name.substr(-1)
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -113,7 +112,6 @@ const actions = {
       // }).catch(error => {
       //   reject(error)
       // })
-
 
       removeToken() // must remove  token  first
       resetRouter()

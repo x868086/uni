@@ -7,7 +7,7 @@
       suffix-icon="el-icon-search"
       class="serial-search"
       @blur="serialSearch"
-    ></el-input>
+    />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -23,7 +23,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="110px" align="center" prop="serial_number" label="号码" fixed>
+      <el-table-column
+        min-width="110px"
+        align="center"
+        prop="serial_number"
+        label="号码"
+        fixed
+      >
         <template slot-scope="{ row }">
           <span>{{ row.serial_number }}</span>
         </template>
@@ -41,7 +47,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="120px" align="center" label="营服名称" prop="id_desc">
+      <el-table-column
+        min-width="120px"
+        align="center"
+        label="营服名称"
+        prop="id_desc"
+      >
         <template slot-scope="{ row }">
           <!-- <svg-icon
             v-for="n in + row.importance"
@@ -151,23 +162,42 @@
     </el-table>
 
     <el-dialog title="二次销售信息" :visible.sync="dialogFormVisible">
-      <el-form :model="form" status-icon :rules="rules" ref="ruleForm">
-        <el-form-item label="二次销售号码" :label-width="formLabelWidth" prop="serial">
-          <el-input v-model="form.serial" autocomplete="off" :disabled="true"></el-input>
+      <el-form ref="ruleForm" :model="form" status-icon :rules="rules">
+        <el-form-item
+          label="二次销售号码"
+          :label-width="formLabelWidth"
+          prop="serial"
+        >
+          <el-input v-model="form.serial" autocomplete="off" :disabled="true" />
         </el-form-item>
-        <el-form-item label="发展人" :label-width="formLabelWidth" prop="devName">
-          <el-input v-model="form.devName" autocomplete="off"></el-input>
+        <el-form-item
+          label="发展人"
+          :label-width="formLabelWidth"
+          prop="devName"
+        >
+          <el-input v-model="form.devName" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="发展人手机号" :label-width="formLabelWidth" prop="devPhone">
-          <el-input v-model="form.devPhone" autocomplete="off"></el-input>
+        <el-form-item
+          label="发展人手机号"
+          :label-width="formLabelWidth"
+          prop="devPhone"
+        >
+          <el-input v-model="form.devPhone" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="用户联系电话" :label-width="formLabelWidth" prop="contactPhone">
-          <el-input v-model="form.contactPhone" autocomplete="off"></el-input>
+        <el-form-item
+          label="用户联系电话"
+          :label-width="formLabelWidth"
+          prop="contactPhone"
+        >
+          <el-input v-model="form.contactPhone" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取 消</el-button>
-        <el-button type="primary" @click.prevent="submitForm('ruleForm')">确 定</el-button>
+        <el-button
+          type="primary"
+          @click.prevent="submitForm('ruleForm')"
+        >确 定</el-button>
       </div>
     </el-dialog>
 
@@ -176,11 +206,11 @@
       background
       :page-size="listQuery.limit"
       :total="listLength"
+      class="serial-pagination"
       @prev-click="getPrevPage"
       @next-click="getNextPage"
       @current-change="getCurrentPage"
-      class="serial-pagination"
-    ></el-pagination>
+    />
   </div>
 </template>
 
@@ -190,7 +220,7 @@ import { getb2iserial, modify } from '@/api/b2i2c'
 import { isPhone, isChinesStr } from '@/utils/validate'
 
 export default {
-  name: 'serialModify',
+  name: 'SerialModify',
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -202,7 +232,7 @@ export default {
     }
   },
   data() {
-    let validateDevName = (rule, value, callback) => {
+    const validateDevName = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入发展人名称'))
       } else if (!isChinesStr(value)) {
@@ -210,7 +240,7 @@ export default {
       }
       callback()
     }
-    let validateDevPhone = (rule, value, callback) => {
+    const validateDevPhone = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入手机号码'))
       } else {
@@ -220,7 +250,7 @@ export default {
         callback()
       }
     }
-    let validateContactPhone = (rule, value, callback) => {
+    const validateContactPhone = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入联系方式'))
       } else {
@@ -291,12 +321,12 @@ export default {
       this.listLoading = false
     },
     submitForm(formName) {
-      this.$refs[formName].validate(async (valid, v2) => {
+      this.$refs[formName].validate(async(valid, v2) => {
         if (valid) {
-          let operate = '待处理'
-          let operateTime = new Date().getTime()
           try {
-            let result = await modify(this.form.serial, {
+            const operate = '待处理'
+            const operateTime = new Date().getTime()
+            await modify(this.form.serial, {
               devName: this.form.devName,
               devPhone: this.form.devPhone,
               contactPhone: this.form.contactPhone,
@@ -338,13 +368,13 @@ export default {
       if (!this.inputSerial || this.inputSerial.length !== 11) {
         return false
       }
-      const { result = null, total = undefined } = await getb2iserial({
+      const { result = null } = await getb2iserial({
         offset: 0,
         limit: 10000
       })
 
-      let remoteIndex = result.findIndex(
-        e => e.serial_number === this.inputSerial
+      const remoteIndex = result.findIndex(
+        (e) => e.serial_number === this.inputSerial
       )
 
       if (remoteIndex === -1) {
@@ -352,11 +382,11 @@ export default {
         return false
       }
 
-      let pageNumber = remoteIndex / this.listQuery.limit
+      const pageNumber = remoteIndex / this.listQuery.limit
       await this.getCurrentPage(pageNumber + 1)
 
-      let localIndex = this.list.findIndex(
-        e => e.serial_number === this.inputSerial
+      const localIndex = this.list.findIndex(
+        (e) => e.serial_number === this.inputSerial
       )
       return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0])
     },
@@ -374,9 +404,6 @@ export default {
     },
     sortByOperateAction(a, b) {
       return a.operate - b.operate
-    },
-    sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
     },
     sortByFee(a, b) {
       return a.fee - b.fee
