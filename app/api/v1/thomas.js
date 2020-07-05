@@ -23,6 +23,13 @@ router.post('/removefile', async (ctx, next) => {
   throw new global.errs.Success(`${fileName} 文件已成功删除`, 0, 202);
 });
 
+router.post('/rollingrow', async (ctx, next) => {
+  let { filePath } = ctx.request.body;
+  let result = await new ThomasService({
+    originalname: filePath,
+  }).rollingRow();
+});
+
 router.post('/uploadfile', upload.single('file'), async (ctx, next) => {
   let { userId = undefined } = ctx.auth;
   let { nick_name = undefined } = await UserModel.findOne({
