@@ -1,7 +1,7 @@
-let XLSX = require('xlsx');
 const fs = require('fs');
 const ExcelJS = require('exceljs');
 
+// XLSX 库(必须要将文件的编码类型转成UTF8格式才能使用)
 // let getHeaderRow = (sheet) => {
 //   const headers = [];
 //   const range = XLSX.utils.decode_range(sheet['!ref']);
@@ -27,69 +27,62 @@ const ExcelJS = require('exceljs');
 //   // const results = XLSX.utils.sheet_to_json(worksheet);
 // }
 
+let dataField = {
+  b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
+};
 
-let xlsxToJson = async (filePath) => {
-  // let buf = fs.readFileSync(filePath);
-  // let workBook = XLSX.read(buf, { type: 'buffer' });
-  // const firstSheetName = workBook.SheetNames[0];
-  // const worksheet = workBook.Sheets[firstSheetName];
-  // const results = XLSX.utils.sheet_to_json(worksheet);
-
-
-
-  let getHeaderRow = (row) => {
-    return JSON.stringify(row.values)
+let equalField = (fields, modelName) => {
+  if (!dataField[modelName]) {
+    throw new global.errs.ParametersException(
+      '未找到对应的数据表,请重选择正确的数据表!'
+    );
   }
+  fields.shift();
 
-  // const workbook = new ExcelJS.Workbook();
-  // let workBookFile = await workbook.xlsx.readFile(filePath);
+  return fields.toString() === dataField[modelName].toString() ? true : false;
+};
 
-  // // 按 id 提取工作表
-  // const sheet = workBookFile.getWorksheet(1);
-  // const firstRow = sheet.getRow(1);
-  // let sheetHeader = getHeaderRow(firstRow)
-  // console.log(`开始 ${new Date().toLocaleTimeString()}`)
-
-  // sheet.eachRow(function (row, rowNumber) {
-  //     console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values));
-  //   });
-
-  // console.log(`结束 ${new Date().toLocaleTimeString()}`)
-
-  // const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath);
-
-  // for await (const worksheetReader of workbookReader) {
-  //   for await (const row of worksheetReader) {
-  //     console.log(JSON.stringify(row.values))
-  //   }
-  // }
-
+let xlsxToJson = async (filePath, modelName) => {
   const workbook = new ExcelJS.Workbook();
-  let workBookFile = await workbook.xlsx.readFile(filePath);
+  let workBookFile = null;
+  try {
+    workBookFile = await workbook.xlsx.readFile(filePath);
+  } catch (error) {
+    throw new global.errs.ParametersException(
+      `${error.message} 未找到对应的上传文件!`
+    );
+  }
 
   // 按 id 提取工作表
   const sheet = workBookFile.getWorksheet(1);
   const firstRow = sheet.getRow(1);
-  let sheetHeader = getHeaderRow(firstRow)
+  let sheetHeader = firstRow.values;
+
+  // 判断导入表的字段是否与数据model字段一致，不一致直接抛出错误终止程序
+  if (!equalField(sheetHeader, modelName)) {
+    throw new global.errs.ParametersException(
+      '导入文件字段与数据库字段不匹配,请检查导入文件是否符合规范!'
+    );
+  }
 
   const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath);
 
-  let rollingArray = []
-  let str = sheetHeader.replace('[', '').replace(']', '').split(',')
+  let rollingArray = [];
 
   for await (const worksheetReader of workbookReader) {
     for await (const row of worksheetReader) {
-      console.log(row.values)
-      row.values.forEach((e, index) => {
-        let obj = {
-          str[i]: e
-        }
-        rollingArray.push(obj)
-      })
+      // console.log(row.values);
+      let obj = {};
+      sheetHeader.map((e, i) => {
+        // Object.assign(obj, { e: row.values[i] });
+        Object.assign(obj, { [e.toLowerCase()]: row.values[i] });
+        // console.log(obj);
+      });
+      rollingArray.push(obj);
     }
   }
-
-
+  rollingArray.shift();
+  return rollingArray;
 };
 
 module.exports = {

@@ -16,6 +16,7 @@ class ThomasService {
     uploadTime = '',
     operateAuthor = '',
     filePath = '',
+    modelName = '',
   }) {
     this.buffer = buffer;
     this.path = path;
@@ -24,6 +25,7 @@ class ThomasService {
     this.uploadTime = uploadTime;
     this.operateAuthor = operateAuthor;
     this.filePath = `${this.path}\\${this.originalname}`;
+    this.modelName = modelName;
   }
 
   async getList() {
@@ -69,7 +71,16 @@ class ThomasService {
   }
 
   async rollingRow() {
-    let result = await xlsxToJson(this.filePath);
+    let file = await ThomasModel.findOne({
+      where: {
+        file_path: this.filePath,
+      },
+    });
+    if (!file) {
+      throw new global.errs.ParametersException('未找到对应的上传文件!');
+    }
+    let ObjectArray = await xlsxToJson(this.filePath, this.modelName);
+    console.log(ObjectArray);
   }
 
   async writeFileStream() {

@@ -24,9 +24,10 @@ router.post('/removefile', async (ctx, next) => {
 });
 
 router.post('/rollingrow', async (ctx, next) => {
-  let { filePath } = ctx.request.body;
+  let { filePath, modelName } = ctx.request.body;
   let result = await new ThomasService({
     originalname: filePath,
+    modelName: modelName,
   }).rollingRow();
 });
 
