@@ -69,7 +69,7 @@ class ThomasService {
   }
 
   async rollingRow() {
-    let result = xlsxToJson(this.filePath);
+    let result = await xlsxToJson(this.filePath);
   }
 
   async writeFileStream() {
