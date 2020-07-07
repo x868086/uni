@@ -5,6 +5,7 @@ const uploadPath = path.join(process.cwd(), '/temp/uploadfile');
 
 let { ThomasModel } = require('../models/thomas');
 let { B2iserialModel } = require('../models/b2iserial')
+let { SpecialSerialModel } = require('../models/special-serial')
 const {
   sequelize
 } = require("../../core/db")
@@ -86,17 +87,26 @@ class ThomasService {
     // 获取xlsxtojson函数转换xlsx文件每行数据生成的的objArray和目标数据表的fields数组
     let { rollingArray, fields } = await xlsxToJson(this.filePath, this.modelName);
 
+    // 有导入需求的所有Model
+    let modelTarget = () => {
+      return {
+        b2iserial: B2iserialModel,
+        specialserial: SpecialSerialModel
+      }
+    }
+
     return sequelize.transaction(async (t) => {
       let result = null
       try {
-        await B2iserialModel.destroy({
+        // 这里的model是根据前端传入的model待确定调用哪个业务的Model对象
+        await modelTarget()[this.modelName].destroy({
           truncate: true,
           force: true,
           transaction: t
         })
-        result = await B2iserialModel.bulkCreate(rollingArray, {
+        result = await modelTarget()[this.modelName].bulkCreate(rollingArray, {
           fields: fields,
-          ignoreDuplicates: true,
+          // ignoreDuplicates: true,
           transaction: t
         })
       } catch (error) {

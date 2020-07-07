@@ -281,6 +281,25 @@ export const asyncRoutes = [
             meta: { roles: ['DirectSeller'], title: '号码释放申请' }
           }
         ]
+      },
+
+      {
+        path: 'middleplatform',
+        component: () => import('@/views/market/middleplatform'),
+        name: 'middleplatform',
+        meta: {
+          roles: ['DepartmentSupervisor', 'StoreManager'],
+          title: '中台运营'
+        },
+        alwaysShow: true,
+        children: [
+          {
+            path: 'special-serial',
+            component: () => import('@/views/market/middleplatform/special-serial'),
+            name: 'special-serial',
+            meta: { roles: ['DepartmentSupervisor', 'StoreManager'], title: '靓号协议' }
+          }
+        ]
       }
     ]
   },
