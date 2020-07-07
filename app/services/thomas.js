@@ -4,6 +4,10 @@ const path = require('path');
 const uploadPath = path.join(process.cwd(), '/temp/uploadfile');
 
 let { ThomasModel } = require('../models/thomas');
+let { B2iserialModel } = require('../models/b2iserial')
+const {
+  sequelize
+} = require("../../core/db")
 
 let { xlsxToJson } = require('../services/xlsxtojson');
 
@@ -79,8 +83,29 @@ class ThomasService {
     if (!file) {
       throw new global.errs.ParametersException('未找到对应的上传文件!');
     }
-    let ObjectArray = await xlsxToJson(this.filePath, this.modelName);
-    console.log(ObjectArray);
+    // 获取xlsxtojson函数转换xlsx文件每行数据生成的的objArray和目标数据表的fields数组
+    let { rollingArray, fields } = await xlsxToJson(this.filePath, this.modelName);
+
+    return sequelize.transaction(async (t) => {
+      let result = null
+      try {
+        await B2iserialModel.destroy({
+          truncate: true,
+          force: true,
+          transaction: t
+        })
+        result = await B2iserialModel.bulkCreate(rollingArray, {
+          fields: fields,
+          ignoreDuplicates: true,
+          transaction: t
+        })
+      } catch (error) {
+        throw new global.errs.HttpException(`${error.message} 导入数据错误`)
+      }
+      throw new global.errs.Success(`成功导入 ${result.length} 条记录`)
+    })
+
+
   }
 
   async writeFileStream() {

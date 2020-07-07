@@ -27,19 +27,24 @@ const ExcelJS = require('exceljs');
 //   // const results = XLSX.utils.sheet_to_json(worksheet);
 // }
 
-let dataField = {
-  b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
-};
+// let insertFields = {
+//   b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
+// };
+let insertFields = () => {
+  return {
+    b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee']
+  }
+}
 
 let equalField = (fields, modelName) => {
-  if (!dataField[modelName]) {
+  if (!insertFields()[modelName]) {
     throw new global.errs.ParametersException(
       '未找到对应的数据表,请重选择正确的数据表!'
     );
   }
   fields.shift();
 
-  return fields.toString() === dataField[modelName].toString() ? true : false;
+  return fields.toString() === insertFields()[modelName].toString() ? true : false;
 };
 
 let xlsxToJson = async (filePath, modelName) => {
@@ -75,14 +80,15 @@ let xlsxToJson = async (filePath, modelName) => {
       let obj = {};
       sheetHeader.map((e, i) => {
         // Object.assign(obj, { e: row.values[i] });
-        Object.assign(obj, { [e.toLowerCase()]: row.values[i] });
+        Object.assign(obj, { [e.toLowerCase()]: row.values[i + 1] });
         // console.log(obj);
       });
       rollingArray.push(obj);
     }
   }
   rollingArray.shift();
-  return rollingArray;
+  //返回由xlsx row转换的objArray,和数据表的字段名称
+  return { rollingArray, fields: insertFields()[modelName] };
 };
 
 module.exports = {
