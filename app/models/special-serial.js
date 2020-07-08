@@ -23,7 +23,7 @@ SpecialSerialModel.init({
         type: Sequelize.STRING(12),
         allowNull: false
     },
-    role_value: {
+    rule_value: {
         type: Sequelize.SMALLINT(12),
         allowNull: false
     },

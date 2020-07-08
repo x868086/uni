@@ -283,23 +283,43 @@ export const asyncRoutes = [
         ]
       },
 
+      // {
+      //   path: 'middleplatform',
+      //   component: () => import('@/views/market/middleplatform'),
+      //   name: 'middleplatform',
+      //   meta: {
+      //     roles: ['DepartmentSupervisor', 'StoreManager'],
+      //     title: '中台运营'
+      //   },
+      //   alwaysShow: true,
+      //   children: [
+      //     {
+      //       path: 'special-serial',
+      //       component: () => import('@/views/market/middleplatform/special-serial'),
+      //       name: 'special-serial',
+      //       meta: { roles: ['DepartmentSupervisor', 'StoreManager'], title: '靓号协议' }
+      //     }
+      //   ]
+      // }
+    ]
+  },
+  {
+    path: '/middleplatform',
+    component: Layout,
+    redirect: '/middleplatform/special-serial',
+    name: 'middleplatform',
+    alwaysShow: true,
+    meta: {
+      roles: ['DepartmentSupervisor', 'StoreManager'],
+      title: '中台运营',
+      icon: 'el-icon-monitor'
+    },
+    children: [
       {
-        path: 'middleplatform',
-        component: () => import('@/views/market/middleplatform'),
-        name: 'middleplatform',
-        meta: {
-          roles: ['DepartmentSupervisor', 'StoreManager'],
-          title: '中台运营'
-        },
-        alwaysShow: true,
-        children: [
-          {
-            path: 'special-serial',
-            component: () => import('@/views/market/middleplatform/special-serial'),
-            name: 'special-serial',
-            meta: { roles: ['DepartmentSupervisor', 'StoreManager'], title: '靓号协议' }
-          }
-        ]
+        path: 'special-serial',
+        component: () => import('@/views/market/middleplatform/special-serial'),
+        name: 'special-serial',
+        meta: { roles: ['DepartmentSupervisor', 'StoreManager'], title: '靓号协议' }
       }
     ]
   },

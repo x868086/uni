@@ -1,13 +1,9 @@
 import request from '@/utils/request';
 
 
-export function getSpecialSearialList({ offset, limit }) {
+export function serialSearch(serial) {
     return request({
-        url: '/middleplatform/specialserial-list',
-        method: 'get',
-        params: {
-            offset,
-            limit
-        }
+        url: `/middleplatform/${serial}/specialserial-search/`,
+        method: 'get'
     });
 }
