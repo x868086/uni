@@ -23,7 +23,15 @@ class SpecialSerialService {
                 end_date: e.end_date,
             };
         });
-        return result
+        let total = await SpecialSerialModel.findAndCountAll({
+            paranoid: false,
+        });
+        return {
+            offset: offset,
+            limit: limit,
+            total: total.count,
+            result,
+        };
     }
 }
 

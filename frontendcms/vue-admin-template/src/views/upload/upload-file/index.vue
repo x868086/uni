@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import NProgress from 'nprogress'
 import { getAccessToken } from '@/utils/auth'
 import { _encode } from '@/utils/encode-token'
 import { getUploadFileList, removeFile, rollingFile } from '@/api/thomas'
@@ -160,7 +161,9 @@ export default {
       this.modelName = command
     },
     async rollingRow(fileName) {
+      NProgress.start()
       await rollingFile({ filePath: fileName, modelName: this.modelName })
+      NProgress.done()
     }
   }
 }

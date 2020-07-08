@@ -54,10 +54,12 @@
         min-width="90"
         prop="fee"
         :sortable="true"
-        :sort-method="sortByFee"
+        :sort-method="sortByDate"
       >
         <template slot-scope="{ row }">
-          <span>{{ row.end_date }}</span>
+          <el-tag :type="isendDate(row.end_date)">
+            <span>{{ row.end_date }}</span>
+          </el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -77,43 +79,18 @@
 
 <script>
 // import { fetchList } from '@/api/article'
-import { getb2iserial, allocate, reject, remove } from '@/api/b2i2c'
+import { getSpecialSearialList } from '@/api/middleplatform'
 import { exportCsv } from '@/utils/export-csv'
 
 export default {
   name: 'SpecialSerial',
   data() {
     return {
-      list: [
-        {
-          serial_number: '15629335566',
-          in_date: '2014/1/6',
-          role_value: '50',
-          end_date: '2019/01/30'
-        },
-        {
-          serial_number: '15629335566',
-          in_date: '2014/1/6',
-          role_value: '50',
-          end_date: '2019/01/30'
-        },
-        {
-          serial_number: '15629335566',
-          in_date: '2014/1/6',
-          role_value: '50',
-          end_date: '2019/01/30'
-        },
-        {
-          serial_number: '15629335566',
-          in_date: '2014/1/6',
-          role_value: '50',
-          end_date: '2019/01/30'
-        }
-      ],
+      list: null,
       listLoading: true,
       listQuery: {
         offset: 0,
-        limit: 10
+        limit: 200
       },
       inputSerial: null,
       listLength: 0,
@@ -128,18 +105,12 @@ export default {
       this.listLoading = true
       // const { data = undefined } = await fetchList(this.listQuery)
 
-      const { result = null, total = undefined } = await getb2iserial({
+      const { result = null, total = undefined } = await getSpecialSearialList({
         offset: offset,
         limit: limit
       })
       this.listLength = total
-      const items = result
-      //   this.list = items.map((v, i) => {
-      //     this.$set(v, 'edit', v.operate) // https://vuejs.org/v2/guide/reactivity.html
-      //     this.$set(v, 'id', i)
-      //     // v.originalTitle = v.title //  will be used when user click the cancel botton
-      //     return v
-      //   })
+      this.list = result
       this.listLoading = false
     },
 
@@ -147,9 +118,9 @@ export default {
       if (!this.inputSerial || this.inputSerial.length !== 11) {
         return false
       }
-      const { result = null } = await getb2iserial({
+      const { result = null } = await getSpecialSearialList({
         offset: 0,
-        limit: 10000
+        limit: 100000
       })
 
       const remoteIndex = result.findIndex(
@@ -178,14 +149,28 @@ export default {
       )
       this.currentPage = parseInt(p - 1)
     },
-    sortByOperateTime(a, b) {
-      return a.operate_time - b.operate_time
+    sortByDate(a, b) {
+      let value1 = a.end_date.split('/')
+      value1.splice(1, 1, (value1[1] - 1).toString())
+
+      let value2 = b.end_date.split('/')
+      value2.splice(1, 1, (value2[1] - 1).toString())
+      return new Date(...value1) - new Date(...value2)
     },
-    sortByOperateAction(a, b) {
-      return a.operate - b.operate
-    },
-    sortByFee(a, b) {
-      return a.fee - b.fee
+    isendDate(end_date) {
+      let value1 = end_date.split('/')
+      value1.splice(1, 1, (value1[1] - 1).toString())
+      let endDateTimeStramp = new Date(...value1).getTime()
+      let days = parseInt(
+        (endDateTimeStramp - new Date().getTime()) / 1000 / 60 / 60 / 24
+      )
+      if (days >= 30) {
+        return 'info'
+      } else if (days > 0 && days < 30) {
+        return 'warning'
+      } else if (days < 0) {
+        return 'danger'
+      }
     }
   }
 }
