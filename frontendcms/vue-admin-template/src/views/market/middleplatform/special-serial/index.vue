@@ -55,7 +55,7 @@
         prop="fee"
       >
         <template slot-scope="{ row }">
-          <el-tag :type="isendDate(row.end_date)">
+          <el-tag :type="isendDate(row.end_date)" effect="dark">
             <span>{{ row.end_date }}</span>
           </el-tag>
         </template>
