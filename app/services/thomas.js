@@ -4,11 +4,9 @@ const path = require('path');
 const uploadPath = path.join(process.cwd(), '/temp/uploadfile');
 
 let { ThomasModel } = require('../models/thomas');
-let { B2iserialModel } = require('../models/b2iserial')
-let { SpecialSerialModel } = require('../models/special-serial')
-const {
-  sequelize
-} = require("../../core/db")
+let { B2iserialModel } = require('../models/b2iserial');
+let { SpecialSerialModel } = require('../models/special-serial');
+const { sequelize } = require('../../core/db');
 
 let { xlsxToJson } = require('../services/xlsxtojson');
 
@@ -85,37 +83,41 @@ class ThomasService {
       throw new global.errs.ParametersException('未找到对应的上传文件!');
     }
     // 获取xlsxtojson函数转换xlsx文件每行数据生成的的objArray和目标数据表的fields数组
-    let { rollingArray, fields } = await xlsxToJson(this.filePath, this.modelName);
+    let { rollingArray, fields } = await xlsxToJson(
+      this.filePath,
+      this.modelName
+    );
 
     // 有导入需求的所有Model
     let modelTarget = () => {
       return {
         b2iserial: B2iserialModel,
-        specialserial: SpecialSerialModel
-      }
-    }
+        specialserial: SpecialSerialModel,
+      };
+    };
 
     return sequelize.transaction(async (t) => {
-      let result = null
+      let result = null;
       try {
         // 这里的model是根据前端传入的model待确定调用哪个业务的Model对象
         await modelTarget()[this.modelName].destroy({
           truncate: true,
           force: true,
-          transaction: t
-        })
+          transaction: t,
+        });
         result = await modelTarget()[this.modelName].bulkCreate(rollingArray, {
           fields: fields,
           // ignoreDuplicates: true,
-          transaction: t
-        })
+          transaction: t,
+        });
+        // 使用单独线程导入数据，成功后返回导入数据的个数
+        return result.length;
       } catch (error) {
-        throw new global.errs.HttpException(`${error.message} 导入数据错误`)
+        throw new global.errs.HttpException(`${error.message} 导入数据错误`);
       }
-      throw new global.errs.Success(`成功导入 ${result.length} 条记录`)
-    })
-
-
+      // 不使用单独线程导入时，启用下面抛出错误的方式传递导入成功的信息
+      // throw new global.errs.Success(`成功导入 ${result.length} 条记录`);
+    });
   }
 
   async writeFileStream() {
