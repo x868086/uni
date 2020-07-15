@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from '@/layout';
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -93,13 +93,13 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
-    hidden: true
+    hidden: true,
   },
 
   {
     path: '/404',
     component: () => import('@/views/404'),
-    hidden: true
+    hidden: true,
   },
 
   {
@@ -111,9 +111,9 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: '工作台', icon: 'dashboard' }
-      }
-    ]
+        meta: { title: '工作台', icon: 'dashboard' },
+      },
+    ],
   },
 
   {
@@ -127,15 +127,15 @@ export const constantRoutes = [
         path: 'table',
         name: 'Table',
         component: () => import('@/views/table/index'),
-        meta: { title: '表格', icon: 'table' }
+        meta: { title: '表格', icon: 'table' },
       },
       {
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),
-        meta: { title: '树', icon: 'tree' }
-      }
-    ]
+        meta: { title: '树', icon: 'tree' },
+      },
+    ],
   },
 
   {
@@ -146,11 +146,11 @@ export const constantRoutes = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: '表单', icon: 'form' }
-      }
-    ]
-  }
-]
+        meta: { title: '表单', icon: 'form' },
+      },
+    ],
+  },
+];
 
 /**
  * asyncRoutes
@@ -222,9 +222,9 @@ export const asyncRoutes = [
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
+        meta: { title: 'External Link', icon: 'link' },
+      },
+    ],
   },
 
   {
@@ -233,30 +233,57 @@ export const asyncRoutes = [
     redirect: '/market/classic',
     name: 'market',
     meta: {
-      roles: ['DepartmentSupervisor', 'DirectSeller'],
+      roles: [
+        'DepartmentSupervisor',
+        'StoreSupervisor',
+        'StoreManager',
+        'DirectSeller',
+      ],
       title: '市场运营',
-      icon: 'el-icon-shopping-bag-2'
+      icon: 'el-icon-shopping-bag-2',
     },
     children: [
       {
         path: 'classic',
         component: () => import('@/views/market/classic/index'), // Parent router-view
         name: 'classic',
-        meta: { roles: ['DepartmentSupervisor'], title: '存量经营' },
+        meta: {
+          roles: [
+            'DepartmentSupervisor',
+            'StoreSupervisor',
+            'StoreManager',
+            'DirectSeller',
+          ],
+          title: '存量经营',
+        },
         children: [
           {
             path: 'threshold-config',
             component: () => import('@/views/market/classic/threshold-config'),
             name: 'threshold-config',
-            meta: { title: '阈值配置' }
+            meta: { roles: ['DepartmentSupervisor'], title: '阈值配置' },
           },
           {
             path: 'threshold-list',
             component: () => import('@/views/market/classic/threshold-list'),
             name: 'threshold-list',
-            meta: { title: '阈值列表' }
-          }
-        ]
+            meta: { roles: ['DepartmentSupervisor'], title: '阈值列表' },
+          },
+          {
+            path: 'threshold-bingo',
+            component: () => import('@/views/market/classic/threshold-bingo'),
+            name: 'threshold-bingo',
+            meta: {
+              roles: [
+                'DepartmentSupervisor',
+                'StoreSupervisor',
+                'StoreManager',
+                'DirectSeller',
+              ],
+              title: '档级查询',
+            },
+          },
+        ],
       },
       {
         path: 'b2i2c',
@@ -264,7 +291,7 @@ export const asyncRoutes = [
         name: 'b2i2c',
         meta: {
           roles: ['DepartmentSupervisor', 'DirectSeller'],
-          title: 'B2I2C运营'
+          title: 'B2I2C运营',
         },
         alwaysShow: true,
         children: [
@@ -272,15 +299,15 @@ export const asyncRoutes = [
             path: 'serial-reset',
             component: () => import('@/views/market/b2i2c/serial-reset'),
             name: 'serial-reset',
-            meta: { roles: ['DepartmentSupervisor'], title: '号码回收调度' }
+            meta: { roles: ['DepartmentSupervisor'], title: '号码回收调度' },
           },
           {
             path: 'serial-modify',
             component: () => import('@/views/market/b2i2c/serial-modify'),
             name: 'serial-modify',
-            meta: { roles: ['DirectSeller'], title: '号码释放申请' }
-          }
-        ]
+            meta: { roles: ['DirectSeller'], title: '号码释放申请' },
+          },
+        ],
       },
 
       // {
@@ -301,7 +328,7 @@ export const asyncRoutes = [
       //     }
       //   ]
       // }
-    ]
+    ],
   },
   {
     path: '/middleplatform',
@@ -312,16 +339,19 @@ export const asyncRoutes = [
     meta: {
       roles: ['DepartmentSupervisor', 'StoreManager'],
       title: '中台运营',
-      icon: 'el-icon-monitor'
+      icon: 'el-icon-monitor',
     },
     children: [
       {
         path: 'special-serial',
         component: () => import('@/views/market/middleplatform/special-serial'),
         name: 'special-serial',
-        meta: { roles: ['DepartmentSupervisor', 'StoreManager'], title: '靓号协议' }
-      }
-    ]
+        meta: {
+          roles: ['DepartmentSupervisor', 'StoreManager'],
+          title: '靓号协议',
+        },
+      },
+    ],
   },
 
   {
@@ -333,35 +363,35 @@ export const asyncRoutes = [
     meta: {
       roles: ['DepartmentSupervisor'],
       title: '上传导入',
-      icon: 'el-icon-upload'
+      icon: 'el-icon-upload',
     },
     children: [
       {
         path: 'upload-file',
         component: () => import('@/views/upload/upload-file'),
         name: 'upload-file',
-        meta: { roles: ['DepartmentSupervisor'], title: '文件上传' }
-      }
-    ]
+        meta: { roles: ['DepartmentSupervisor'], title: '文件上传' },
+      },
+    ],
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
-]
+  { path: '*', redirect: '/404', hidden: true },
+];
 
 const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes
-  })
+    routes: constantRoutes,
+  });
 
-const router = createRouter()
+const router = createRouter();
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
-export default router
+export default router;
