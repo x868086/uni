@@ -357,10 +357,10 @@ cond3(no)->op3
 
 #### thomas 导入文件列表
 
-| file_id | file_name                                                           | file_size | file_path                                                                                         | upload_time         | operate_author |
-| ------- | ------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------- | ------------------- | -------------- |
-| 1       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          |
-| 2       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          |
+| file_id | file_name                                                           | file_size | file_path                                                                                         | upload_time         | operate_author | state_name | upload_row |
+| ------- | ------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------- | ------------------- | -------------- | ---------- | ---------- |
+| 1       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          | 待执行     | 0          |
+| 2       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          | 完成       | 25         |
 
 - _file_id SMALLINT(11), unsigned, autoIncrement, primaryKey_
 - _file_name STRING(128), unique:true,allowNull:false_
@@ -368,6 +368,8 @@ cond3(no)->op3
 - _file_path STRING(128), unique:true,allowNull:false_
 - _upload_time STRING(64), allowNull:true_
 - _operate_author STRING(128), allowNull:false_
+- _state_name STRING(128), allowNull:false, defaultValue: '待执行'_
+- _upload_row INTEGER, allowNull: false, defaultValue:0_
 
 ### 2. TCB 云数据库？
 
