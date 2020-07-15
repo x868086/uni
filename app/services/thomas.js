@@ -20,6 +20,8 @@ class ThomasService {
     operateAuthor = '',
     filePath = '',
     modelName = '',
+    stateName = undefined,
+    uploadRow = undefined,
   }) {
     this.buffer = buffer;
     this.path = path;
@@ -29,6 +31,8 @@ class ThomasService {
     this.operateAuthor = operateAuthor;
     this.filePath = `${this.path}\\${this.originalname}`;
     this.modelName = modelName;
+    this.stateName = stateName;
+    this.uploadRow = uploadRow;
   }
 
   async getList() {
@@ -39,6 +43,8 @@ class ThomasService {
         'file_path',
         'upload_time',
         'operate_author',
+        'state_name',
+        'upload_row',
       ],
     }).map((e) => {
       return {
@@ -47,6 +53,8 @@ class ThomasService {
         filePath: e.file_path,
         uploadTime: e.upload_time,
         operateAuthor: e.operate_author,
+        stateName: e.state_name,
+        uploadRow: e.upload_row,
       };
     });
     return result;
@@ -98,6 +106,7 @@ class ThomasService {
 
     return sequelize.transaction(async (t) => {
       let result = null;
+      let total = 0;
       try {
         // 这里的model是根据前端传入的model待确定调用哪个业务的Model对象
         await modelTarget()[this.modelName].destroy({
@@ -110,8 +119,9 @@ class ThomasService {
           // ignoreDuplicates: true,
           transaction: t,
         });
+        total = result.length;
         // 使用单独线程导入数据，成功后返回导入数据的个数
-        return result.length;
+        return total;
       } catch (error) {
         throw new global.errs.HttpException(`${error.message} 导入数据错误`);
       }
@@ -167,11 +177,28 @@ class ThomasService {
       file_path: this.filePath,
       upload_time: this.uploadTime,
       operate_author: this.operateAuthor,
+      state_name: this.stateName,
+      upload_row: this.uploadRow,
     });
     return {
       fileName: file_name,
       fileSize: file_size,
     };
+  }
+
+  async updateFileInfo(stateName, total, fieldsArray) {
+    await ThomasModel.update(
+      {
+        state_name: stateName,
+        upload_row: total,
+      },
+      {
+        where: {
+          file_path: this.filePath,
+        },
+        fields: fieldsArray,
+      }
+    );
   }
 }
 

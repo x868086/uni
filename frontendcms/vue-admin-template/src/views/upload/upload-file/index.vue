@@ -55,6 +55,19 @@
           <span>{{ scope.row.operateAuthor }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="stateName" min-width="90" label="状态">
+        <template slot-scope="scope">
+          <span>{{ scope.row.stateName }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="uploadRow" min-width="90" label="计数">
+        <template slot-scope="scope">
+          <span>{{ scope.row.uploadRow }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="actions" label="执行" min-width="330">
         <template slot-scope="scope">
           <el-button

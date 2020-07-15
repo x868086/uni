@@ -10,14 +10,28 @@ process.on('message', async (msg) => {
   let result = null;
 
   try {
+    await new ThomasService({
+      originalname: filePath,
+    }).updateFileInfo('执行中', 0, ['state_name', 'upload_row']);
+
     result = await new ThomasService({
       originalname: filePath,
       modelName: modelName,
     }).rollingRow();
+
+    await new ThomasService({
+      originalname: filePath,
+    }).updateFileInfo('完成', result, ['state_name', 'upload_row']);
+
     process.send({ msg: result });
     process.kill(process.pid, 'SIGTERM');
   } catch (error) {
     process.send({ msg: result });
+
+    await new ThomasService({
+      originalname: filePath,
+    }).updateFileInfo('失败', 0, ['state_name', 'upload_row']);
+
     process.kill(process.pid, 'SIGTERM');
   }
 });
