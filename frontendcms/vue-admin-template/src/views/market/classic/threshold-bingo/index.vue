@@ -7,7 +7,7 @@
         <count-to
           :start-val="0"
           :end-val="avgFee"
-          :duration="4000"
+          :duration="2000"
           :decimals="2"
           class="count-content"
           prefix="￥"
@@ -62,7 +62,7 @@ export default {
     return {
       inputPspt: null,
       activeNames: [],
-      avgFee: 100.68,
+      avgFee: 32.26,
       thresholdArray: [
         {
           config_name: '花呗红包30%赠费',
