@@ -17,7 +17,7 @@
         <em>点击上传</em>
       </div>
       <div slot="tip" class="el-upload__tip">
-        只能上传.xlsx/.docx类型文件,且大小不超过10Mb
+        只能上传.xlsx/.docx类型文件,且大小不超过50Mb
       </div>
     </el-upload>
 
@@ -55,6 +55,19 @@
           <span>{{ scope.row.operateAuthor }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="stateName" min-width="90" label="状态">
+        <template slot-scope="scope">
+          <span>{{ scope.row.stateName }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="uploadRow" min-width="90" label="计数">
+        <template slot-scope="scope">
+          <span>{{ scope.row.uploadRow }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="actions" label="执行" min-width="330">
         <template slot-scope="scope">
           <el-button
@@ -78,6 +91,9 @@
                 >2i二次销售</el-dropdown-item
               >
               <el-dropdown-item command="auditlist">稽核清单</el-dropdown-item>
+              <el-dropdown-item command="specialserial"
+                >靓号协议期</el-dropdown-item
+              >
             </el-dropdown-menu>
           </el-dropdown>
 
@@ -96,6 +112,7 @@
 </template>
 
 <script>
+import NProgress from 'nprogress';
 import { getAccessToken } from '@/utils/auth';
 import { _encode } from '@/utils/encode-token';
 import { getUploadFileList, removeFile, rollingFile } from '@/api/thomas';
@@ -129,7 +146,7 @@ export default {
     },
     uploadValidate(file) {
       const extension = file.name.split('.').slice(-1)[0];
-      const extensionReg = new RegExp('\(xlsx|docx)$', 'g');
+      const extensionReg = new RegExp('(xlsx|docx)$', 'g');
       if (!extensionReg.test(extension)) {
         this.$message({
           message: `不支持上传 .${extension} 类型文件`,
@@ -137,7 +154,7 @@ export default {
         });
         return false;
       }
-      if (file.size > 10485760) {
+      if (file.size > 50 * 1024 * 1024) {
         this.$message({
           message: `文件大小 ${(file.size / 1024 / 1024).toFixed(
             2
@@ -165,7 +182,9 @@ export default {
       this.modelName = command;
     },
     async rollingRow(fileName) {
+      NProgress.start();
       await rollingFile({ filePath: fileName, modelName: this.modelName });
+      NProgress.done();
     },
   },
 };

@@ -32,7 +32,8 @@ const ExcelJS = require('exceljs');
 // };
 let insertFields = () => {
   return {
-    b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee']
+    b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
+    specialserial: ['serial_number', 'in_date', 'rule_value', 'end_date']
   }
 }
 

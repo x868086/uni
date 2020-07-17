@@ -4,10 +4,9 @@ const path = require('path');
 const uploadPath = path.join(process.cwd(), '/temp/uploadfile');
 
 let { ThomasModel } = require('../models/thomas');
-let { B2iserialModel } = require('../models/b2iserial')
-const {
-  sequelize
-} = require("../../core/db")
+let { B2iserialModel } = require('../models/b2iserial');
+let { SpecialSerialModel } = require('../models/special-serial');
+const { sequelize } = require('../../core/db');
 
 let { xlsxToJson } = require('../services/xlsxtojson');
 
@@ -21,6 +20,8 @@ class ThomasService {
     operateAuthor = '',
     filePath = '',
     modelName = '',
+    stateName = undefined,
+    uploadRow = undefined,
   }) {
     this.buffer = buffer;
     this.path = path;
@@ -30,6 +31,8 @@ class ThomasService {
     this.operateAuthor = operateAuthor;
     this.filePath = `${this.path}\\${this.originalname}`;
     this.modelName = modelName;
+    this.stateName = stateName;
+    this.uploadRow = uploadRow;
   }
 
   async getList() {
@@ -40,6 +43,8 @@ class ThomasService {
         'file_path',
         'upload_time',
         'operate_author',
+        'state_name',
+        'upload_row',
       ],
     }).map((e) => {
       return {
@@ -48,6 +53,8 @@ class ThomasService {
         filePath: e.file_path,
         uploadTime: e.upload_time,
         operateAuthor: e.operate_author,
+        stateName: e.state_name,
+        uploadRow: e.upload_row,
       };
     });
     return result;
@@ -84,28 +91,43 @@ class ThomasService {
       throw new global.errs.ParametersException('未找到对应的上传文件!');
     }
     // 获取xlsxtojson函数转换xlsx文件每行数据生成的的objArray和目标数据表的fields数组
-    let { rollingArray, fields } = await xlsxToJson(this.filePath, this.modelName);
+    let { rollingArray, fields } = await xlsxToJson(
+      this.filePath,
+      this.modelName
+    );
+
+    // 有导入需求的所有Model
+    let modelTarget = () => {
+      return {
+        b2iserial: B2iserialModel,
+        specialserial: SpecialSerialModel,
+      };
+    };
 
     return sequelize.transaction(async (t) => {
-      let result = null
+      let result = null;
+      let total = 0;
       try {
-        await B2iserialModel.destroy({
+        // 这里的model是根据前端传入的model待确定调用哪个业务的Model对象
+        await modelTarget()[this.modelName].destroy({
           truncate: true,
           force: true,
-          transaction: t
-        })
-        result = await B2iserialModel.bulkCreate(rollingArray, {
+          transaction: t,
+        });
+        result = await modelTarget()[this.modelName].bulkCreate(rollingArray, {
           fields: fields,
-          ignoreDuplicates: true,
-          transaction: t
-        })
+          // ignoreDuplicates: true,
+          transaction: t,
+        });
+        total = result.length;
+        // 使用单独线程导入数据，成功后返回导入数据的个数
+        return total;
       } catch (error) {
-        throw new global.errs.HttpException(`${error.message} 导入数据错误`)
+        throw new global.errs.HttpException(`${error.message} 导入数据错误`);
       }
-      throw new global.errs.Success(`成功导入 ${result.length} 条记录`)
-    })
-
-
+      // 不使用单独线程导入时，启用下面抛出错误的方式传递导入成功的信息
+      // throw new global.errs.Success(`成功导入 ${result.length} 条记录`);
+    });
   }
 
   async writeFileStream() {
@@ -155,11 +177,28 @@ class ThomasService {
       file_path: this.filePath,
       upload_time: this.uploadTime,
       operate_author: this.operateAuthor,
+      state_name: this.stateName,
+      upload_row: this.uploadRow,
     });
     return {
       fileName: file_name,
       fileSize: file_size,
     };
+  }
+
+  async updateFileInfo(stateName, total, fieldsArray) {
+    await ThomasModel.update(
+      {
+        state_name: stateName,
+        upload_row: total,
+      },
+      {
+        where: {
+          file_path: this.filePath,
+        },
+        fields: fieldsArray,
+      }
+    );
   }
 }
 

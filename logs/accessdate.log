@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [2020-07-07T00:00:00.276] [INFO] accessdate - ::ffff:127.0.0.1 - - "GET /v1/thomas/getlist HTTP/1.1" 200 194 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
 [2020-07-07T00:00:12.993] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/thomas/rollingrow HTTP/1.1" 400 127 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
 [2020-07-07T00:00:22.040] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/thomas/rollingrow HTTP/1.1" 400 127 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
@@ -246,3 +247,10 @@
 [2020-07-17T12:26:52.842] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/verify HTTP/1.1" 200 569 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
 [2020-07-17T12:26:52.921] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/tokenverify HTTP/1.1" 200 134 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
 [2020-07-17T12:26:55.034] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/tokenverify HTTP/1.1" 200 134 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+=======
+[2020-07-17T11:08:00.689] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/tokenverify HTTP/1.1" 400 86 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+[2020-07-17T11:08:05.595] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/verify HTTP/1.1" 200 569 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+[2020-07-17T11:08:05.798] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/tokenverify HTTP/1.1" 200 134 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+[2020-07-17T11:08:18.568] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/tokenverify HTTP/1.1" 200 134 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+[2020-07-17T11:08:37.111] [INFO] accessdate - ::ffff:127.0.0.1 - - "POST /v1/users/tokenverify HTTP/1.1" 200 134 "http://localhost:9528/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+>>>>>>> d69407687f76d78307f0336e5b0fb6fdaa769aa4

@@ -40,6 +40,9 @@ const apiList = [
   { requestRegexp: /\/v1\/thomas\/getlist/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/removefile/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/rollingrow/, apiScope: 48 },
+
+  //specialserial
+  { requestRegexp: /\/v1\/middleplatform\/\w*\/specialserial-search/, apiScope: 30 },
 ];
 
 const whiteList = [
