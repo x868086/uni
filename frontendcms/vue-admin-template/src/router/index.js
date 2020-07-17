@@ -116,40 +116,40 @@ export const constantRoutes = [
     ],
   },
 
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '示例', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '表格', icon: 'table' },
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '树', icon: 'tree' },
-      },
-    ],
-  },
+  // {
+  //   path: '/example',
+  //   component: Layout,
+  //   redirect: '/example/table',
+  //   name: 'Example',
+  //   meta: { title: '示例', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: '表格', icon: 'table' },
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: '树', icon: 'tree' },
+  //     },
+  //   ],
+  // },
 
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: '表单', icon: 'form' },
-      },
-    ],
-  },
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('@/views/form/index'),
+  //       meta: { title: '表单', icon: 'form' },
+  //     },
+  //   ],
+  // },
 ];
 
 /**
@@ -216,16 +216,16 @@ export const asyncRoutes = [
   //   ]
   // },
 
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' },
-      },
-    ],
-  },
+  // {
+  //   path: 'external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+  //       meta: { title: 'External Link', icon: 'link' },
+  //     },
+  //   ],
+  // },
 
   {
     path: '/market',
@@ -344,7 +344,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'special-serial',
-        component: () => import('@/views/market/middleplatform/special-serial'),
+        component: () => import('@/views/middleplatform/special-serial'),
         name: 'special-serial',
         meta: {
           roles: ['DepartmentSupervisor', 'StoreManager'],
