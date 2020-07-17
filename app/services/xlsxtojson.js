@@ -31,9 +31,11 @@ const ExcelJS = require('exceljs');
 //   b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
 // };
 let insertFields = () => {
+  // models name
   return {
     b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
-    specialserial: ['serial_number', 'in_date', 'rule_value', 'end_date']
+    specialserial: ['serial_number', 'in_date', 'rule_value', 'end_date'],
+    psptarpu: ['pspt_id', 'arpu_value']
   }
 }
 

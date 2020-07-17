@@ -38,8 +38,15 @@ class AccountValidator extends LinValidator {
       new Rule("isInt", "登陆类型码为3位整数", { min: 100, max: 600 }),
     ];
   }
+}
 
-
+class PsptValidator extends LinValidator {
+  constructor() {
+    super()
+    this.psptId = [
+      new Rule("isLength", "证件信息必须为有效的身份证、护照、军官证、港澳台居民通行证", { min: 6, max: 18 })
+    ]
+  }
 }
 
 
@@ -152,6 +159,20 @@ class B2iserialModifyValidator extends B2iserialValidator {
   }
 }
 
+class ArpuValueValidator extends LinValidator {
+  constructor() {
+    super()
+  }
+  validateArpu(val) {
+    let arpuValue = val.body.arpu
+    if (!!parseFloat(arpuValue) || parseFloat(arpuValue) === 0) {
+      return true
+    } else {
+      throw new global.errs.ParametersException('月均消费值必须为数值')
+    }
+  }
+}
+
 
 class ThresholdValidator extends LinValidator {
   constructor() {
@@ -241,5 +262,7 @@ module.exports = {
   ThresholdValidator,
   ThresholdCreateValidator,
   ThresholdModifyValidator,
-  TokenValidator
+  TokenValidator,
+  PsptValidator,
+  ArpuValueValidator
 };

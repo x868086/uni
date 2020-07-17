@@ -16,9 +16,7 @@
         将文件拖到此处，或
         <em>点击上传</em>
       </div>
-      <div slot="tip" class="el-upload__tip">
-        只能上传.xlsx/.docx类型文件,且大小不超过50Mb
-      </div>
+      <div slot="tip" class="el-upload__tip">只能上传.xlsx/.docx类型文件,且大小不超过50Mb</div>
     </el-upload>
 
     <el-table
@@ -75,8 +73,7 @@
             size="mini"
             icon="el-icon-circle-check-outline"
             @click.native="removeFile(scope.row.fileName)"
-            >删除</el-button
-          >
+          >删除</el-button>
 
           <el-dropdown
             split-button
@@ -87,13 +84,9 @@
           >
             选择数据表
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="b2iserial"
-                >2i二次销售</el-dropdown-item
-              >
-              <el-dropdown-item command="auditlist">稽核清单</el-dropdown-item>
-              <el-dropdown-item command="specialserial"
-                >靓号协议期</el-dropdown-item
-              >
+              <el-dropdown-item command="psptarpu">证件号消费</el-dropdown-item>
+              <el-dropdown-item command="specialserial">靓号协议期</el-dropdown-item>
+              <el-dropdown-item command="b2iserial">2i二次销售</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
@@ -103,8 +96,7 @@
             icon="el-icon-circle-check-outline"
             @click.native="rollingRow(scope.row.fileName)"
             :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
-            >导入</el-button
-          >
+          >导入</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -112,10 +104,10 @@
 </template>
 
 <script>
-import NProgress from 'nprogress';
-import { getAccessToken } from '@/utils/auth';
-import { _encode } from '@/utils/encode-token';
-import { getUploadFileList, removeFile, rollingFile } from '@/api/thomas';
+import NProgress from 'nprogress'
+import { getAccessToken } from '@/utils/auth'
+import { _encode } from '@/utils/encode-token'
+import { getUploadFileList, removeFile, rollingFile } from '@/api/thomas'
 
 export default {
   name: 'Upload',
@@ -123,71 +115,71 @@ export default {
     return {
       uploadUrl: `${process.env.VUE_APP_BASE_API}/thomas/uploadfile`,
       uploadSetHeaders: {
-        Authorization: _encode(getAccessToken()),
+        Authorization: _encode(getAccessToken())
       },
       tableData: [],
-      modelName: '',
-    };
+      modelName: ''
+    }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     async getList() {
-      const result = await getUploadFileList();
-      this.tableData = this.tableData.concat(result);
+      const result = await getUploadFileList()
+      this.tableData = this.tableData.concat(result)
     },
     async removeFile(fileName) {
-      await removeFile({ fileName: fileName });
+      await removeFile({ fileName: fileName })
       const t = setTimeout(() => {
-        location.reload();
-        clearTimeout(t);
-      }, 2000);
+        location.reload()
+        clearTimeout(t)
+      }, 2000)
     },
     uploadValidate(file) {
-      const extension = file.name.split('.').slice(-1)[0];
-      const extensionReg = new RegExp('(xlsx|docx)$', 'g');
+      const extension = file.name.split('.').slice(-1)[0]
+      const extensionReg = new RegExp('(xlsx|docx)$', 'g')
       if (!extensionReg.test(extension)) {
         this.$message({
           message: `不支持上传 .${extension} 类型文件`,
-          type: 'error',
-        });
-        return false;
+          type: 'error'
+        })
+        return false
       }
       if (file.size > 50 * 1024 * 1024) {
         this.$message({
           message: `文件大小 ${(file.size / 1024 / 1024).toFixed(
             2
           )}MB 超出上限`,
-          type: 'error',
-        });
-        return false;
+          type: 'error'
+        })
+        return false
       }
     },
     uploadSuccess(res, file, filelise) {
-      location.reload();
+      location.reload()
       this.$message({
         message: `${res.fileName} 导入成功,文件大小${res.fileSize}`,
-        type: 'success',
-      });
+        type: 'success'
+      })
     },
     uploadError(err, file) {
-      const message = JSON.parse(err['message'])['msg'];
+      const message = JSON.parse(err['message'])['msg']
       this.$message({
         message: `${message}`,
-        type: 'error',
-      });
+        type: 'error'
+      })
     },
     selectModel(command) {
-      this.modelName = command;
+      this.modelName = command
     },
     async rollingRow(fileName) {
-      NProgress.start();
-      await rollingFile({ filePath: fileName, modelName: this.modelName });
-      NProgress.done();
-    },
-  },
-};
+      NProgress.start()
+      await rollingFile({ filePath: fileName, modelName: this.modelName })
+      NProgress.done()
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

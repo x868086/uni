@@ -3,10 +3,10 @@
     <div class="search-wrap">
       <div class="count-wrap">
         <!-- <countTo :startVal="0" :endVal="200" :duration="3000"></countTo> -->
-        <span>近三月消费均值: </span>
+        <span>近三月消费均值:</span>
         <count-to
           :start-val="0"
-          :end-val="avgFee"
+          :end-val="userArpu"
           :duration="2000"
           :decimals="2"
           class="count-content"
@@ -36,8 +36,8 @@
             v-bind:class="[
               activeNames.includes(idx) ? titleActive : titleInactive,
             ]"
-            >{{ item.config_name }}</span
-          ><i
+          >{{ item.config_name }}</span>
+          <i
             class="header-icon el-icon-info"
             v-bind:class="[
               activeNames.includes(idx) ? titleActive : titleInactive,
@@ -54,7 +54,8 @@
   </section>
 </template>
 <script>
-import countTo from 'vue-count-to';
+import countTo from 'vue-count-to'
+import { getArpu, arpuBingo } from '@/api/classic'
 export default {
   name: 'threshold-bingo',
   components: { countTo },
@@ -62,47 +63,40 @@ export default {
     return {
       inputPspt: null,
       activeNames: [],
-      avgFee: 32.26,
-      thresholdArray: [
-        {
-          config_name: '花呗红包30%赠费',
-          gt: 196,
-          lte: 212,
-          title: '低消298元,赠送红包86元,赠送时长24月',
-        },
-        {
-          config_name: '花呗分期推荐40%赠费',
-          gt: 156,
-          lte: 208,
-          title: '5G套餐399元,赠送191元,赠送时长24月',
-        },
-        {
-          config_name: '5G直降活动',
-          gt: 156,
-          lte: 208,
-          title: '推荐5G套餐399档级，终端直降4000元',
-        },
-      ],
+      userArpu: 0,
+      thresholdArray: [],
       titleActive: 'title-active',
-      titleInactive: 'title-inactive',
-    };
+      titleInactive: 'title-inactive'
+    }
   },
   computed: {},
   mounted() {
-    this.initActiveNames();
+    this.initActiveNames()
   },
   methods: {
     initActiveNames() {
-      this.activeNames = this.thresholdArray.map((e, i) => i);
+      this.activeNames = this.thresholdArray.map((e, i) => i)
+    },
+    initInputArpu() {
+      this.userArpu = 0
+      this.thresholdArray = []
     },
     handleChange(val) {
-      console.log(val);
+      console.log(val)
     },
-    psptSearch() {
-      console.log(this.inputPspt);
-    },
-  },
-};
+    async psptSearch() {
+      this.initInputArpu()
+      if (this.inputPspt.length < 6) {
+        return false
+      }
+      let { arpuValue = undefined } = await getArpu({ psptId: this.inputPspt })
+      this.userArpu = arpuValue
+      let result = await arpuBingo({ arpu: arpuValue })
+      this.thresholdArray = result
+      this.initActiveNames()
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

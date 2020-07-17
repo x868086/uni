@@ -6,6 +6,7 @@ const uploadPath = path.join(process.cwd(), '/temp/uploadfile');
 let { ThomasModel } = require('../models/thomas');
 let { B2iserialModel } = require('../models/b2iserial');
 let { SpecialSerialModel } = require('../models/special-serial');
+let { PsptArpuModel } = require('../models/psptarpu')
 const { sequelize } = require('../../core/db');
 
 let { xlsxToJson } = require('../services/xlsxtojson');
@@ -101,6 +102,7 @@ class ThomasService {
       return {
         b2iserial: B2iserialModel,
         specialserial: SpecialSerialModel,
+        psptarpu: PsptArpuModel
       };
     };
 

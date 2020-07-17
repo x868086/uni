@@ -1,10 +1,13 @@
 const Router = require('koa-router')
 const { ThresholdService } = require('../../services/threshold')
+const { PsptArpuService } = require('../../services/psptarpu')
 
 const { PositiveIntegerValidator,
     ThresholdValidator,
     ThresholdCreateValidator,
-    ThresholdModifyValidator } = require("../../validators/validator")
+    ThresholdModifyValidator,
+    PsptValidator,
+    ArpuValueValidator } = require("../../validators/validator")
 
 
 const router = new Router({
@@ -22,9 +25,15 @@ router.post('/search', async (ctx, next) => {
     ctx.body = threshold
 })
 
-router.get('/:arpu/bingo', async (ctx, next) => {
-    let v = await new PositiveIntegerValidator().validate(ctx, { int: "arpu" })
-    let threshold = await new ThresholdService({ arpu: v.get('path.arpu') }).thresholdBingo()
+router.post('/getarpu', async (ctx, next) => {
+    let v = await new PsptValidator().validate(ctx)
+    let arpuValue = await new PsptArpuService({ psptId: v.get('body.psptId') }).getArpu()
+    ctx.body = arpuValue
+})
+
+router.post('/bingo', async (ctx, next) => {
+    let v = await new ArpuValueValidator().validate(ctx)
+    let threshold = await new ThresholdService({ arpu: v.get('body.arpu') }).thresholdBingo()
     ctx.body = threshold
 })
 

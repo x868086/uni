@@ -303,16 +303,13 @@ cond3(no)->op3
 
 #### 证件号码
 
-| id  | serial     | fee | pdlevel20 | pdlevel30 | pdlevel40 |
-| --- | ---------- | --- | --------- | --------- | --------- |
-| 1   | 4205251988 | 25  |
+| id  | pspt_id    | arpu_value |
+| --- | ---------- | ---------- |
+| 1   | 4205251988 | 25         |
 
 - _id: INTEGER(11), unsigned, autoIncrement, primaryKey_
-- _serial: STRING(20), unique_
-- _fee: INTEGER(11), unsigned_
-- _pdlevel20: STRING(256)_
-- _pdlevel30: STRING(256)_
-- _pdlevel40: STRING(256)_
+- _pspt_id: STRING(20), allowNull:false_
+- _arpu_value: FLOAT(11),allowNull:false_,defaultValue:0
 
 #### b2i2c 二次销售号码
 
@@ -380,23 +377,23 @@ cond3(no)->op3
   {
     article_id: 1,
     public_date: 1589185965494,
-    author: '张三',
-    type: '资费',
-    channel_name: '营销部',
-    title: '关于做好5G折扣资费推广的通知',
+    author: "张三",
+    type: "资费",
+    channel_name: "营销部",
+    title: "关于做好5G折扣资费推广的通知",
     content:
-      '<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>',
+      "<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>",
     state_code: 0,
   },
 
   {
     article_id: 2,
     public_date: 1589185965494,
-    author: '张三',
-    type: '业务规范',
-    channel_name: '政企营销中心',
-    title: 'CBSS欠费用户操作流程',
-    content: '<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>',
+    author: "张三",
+    type: "业务规范",
+    channel_name: "政企营销中心",
+    title: "CBSS欠费用户操作流程",
+    content: "<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>",
     state_code: 1,
   },
 ];
@@ -593,18 +590,18 @@ POST / users / channels;
 [
   {
     scope: 60,
-    org_desc: '宜昌',
-    channels: ['09C15', 'YVBBJ', 'YFYUJ', '09CAA', 'Y1ZRI', 'YAAJ0'],
+    org_desc: "宜昌",
+    channels: ["09C15", "YVBBJ", "YFYUJ", "09CAA", "Y1ZRI", "YAAJ0"],
   },
   {
     scope: 36,
-    org_desc: '西陵东山网格',
-    channels: ['09C15', 'YVBBJ', 'YFYUJ'],
+    org_desc: "西陵东山网格",
+    channels: ["09C15", "YVBBJ", "YFYUJ"],
   },
   {
     scope: 30,
-    org_desc: '正兴合作厅',
-    channels: ['09C15'],
+    org_desc: "正兴合作厅",
+    channels: ["09C15"],
   },
 ];
 ```
@@ -1087,24 +1084,24 @@ GET / b2iserial / list;
 ```js
 [
   {
-    serial_number: '15607200000',
-    product_name: '腾讯大王卡',
-    belong: 'YF0307',
+    serial_number: "15607200000",
+    product_name: "腾讯大王卡",
+    belong: "YF0307",
     fee: 15,
-    dev_name: 'Jack',
-    dev_phone: '18600000001',
-    contact_phone: '18600000001',
-    operate: '',
+    dev_name: "Jack",
+    dev_phone: "18600000001",
+    contact_phone: "18600000001",
+    operate: "",
   },
   {
-    serial_number: '15607200000',
-    product_name: '腾讯大王卡',
-    belong: 'YF0307',
+    serial_number: "15607200000",
+    product_name: "腾讯大王卡",
+    belong: "YF0307",
     fee: 15,
-    dev_name: 'Jack',
-    dev_phone: '18600000001',
-    contact_phone: '18600000001',
-    operate: '',
+    dev_name: "Jack",
+    dev_phone: "18600000001",
+    contact_phone: "18600000001",
+    operate: "",
   },
 ];
 ```
@@ -1354,6 +1351,30 @@ POST / threshold / list;
 - operator: 操作人 [type: string]
 - items: 阈值详情 [type: Array]
 
+#### 获取 ARPU 值
+
+##### URL
+
+```js
+GET / threshold / getarpu;
+```
+
+##### Parameters
+
+- psptId: 用户证件号码 [type: string]
+
+##### Response 200
+
+```js
+{
+    "arpuValue":220.12
+}
+```
+
+Response_description
+
+- arpuValue: arpu 值 [type: Float]
+
 #### 阈值匹配
 
 ##### URL
@@ -1371,20 +1392,20 @@ GET /threshold/<int:arpu>/bingo
 ```js
 [
   {
-    config_name: '花呗红包30%赠费',
+    config_name: "花呗红包30%赠费",
     gt: 196,
     lte: 212,
-    title: '低消298元,赠送红包86元,赠送时长24月',
-    start_date: '2020-6-17 15:24:49',
-    end_date: '2020-6-17 15:24:49',
+    title: "低消298元,赠送红包86元,赠送时长24月",
+    start_date: "2020-6-17 15:24:49",
+    end_date: "2020-6-17 15:24:49",
   },
   {
-    config_name: '花呗分期推荐40%赠费',
+    config_name: "花呗分期推荐40%赠费",
     gt: 208,
     lte: 313,
-    title: '5G套餐599元,赠送286元,赠送时长24月',
-    start_date: '2020-6-17 15:24:49',
-    end_date: '2020-6-17 15:24:49',
+    title: "5G套餐599元,赠送286元,赠送时长24月",
+    start_date: "2020-6-17 15:24:49",
+    end_date: "2020-6-17 15:24:49",
   },
 ];
 ```
@@ -1494,22 +1515,22 @@ GET / article / list;
   {
     article_id: 1,
     public_date: 1589185965494,
-    author: '张三',
-    type: '资费',
-    channel_name: '营销部',
-    title: '关于做好5G折扣资费推广的通知',
+    author: "张三",
+    type: "资费",
+    channel_name: "营销部",
+    title: "关于做好5G折扣资费推广的通知",
     content:
-      '<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>',
+      "<span>关于做好5G折扣资费推广的通知关于做好5G折扣资费推广的通知</span>",
   },
 
   {
     article_id: 2,
     public_date: 1589185965494,
-    author: '张三',
-    type: '业务规范',
-    channel_name: '政企营销中心',
-    title: 'CBSS欠费用户操作流程',
-    content: '<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>',
+    author: "张三",
+    type: "业务规范",
+    channel_name: "政企营销中心",
+    title: "CBSS欠费用户操作流程",
+    content: "<span>CBSS欠费用户操作流程CBSS欠费用户操作流程</span>",
   },
 ];
 ```
@@ -1659,11 +1680,11 @@ GET / thomas / getlist;
 ```js
 [
   {
-    fileName: 'TEST0.xlsx',
-    filePath: 'E:source\uni\temp\uploadfileTEST0.xlsx',
-    fileSize: '181.00 KB',
-    operateAuthor: 'json1',
-    uploadTime: '2020-7-4 9:24:53 PM',
+    fileName: "TEST0.xlsx",
+    filePath: "E:source\uni\temp\uploadfileTEST0.xlsx",
+    fileSize: "181.00 KB",
+    operateAuthor: "json1",
+    uploadTime: "2020-7-4 9:24:53 PM",
   },
 ];
 ```
@@ -1724,14 +1745,14 @@ GET / log / list;
   {
     id: 1,
     logo_date: 1589185965494,
-    account: '15600000001',
-    api: '/file/upload',
+    account: "15600000001",
+    api: "/file/upload",
   },
   {
     id: 2,
     logo_date: 1589185965494,
-    account: '15600000001',
-    api: '/users/list',
+    account: "15600000001",
+    api: "/users/list",
   },
 ];
 ```
