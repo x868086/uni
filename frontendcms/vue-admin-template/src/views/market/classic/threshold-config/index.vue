@@ -63,6 +63,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Thresholds from './components/function';
+import { thresholdCreate } from '@/api/classic';
 export default {
   name: 'threshold-config',
   data() {
@@ -133,9 +134,13 @@ export default {
         `;
       });
     },
-    uploadThreshold() {
+    async uploadThreshold() {
       this.resolveThreshold();
       this.thresholdValidate();
+      this.thresholdsObj.forEach(async (e) => {
+        await thresholdCreate(e);
+      });
+      location.reload();
     },
   },
 };
