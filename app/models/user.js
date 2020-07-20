@@ -1,8 +1,8 @@
-const { Sequelize, Model } = require("sequelize");
-const { sequelize } = require("../../core/db");
-const { secretUtile } = require("../../core/utile");
+const { Sequelize, Model } = require('sequelize');
+const { sequelize } = require('../../core/db');
+const { secretUtile } = require('../../core/utile');
 
-class UserModel extends Model { }
+class UserModel extends Model {}
 
 UserModel.init(
   {
@@ -27,9 +27,9 @@ UserModel.init(
       allowNull: false,
       set(val) {
         const pwd = secretUtile.generateSecret(val);
-        this.setDataValue("secret", pwd);
+        this.setDataValue('secret', pwd);
       },
-      unique: true
+      unique: true,
     },
     nick_name: {
       type: Sequelize.STRING(128),
@@ -52,7 +52,7 @@ UserModel.init(
   },
   {
     sequelize,
-    tableName: "user",
+    tableName: 'user',
   }
 );
 
