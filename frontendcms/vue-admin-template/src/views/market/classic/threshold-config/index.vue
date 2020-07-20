@@ -4,16 +4,14 @@
       <el-col :span="12">
         <section class="threshold-config">
           <div class="threshold-items">
-            <span>弹窗产品名称：</span
-            ><el-input
+            <span>弹窗产品名称：</span><el-input
+              v-model="configName"
               type="text"
               placeholder="请输入产品名称"
-              v-model="configName"
               maxlength="30"
               show-word-limit
               class="config-name"
-            >
-            </el-input>
+            />
           </div>
 
           <!-- <threshold></threshold> -->
@@ -22,8 +20,7 @@
               type="primary"
               size="small"
               @click.native="appendThreshold"
-              >添加</el-button
-            >
+            >添加</el-button>
             <!-- <el-button
               type="warning"
               size="small"
@@ -33,27 +30,25 @@
             <el-button
               type="success"
               size="small"
-              @click.native="uploadThreshold"
               :disabled="!thresholdDescribe"
-              >提交</el-button
-            >
+              @click.native="uploadThreshold"
+            >提交</el-button>
           </div>
         </section>
       </el-col>
       <el-col :span="12">
         <section class="threshold-describe">
           <el-input
+            v-model="thresholdDescribe"
             type="textarea"
             placeholder="规则解析说明..."
-            v-model="thresholdDescribe"
             maxlength="200"
             show-word-limit
             :clearable="false"
             :readonly="true"
             :autosize="true"
             resize="none"
-          >
-          </el-input>
+          />
         </section>
       </el-col>
     </el-row>
@@ -61,43 +56,44 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Thresholds from './components/function';
-import { thresholdCreate } from '@/api/classic';
+import { mapGetters } from 'vuex'
+import Thresholds from './components/function'
+import { thresholdCreate } from '@/api/classic'
 export default {
-  name: 'threshold-config',
+  name: 'ThresholdConfig',
   data() {
     return {
       configName: '',
       thresholdsObj: null,
       thresholdDescribe: '',
-      thresholdsInstance: null,
-    };
+      thresholdsInstance: null
+    }
   },
   computed: {
-    ...mapGetters(['nickname']),
+    ...mapGetters(['nickname'])
   },
   mounted() {
-    this.initDom();
+    this.initDom()
   },
   methods: {
     initDom() {
-      this.thresholdsInstance = new Thresholds();
+      this.thresholdsInstance = new Thresholds()
     },
     thresholdValidate() {
-      let obj = [];
-      let validateResult = [];
-      obj = obj.concat(this.thresholdsObj);
+      let obj = []
+      const validateResult = []
+      obj = obj.concat(this.thresholdsObj)
+      /* eslint-disable */
       while (true) {
-        let val1 = obj.shift();
+        const val1 = obj.shift();
         if (obj.length) {
-          let val2 = obj[0].gt;
+          const val2 = obj[0].gt;
           validateResult.push(val1.lte === val2);
         } else {
           break;
         }
       }
-      let allValidate = validateResult.every((e) => {
+      const allValidate = validateResult.every((e) => {
         return e;
       });
 
@@ -114,8 +110,8 @@ export default {
       this.resolveThreshold();
     },
     resolveThreshold() {
-      let result = this.thresholdsInstance.domArray.map((e) => {
-        let { title, gt, lte } = e.$data;
+      const result = this.thresholdsInstance.domArray.map((e) => {
+        const { title, gt, lte } = e.$data;
         return {
           configName: this.configName,
           title,

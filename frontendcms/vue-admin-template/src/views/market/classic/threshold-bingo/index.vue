@@ -11,7 +11,7 @@
           :decimals="2"
           class="count-content"
           prefix="￥"
-        ></count-to>
+        />
       </div>
       <el-input
         v-model="inputPspt"
@@ -33,16 +33,16 @@
         <template slot="title">
           <span
             class="threshold-title"
-            v-bind:class="[
+            :class="[
               activeNames.includes(idx) ? titleActive : titleInactive,
             ]"
           >{{ item.config_name }}</span>
           <i
             class="header-icon el-icon-info"
-            v-bind:class="[
+            :class="[
               activeNames.includes(idx) ? titleActive : titleInactive,
             ]"
-          ></i>
+          />
         </template>
 
         <div class="threshold-content">
@@ -57,7 +57,7 @@
 import countTo from 'vue-count-to'
 import { getArpu, arpuBingo } from '@/api/classic'
 export default {
-  name: 'threshold-bingo',
+  name: 'ThresholdBingo',
   components: { countTo },
   data() {
     return {
@@ -89,9 +89,9 @@ export default {
       if (this.inputPspt.length < 6) {
         return false
       }
-      let { arpuValue = undefined } = await getArpu({ psptId: this.inputPspt })
+      const { arpuValue = undefined } = await getArpu({ psptId: this.inputPspt })
       this.userArpu = arpuValue
-      let result = await arpuBingo({ arpu: arpuValue })
+      const result = await arpuBingo({ arpu: arpuValue })
       this.thresholdArray = result
       this.initActiveNames()
     }

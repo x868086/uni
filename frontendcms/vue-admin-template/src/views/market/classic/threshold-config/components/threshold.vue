@@ -9,33 +9,31 @@
         <el-col :span="6">
           <div>
             <el-input-number
-              size="mini"
               v-model="gt"
-              :step="5"
-              :min="0"
-            ></el-input-number>
-            <el-input-number
               size="mini"
-              v-model="lte"
               :step="5"
               :min="0"
-            ></el-input-number>
+            />
+            <el-input-number
+              v-model="lte"
+              size="mini"
+              :step="5"
+              :min="0"
+            />
           </div>
         </el-col>
         <el-col :span="12">
           <el-input
+            v-model="title"
             class="config-name"
             type="textarea"
             placeholder="请输入档级推荐信息"
-            v-model="title"
             maxlength="40"
             show-word-limit
             :clearable="true"
             rows="medium"
             resize="none"
-          >
-          </el-input
-        ></el-col>
+          /></el-col>
         <el-col :span="2" class="threshold-remove">
           <el-button
             type="danger"
@@ -43,7 +41,7 @@
             size="mini"
             circle
             @click.native="closeNow"
-          ></el-button>
+          />
         </el-col>
       </el-row>
     </section>
@@ -52,21 +50,21 @@
 
 <script>
 export default {
-  name: 'threshold',
+  name: 'Threshold',
   data() {
     return {
       title: '',
       gt: 0,
-      lte: 0,
-    };
+      lte: 0
+    }
   },
   methods: {
     closeNow() {
-      this.$emit('closeNow', this);
-      console.log(this);
-    },
-  },
-};
+      this.$emit('closeNow', this)
+      console.log(this)
+    }
+  }
+}
 </script>
 
 <style lang="scss">

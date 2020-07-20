@@ -88,7 +88,7 @@ export default {
       }
       this.listLoading = true
       try {
-        let result = await serialSearch(this.inputSerial)
+        const result = await serialSearch(this.inputSerial)
         this.list = []
         this.list.push(result)
         this.listLoading = false
@@ -98,10 +98,10 @@ export default {
       }
     },
     isendDate(end_date) {
-      let value1 = end_date.split('/')
+      const value1 = end_date.split('/')
       value1.splice(1, 1, (value1[1] - 1).toString())
-      let endDateTimeStramp = new Date(...value1).getTime()
-      let days = parseInt(
+      const endDateTimeStramp = new Date(...value1).getTime()
+      const days = parseInt(
         (endDateTimeStramp - new Date().getTime()) / 1000 / 60 / 60 / 24
       )
       switch (true) {

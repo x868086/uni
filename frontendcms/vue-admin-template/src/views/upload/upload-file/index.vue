@@ -94,8 +94,8 @@
             type="success"
             size="mini"
             icon="el-icon-circle-check-outline"
-            @click.native="rollingRow(scope.row.fileName)"
             :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
+            @click.native="rollingRow(scope.row.fileName)"
           >导入</el-button>
         </template>
       </el-table-column>
