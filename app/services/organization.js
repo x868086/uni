@@ -10,7 +10,7 @@ class OrganizationService {
     this.stateCode = state_code;
   }
 
-  // 递归查找子节点
+  // 递归查找子节点 这种方法使用了递归函数,子节点庞大时非常慢,不实用
   // async findChannels() {
   //     let orgArrayReal = []
   //     let orgArray = []
