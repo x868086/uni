@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import axios from 'axios';
+import request from '@/utils/request'
+import axios from 'axios'
 
 // export function login(data) {
 //   return request({
@@ -13,8 +13,8 @@ export function login(data) {
   return request({
     url: '/users/verify',
     method: 'post',
-    data,
-  });
+    data
+  })
 }
 
 // export function getInfo(token) {
@@ -29,16 +29,16 @@ export function getInfo(data) {
   return request({
     url: '/users/tokenverify',
     method: 'post',
-    data,
-  });
+    data
+  })
 }
 
 export function getChannels(data) {
   return request({
     url: '/users/channels',
     method: 'post',
-    data,
-  });
+    data
+  })
 }
 
 // export function logout() {
@@ -51,13 +51,13 @@ export function getChannels(data) {
 export function tokenRefresh(token) {
   return axios
     .get(`${process.env.VUE_APP_BASE_API}/users/tokenrefresh`, {
-      headers: { Authorization: token },
+      headers: { Authorization: token }
     })
     .then((res) => {
-      return res;
+      return res
     })
     .catch((error) => {
       // return error
-      return Promise.reject(error);
-    });
+      return Promise.reject(error)
+    })
 }

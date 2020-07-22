@@ -54,8 +54,7 @@
         type="primary"
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
-        >登录</el-button
-      >
+      >登录</el-button>
     </el-form>
   </div>
 </template>
@@ -66,70 +65,70 @@ export default {
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码长度最少6位'));
+        callback(new Error('密码长度最少6位'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       loginForm: {
         username: '',
-        password: '',
+        password: ''
       },
       loginRules: {
         username: [
           { required: true, message: '请输入账号信息', trigger: 'blur' },
-          { min: 3, max: 128, message: '账号最少3个字符', trigger: 'blur' },
+          { min: 3, max: 128, message: '账号最少3个字符', trigger: 'blur' }
         ],
         password: [
-          { required: true, trigger: 'blur', validator: validatePassword },
-        ],
+          { required: true, trigger: 'blur', validator: validatePassword }
+        ]
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined,
-    };
+      redirect: undefined
+    }
   },
   watch: {
     $route: {
       handler: function(route) {
-        this.redirect = route.query && route.query.redirect;
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
-        this.passwordType = '';
+        this.passwordType = ''
       } else {
-        this.passwordType = 'password';
+        this.passwordType = 'password'
       }
       this.$nextTick(() => {
-        this.$refs.password.focus();
-      });
+        this.$refs.password.focus()
+      })
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.loading = true;
+          this.loading = true
           this.$store
             .dispatch('user/login', this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || '/' });
-              this.loading = false;
+              this.$router.push({ path: this.redirect || '/' })
+              this.loading = false
             })
             .catch(() => {
-              this.loading = false;
-            });
+              this.loading = false
+            })
         } else {
-          console.log('登录错误!!');
-          return false;
+          console.log('登录错误!!')
+          return false
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss">

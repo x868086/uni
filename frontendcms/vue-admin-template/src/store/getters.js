@@ -10,6 +10,6 @@ const getters = {
   rolesname: (state) => state.user.rolesname,
   orgdesc: (state) => state.user.orgdesc,
   permission_routes: (state) => state.permission.routes,
-  channelArray: (state) => state.user.channelArray,
-};
-export default getters;
+  channelArray: (state) => state.user.channelArray
+}
+export default getters
