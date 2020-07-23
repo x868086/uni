@@ -114,42 +114,42 @@ export const constantRoutes = [
         meta: { title: '工作台', icon: 'dashboard' }
       }
     ]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '示例', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '表格', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '树', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: '表单', icon: 'form' }
-      }
-    ]
   }
+
+  // {
+  //   path: '/example',
+  //   component: Layout,
+  //   redirect: '/example/table',
+  //   name: 'Example',
+  //   meta: { title: '示例', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: '表格', icon: 'table' },
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: '树', icon: 'tree' },
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('@/views/form/index'),
+  //       meta: { title: '表单', icon: 'form' },
+  //     },
+  //   ],
+  // },
 ]
 
 /**
@@ -216,16 +216,16 @@ export const asyncRoutes = [
   //   ]
   // },
 
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
+  // {
+  //   path: 'external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+  //       meta: { title: 'External Link', icon: 'link' },
+  //     },
+  //   ],
+  // },
 
   {
     path: '/market',
@@ -233,7 +233,12 @@ export const asyncRoutes = [
     redirect: '/market/classic',
     name: 'market',
     meta: {
-      roles: ['DepartmentSupervisor', 'DirectSeller'],
+      roles: [
+        'DepartmentSupervisor',
+        'StoreSupervisor',
+        'StoreManager',
+        'DirectSeller'
+      ],
       title: '市场运营',
       icon: 'el-icon-shopping-bag-2'
     },
@@ -242,19 +247,41 @@ export const asyncRoutes = [
         path: 'classic',
         component: () => import('@/views/market/classic/index'), // Parent router-view
         name: 'classic',
-        meta: { roles: ['DepartmentSupervisor'], title: '存量经营' },
+        meta: {
+          roles: [
+            'DepartmentSupervisor',
+            'StoreSupervisor',
+            'StoreManager',
+            'DirectSeller'
+          ],
+          title: '存量经营'
+        },
         children: [
           {
             path: 'threshold-config',
             component: () => import('@/views/market/classic/threshold-config'),
             name: 'threshold-config',
-            meta: { title: '阈值配置' }
+            meta: { roles: ['DepartmentSupervisor'], title: '阈值配置' }
           },
+          // {
+          //   path: 'threshold-list',
+          //   component: () => import('@/views/market/classic/threshold-list'),
+          //   name: 'threshold-list',
+          //   meta: { roles: ['DepartmentSupervisor'], title: '阈值列表' }
+          // },
           {
-            path: 'threshold-list',
-            component: () => import('@/views/market/classic/threshold-list'),
-            name: 'threshold-list',
-            meta: { title: '阈值列表' }
+            path: 'threshold-bingo',
+            component: () => import('@/views/market/classic/threshold-bingo'),
+            name: 'threshold-bingo',
+            meta: {
+              roles: [
+                'DepartmentSupervisor',
+                'StoreSupervisor',
+                'StoreManager',
+                'DirectSeller'
+              ],
+              title: '档级查询'
+            }
           }
         ]
       },
@@ -281,6 +308,48 @@ export const asyncRoutes = [
             meta: { roles: ['DirectSeller'], title: '号码释放申请' }
           }
         ]
+      }
+
+      // {
+      //   path: 'middleplatform',
+      //   component: () => import('@/views/market/middleplatform'),
+      //   name: 'middleplatform',
+      //   meta: {
+      //     roles: ['DepartmentSupervisor', 'StoreManager'],
+      //     title: '中台运营'
+      //   },
+      //   alwaysShow: true,
+      //   children: [
+      //     {
+      //       path: 'special-serial',
+      //       component: () => import('@/views/market/middleplatform/special-serial'),
+      //       name: 'special-serial',
+      //       meta: { roles: ['DepartmentSupervisor', 'StoreManager'], title: '靓号协议' }
+      //     }
+      //   ]
+      // }
+    ]
+  },
+  {
+    path: '/middleplatform',
+    component: Layout,
+    redirect: '/middleplatform/special-serial',
+    name: 'middleplatform',
+    alwaysShow: true,
+    meta: {
+      roles: ['DepartmentSupervisor', 'StoreManager'],
+      title: '中台运营',
+      icon: 'el-icon-monitor'
+    },
+    children: [
+      {
+        path: 'special-serial',
+        component: () => import('@/views/middleplatform/special-serial'),
+        name: 'special-serial',
+        meta: {
+          roles: ['DepartmentSupervisor', 'StoreManager'],
+          title: '靓号协议'
+        }
       }
     ]
   },

@@ -44,6 +44,16 @@ ThomasModel.init(
       type: Sequelize.STRING(128),
       allowNull: false,
     },
+    state_name: {
+      type: Sequelize.STRING(16),
+      allowNull: false,
+      defaultValue: '待执行',
+    },
+    upload_row: {
+      type: Sequelize.INTEGER(),
+      allowNull: false,
+      defaultValue: 0,
+    },
   },
   {
     sequelize,

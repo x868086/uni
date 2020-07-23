@@ -33,6 +33,14 @@ export function getInfo(data) {
   })
 }
 
+export function getChannels(data) {
+  return request({
+    url: '/users/channels',
+    method: 'post',
+    data
+  })
+}
+
 // export function logout() {
 //   return request({
 //     url: '/vue-admin-template/user/logout',

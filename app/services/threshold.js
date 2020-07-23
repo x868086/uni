@@ -186,7 +186,7 @@ class ThresholdService {
                 title: this.title
             }
         })
-        if (result) {
+        if (result && result.length > 0) {
             throw new global.errs.HttpException("弹窗规则已存在,无法重复新增")
         }
 

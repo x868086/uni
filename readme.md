@@ -303,16 +303,13 @@ cond3(no)->op3
 
 #### 证件号码
 
-| id  | serial     | fee | pdlevel20 | pdlevel30 | pdlevel40 |
-| --- | ---------- | --- | --------- | --------- | --------- |
-| 1   | 4205251988 | 25  |
+| id  | pspt_id    | arpu_value |
+| --- | ---------- | ---------- |
+| 1   | 4205251988 | 25         |
 
 - _id: INTEGER(11), unsigned, autoIncrement, primaryKey_
-- _serial: STRING(20), unique_
-- _fee: INTEGER(11), unsigned_
-- _pdlevel20: STRING(256)_
-- _pdlevel30: STRING(256)_
-- _pdlevel40: STRING(256)_
+- _pspt_id: STRING(20), allowNull:false_
+- _arpu_value: FLOAT(11),allowNull:false_,defaultValue:0
 
 #### b2i2c 二次销售号码
 
@@ -357,10 +354,10 @@ cond3(no)->op3
 
 #### thomas 导入文件列表
 
-| file_id | file_name                                                           | file_size | file_path                                                                                         | upload_time         | operate_author |
-| ------- | ------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------- | ------------------- | -------------- |
-| 1       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          |
-| 2       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          |
+| file_id | file_name                                                           | file_size | file_path                                                                                         | upload_time         | operate_author | state_name | upload_row |
+| ------- | ------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------- | ------------------- | -------------- | ---------- | ---------- |
+| 1       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          | 待执行     | 0          |
+| 2       | 2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 14.92 KB  | E:\source\uni\temp\uploadfile\2020.03.18-政企-姚松松-给定手机号提融合宽带 无融合提同证件宽带.xlsx | 2020-7-4 9:38:57 PM | json1          | 完成       | 25         |
 
 - _file_id SMALLINT(11), unsigned, autoIncrement, primaryKey_
 - _file_name STRING(128), unique:true,allowNull:false_
@@ -368,6 +365,8 @@ cond3(no)->op3
 - _file_path STRING(128), unique:true,allowNull:false_
 - _upload_time STRING(64), allowNull:true_
 - _operate_author STRING(128), allowNull:false_
+- _state_name STRING(128), allowNull:false, defaultValue: '待执行'_
+- _upload_row INTEGER, allowNull: false, defaultValue:0_
 
 ### 2. TCB 云数据库？
 
@@ -581,38 +580,22 @@ POST / users / channels;
 
 ##### Parameters
 
-- user_id: 用户 id [type: number]
-- org_id: 用户组织节点 id [type: number]
-- scope_top: 用户后端 API 接口的最高权限 [type: number]
+**调用该接口时会获取由/users/verify 接口先行挂载在 ctx.auth 上挂载的 orgId 作为参数**
 
 ##### Response 200
 
 ```js
-[
+
   {
-    scope: 60,
-    org_desc: '宜昌',
-    channels: ['09C15', 'YVBBJ', 'YFYUJ', '09CAA', 'Y1ZRI', 'YAAJ0'],
+    "channelArray": ["09C15", "YVBBJ", "YFYUJ", "09CAA", "Y1ZRI", "YAAJ0"],
   },
-  {
-    scope: 36,
-    org_desc: '西陵东山网格',
-    channels: ['09C15', 'YVBBJ', 'YFYUJ'],
-  },
-  {
-    scope: 30,
-    org_desc: '正兴合作厅',
-    channels: ['09C15'],
-  },
-];
+
+
 ```
 
 ##### Response_description
 
-- data: [type: array]
-- scope: 用户后端 API 接口权限级别 [type: number]
-- org_desc: 用户组织节点名称 [type: string]
-- channels: 用户权限渠道列表 [type: array]
+- channelArray: 用户权限渠道列表 [type: Object]
 
 说明: **递归查找**，按 org_desc 层级汇总 org_desc 下所有 channels 列表
 
@@ -1351,6 +1334,30 @@ POST / threshold / list;
 - end_date: 结束时间, 时间戳 [type: number][timestamp]
 - operator: 操作人 [type: string]
 - items: 阈值详情 [type: Array]
+
+#### 获取 ARPU 值
+
+##### URL
+
+```js
+GET / threshold / getarpu;
+```
+
+##### Parameters
+
+- psptId: 用户证件号码 [type: string]
+
+##### Response 200
+
+```js
+{
+    "arpuValue":220.12
+}
+```
+
+Response_description
+
+- arpuValue: arpu 值 [type: Float]
 
 #### 阈值匹配
 

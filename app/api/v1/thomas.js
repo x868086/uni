@@ -6,6 +6,9 @@ let { ThomasService } = require('../../services/thomas');
 
 let { UserModel } = require('../../models/user');
 
+const { fork } = require('child_process');
+const path = require('path');
+
 const router = new Router({
   prefix: '/v1/thomas',
 });
@@ -23,12 +26,34 @@ router.post('/removefile', async (ctx, next) => {
   throw new global.errs.Success(`${fileName} 文件已成功删除`, 0, 202);
 });
 
+// 普通的单线程导入方法
+// router.post('/rollingrow', async (ctx, next) => {
+//   let { filePath, modelName } = ctx.request.body;
+//   let result = await new ThomasService({
+//     originalname: filePath,
+//     modelName: modelName,
+//   }).rollingRow();
+// });
+
 router.post('/rollingrow', async (ctx, next) => {
   let { filePath, modelName } = ctx.request.body;
-  let result = await new ThomasService({
-    originalname: filePath,
-    modelName: modelName,
-  }).rollingRow();
+  let cp = fork(path.join(__dirname, '../../work-process/rollingrow.js'), [], {
+    cwd: process.cwd(),
+    env: process.env, //子进程的环境变量
+    execPath: process.execPath, //运行模块的可执行文件
+    execArgv: process.execArgv, //传递给可执行文件的参数列表
+    silent: false, //为false表示父进程与子进程共享标准(输入/输出)，为true时不共享。
+  });
+
+  cp.on('message', (data) => {
+    console.log(`got a message is ${data}`, JSON.stringify(data));
+  });
+  cp.on('error', function (err) {
+    console.log(err.message);
+  });
+  cp.send({ filePath, modelName });
+
+  throw new global.errs.Success(`${filePath} 文件已生成导入计划`, 0, 201);
 });
 
 router.post('/uploadfile', upload.single('file'), async (ctx, next) => {

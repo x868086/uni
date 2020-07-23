@@ -74,7 +74,7 @@ class UserService {
 
   async getUserInfo(user) {
     // 获取用户的user_id,org_id,roles数组,scope数组,scopeTop值,channels数组 并以此生成token
-    let permissionArray, scopeArray, scopeTop, role, channelArray;
+    let permissionArray, scopeArray, scopeTop, role;
     try {
       // 查询user的roles和scope
       let result = await new RoleService({ userId: user.user_id }).findScope();
@@ -83,16 +83,9 @@ class UserService {
       scopeTop = result['scopeTop'];
       role = result['role'];
 
-      // 查询user的channels, 传入节点scope值用来判断节点是否渠道级或直销人员级的末梢节点
-      channelArray = await new OrganizationService({
-        org_id: user.org_id,
-        scope: scopeTop,
-      }).findChannels();
-
       return {
         scopeTop,
         role,
-        channelArray,
       };
     } catch (error) {
       throw new global.errs.HttpException(
@@ -119,18 +112,16 @@ class UserService {
         // 或者是以用户的密码为明文，和用户密码二次加密后的密文对比(适用通过refreshToken获取续期时验证用户密码和用户二次加密密码的准确性)
         secretUtile.decodedSecret(this.secret, userSecretCiphertext);
       if (correct) {
-        let { scopeTop, role, channelArray } = await this.getUserInfo(user);
+        let { scopeTop, role } = await this.getUserInfo(user);
         let accessToken = tokenUtile.generateToken(
           // 将用户user_id,org_id,scopTop,权限内的channels加密生成token
           user.user_id,
           user.org_id,
           scopeTop,
           role,
-          channelArray,
           tokenSecurity.accessExpiresIn
         );
         let refreshToken = tokenUtile.generateToken(
-          undefined,
           undefined,
           undefined,
           undefined,

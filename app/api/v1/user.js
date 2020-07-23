@@ -8,6 +8,7 @@ const router = new Router({
 
 const { UserService } = require('../../services/user');
 const { SmsService } = require('../../services/sms');
+const { OrganizationService } = require('../../services/organization');
 
 const {
   PaginationValidator,
@@ -42,6 +43,13 @@ router.get('/tokenrefresh', async (ctx, next) => {
     refreshToken: token.name,
   }).tokenRefresh();
   ctx.body = { accessToken, refreshToken };
+});
+
+router.post('/channels', async (ctx, next) => {
+  let channelArray = await new OrganizationService({
+    org_id: ctx.auth.orgId,
+  }).findChannels();
+  ctx.body = { channelArray };
 });
 
 router.post('/create', async (ctx, next) => {

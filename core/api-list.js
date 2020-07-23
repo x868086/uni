@@ -8,6 +8,7 @@ const apiList = [
   { requestRegexp: /\/v1\/users\/\w*\/modify/, apiScope: 66 },
   { requestRegexp: /\/v1\/users\/security/, apiScope: 1 },
   { requestRegexp: /\/v1\/users\/smscode/, apiScope: 1 },
+  { requestRegexp: /\/v1\/users\/channels/, apiScope: 1 },
   { requestRegexp: /\/v1\/users\/list/, apiScope: 66 },
 
   // role
@@ -28,7 +29,8 @@ const apiList = [
 
   // threshold
   { requestRegexp: /\/v1\/threshold\/list/, apiScope: 48 },
-  { requestRegexp: /\/v1\/threshold\/\w*\/bingo/, apiScope: 24 },
+  { requestRegexp: /\/v1\/threshold\/getarpu/, apiScope: 24 },
+  { requestRegexp: /\/v1\/threshold\/bingo/, apiScope: 24 },
   { requestRegexp: /\/v1\/threshold\/search/, apiScope: 48 },
   { requestRegexp: /\/v1\/threshold\/create/, apiScope: 48 },
   { requestRegexp: /\/v1\/threshold\/modify/, apiScope: 48 },
@@ -40,6 +42,12 @@ const apiList = [
   { requestRegexp: /\/v1\/thomas\/getlist/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/removefile/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/rollingrow/, apiScope: 48 },
+
+  //specialserial
+  {
+    requestRegexp: /\/v1\/middleplatform\/\w*\/specialserial-search/,
+    apiScope: 30,
+  },
 ];
 
 const whiteList = [
