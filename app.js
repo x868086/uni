@@ -15,7 +15,8 @@ app.use(
       // if (ctx.url === '/test') {
       //     return "*"; // 允许来自所有域名请求
       // }
-      return 'http://localhost:9528';
+      // return 'http://localhost:9528'; /**开发环境允许9528端口跨域 */
+      return '*'; /** 生产环境允许80端口跨域 */
     },
     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
     maxAge: 5,

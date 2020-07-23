@@ -1,0 +1,10 @@
+{
+  "apps": {
+    "name": "unicms",
+    "script": "./app.js",
+    "instances": 2,
+    "error_file": "pm2logs/err.log",
+    "out_file": "pm2logs/out.log",
+    "log_data_format": "YYYY-MM-DD HH:mm:ss"
+  }
+}
