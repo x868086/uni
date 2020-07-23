@@ -2,7 +2,6 @@
 node_modules/
 /dist/
 logs/
-/config/
 /temp/
 /public/
 /frontendcms/vue-admin-template/dist/
