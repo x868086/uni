@@ -6,26 +6,26 @@ const environment = {
   env: process.env.NODE_ENV || 'development',
 };
 
-// const dbconfig = {
-//   database: 'uni',
-//   username: 'root',
-//   password: 'admin',
-//   host: environment.env === 'development' ? '127.0.0.1' : '192.168.189.8',
-//   port: '3306',
-//   dialect: 'mysql',
-// };
-
 const dbconfig = {
   database: 'uni',
   username: 'root',
-  password: 'Wrnmmp6666',
-  host:
-    environment.env === 'development'
-      ? 'cdb-iqrua1t7.gz.tencentcdb.com'
-      : '192.168.189.8',
-  port: '10016',
+  password: 'admin',
+  host: environment.env === 'development' ? '192.168.189.8' : '192.168.189.8',
+  port: '3306',
   dialect: 'mysql',
 };
+
+// const dbconfig = {
+//   database: 'uni',
+//   username: 'root',
+//   password: 'Wrnmmp6666',
+//   host:
+//     environment.env === 'development'
+//       ? 'cdb-iqrua1t7.gz.tencentcdb.com'
+//       : '192.168.189.8',
+//   port: '10016',
+//   dialect: 'mysql',
+// };
 
 const tokenSecurity = {
   secret:
