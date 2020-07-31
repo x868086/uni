@@ -355,6 +355,30 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/audit',
+    component: Layout,
+    redirect: '/audit/audit-list',
+    name: 'audit',
+    alwaysShow: true,
+    meta: {
+      roles: ['DepartmentSupervisor', 'StoreSupervisor', 'StoreManager'],
+      title: '收入保障',
+      icon: 'el-icon-money'
+    },
+    children: [
+      {
+        path: 'audit-list',
+        component: () => import('@/views/audit/audit-list'),
+        name: 'audit-list',
+        meta: {
+          roles: ['DepartmentSupervisor', 'StoreSupervisor', 'StoreManager'],
+          title: '稽核明细'
+        }
+      }
+    ]
+  },
+
+  {
     path: '/upload',
     component: Layout,
     redirect: '/upload/upload-file',
