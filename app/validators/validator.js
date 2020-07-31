@@ -15,6 +15,16 @@ class PaginationValidator extends LinValidator {
   }
 }
 
+class AuditDateValidator extends LinValidator {
+  constructor() {
+    super()
+    this.auditdate = [new Rule("isOptional"), new Rule("isInt", "月份参数范围202001-203001", { min: 202001, max: 203001 })]
+    this.rejectReason = [new Rule("isOptional"), new Rule("isLength", "整改原因描述超过限制,请反馈正式书面说明", { min: 0, max: 128 })]
+    this.stateName = [new Rule("isOptional"), new Rule("isIn", "提交状态必须为'待整改'或'已整改'", ['待整改', '已整改'])]
+    this.id = [new Rule("isInt", "号码编号必须为正整数", { min: 0, max: 10000000 })]
+  }
+}
+
 class AccountValidator extends LinValidator {
   constructor() {
     super()
@@ -264,5 +274,6 @@ module.exports = {
   ThresholdModifyValidator,
   TokenValidator,
   PsptValidator,
-  ArpuValueValidator
+  ArpuValueValidator,
+  AuditDateValidator
 };

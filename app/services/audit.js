@@ -2,6 +2,7 @@ const { AuditModel } = require('../models/audit');
 
 class AuditService {
     constructor({
+        id = undefined,
         auditType = undefined,
         auditDate = undefined,
         nonConformance = undefined,
@@ -22,6 +23,7 @@ class AuditService {
         auditStaffname = undefined,
         remarkDesc = undefined
     }) {
+        this.id = id;
         this.auditType = auditType;
         this.auditDate = auditDate;
         this.nonConformance = nonConformance;
@@ -43,25 +45,20 @@ class AuditService {
         this.remarkDesc = remarkDesc;
     }
 
-    async auditList(offset, limit) {
+    async auditList(offset, limit, auditdate) {
         let result = await AuditModel.findAll({
             paranoid: false,
             offset: offset,
             limit: limit,
-        }).map((e) => {
-            return {
-                // serial_number: e.serial_number,
-                // product_name: e.product_name,
-                // yf_code: e.yf_code,
-                // id_desc: e.id_desc,
-                // fee: e.fee,
-                // dev_name: e.dev_name,
-                // dev_phone: e.dev_phone,
-                // contact_phone: e.contact_phone,
-                // operate_time: e.operate_time,
-                // operate: e.operate,
-            };
-        });
+            attributes: ['id', 'audit_type', 'audit_date', 'non_conformance', 'fee', 'serial_number',
+                'net_type_name', 'subjects_name', 'product_name',
+                'access_departname', 'access_departid', 'access_staffid',
+                'access_date', 'id_desc', 'state_name', 'reject_reason',
+                'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc'],
+            where: {
+                audit_date: auditdate
+            }
+        }).map((e) => e.dataValues);
         let total = await AuditModel.findAndCountAll({
             paranoid: false,
         });
@@ -73,8 +70,36 @@ class AuditService {
         };
     }
 
-    async auditModify() {
+    async auditSearch() {
+        let result = await AuditModel.findAll({
+            paranoid: false,
+            attributes: ['id', 'audit_type', 'audit_date', 'non_conformance', 'fee', 'serial_number',
+                'net_type_name', 'subjects_name', 'product_name',
+                'access_departname', 'access_departid', 'access_staffid',
+                'access_date', 'id_desc', 'state_name', 'reject_reason',
+                'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc'],
+            where: {
+                audit_date: this.auditDate,
+                serial_number: this.serialNumber
+            }
+        }).map(e => e.dataValues)
+        return result
+    }
 
+    async auditModify() {
+        let result = await AuditModel.update({
+            state_name: this.stateName,
+            reject_reason: this.rejectReason
+        }, {
+            where: {
+                id: this.id,
+                serial_number: this.serialNumber,
+                audit_date: this.auditDate
+            }
+        })
+        return {
+            serialNumber: this.serialNumber
+        }
     }
 
 }

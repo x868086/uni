@@ -1,37 +1,41 @@
 const Router = require('koa-router')
-const { AutidService } = require("../../services/audit")
+const { AuditService } = require("../../services/audit")
 
-const { PaginationValidator } = require("../../validators/validator")
+const { PaginationValidator, AuditDateValidator, AccountValidator } = require("../../validators/validator")
 
 const router = new Router({
     prefix: "/v1/audit"
 })
 
 router.get("/list", async (ctx, next) => {
-    const v = await new PaginationValidator().validate(ctx)
-    let auditList = await new AutidService({}).auditList(v.get("query.offset"), v.get("query.limit"))
+    const v1 = await new PaginationValidator().validate(ctx)
+    const v2 = await new AuditDateValidator().validate(ctx)
+    let auditList = await new AuditService({}).auditList(v1.get("query.offset"), v1.get("query.limit"), v2.get("query.auditdate"))
     ctx.body = auditList
 })
 
-router.get("/:auditid/search", async (ctx, next) => {
-    // const v1 = await new B2iserialValidator().validate(ctx)
-    // let serial = await new B2iserialService({
-    //     serialNumber: v1.get("path.serialnumber")
-    // }).serialSearch()
-    // ctx.body = serial
+router.post("/search", async (ctx, next) => {
+    const v1 = await new AccountValidator().validate(ctx, { account: "serialNumber" })
+    const v2 = await new AuditDateValidator().validate(ctx)
+    let result = await new AuditService({
+        serialNumber: v1.get("body.serialNumber"),
+        // 取原始类型的auditdate参数，这里是字符串类型，因为AuditDateValidator校验器会自动将auditdate转成数值型
+        auditDate: v2.get("body.auditdate", parsed = false)
+    }).auditSearch()
+    ctx.body = result
 })
 
-router.post("/:auditid/modify", async (ctx, next) => {
-    // const v1 = await new B2iserialValidator().validate(ctx)
-    // const v2 = await new B2iserialModifyValidator().validate(ctx)
-    // await new B2iserialService({
-    //     serialNumber: v1.get("path.serialnumber"),
-    //     devName: v2.get("body.devName"),
-    //     devPhone: v2.get("body.devPhone"),
-    //     contactPhone: v2.get("body.contactPhone"),
-    //     operate: v2.get("body.operate"),
-    //     operateTime: v2.get("body.operateTime")
-    // }).serialModify(['待处理', '已处理', '删除'])
+router.post("/modify", async (ctx, next) => {
+    const v1 = await new AccountValidator().validate(ctx, { account: "serialNumber" })
+    const v2 = await new AuditDateValidator().validate(ctx)
+    let result = await new AuditService({
+        id: v1.get("body.id"),
+        serialNumber: v1.get("body.serialNumber"),
+        auditDate: v2.get("body.auditdate", parsed = false),
+        stateName: v2.get("body.stateName"),
+        rejectReason: v2.get("body.rejectReason")
+    }).auditModify()
+    throw new global.errs.Success(`${result.serialNumber} 的稽核结果信息提交成功`, 0, 202)
 })
 
 

@@ -6,7 +6,7 @@ class AuditModel extends Model { }
 AuditModel.init(
     {
         id: {
-            type: Sequelize.INTEGER(),
+            type: Sequelize.INTEGER(11),
             unsigned: true,
             autoIncrement: true,
             primaryKey: true,
