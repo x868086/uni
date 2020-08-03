@@ -23,14 +23,11 @@ export function getAuditList({ offset = 0, limit = 20, auditdate = currentMonth(
 }
 
 
-export function searchSerial() {
+export function searchSerial(data) {
     return request({
         url: '/audit/search',
         method: 'post',
-        params: {
-            serialNumber: serialNumber,
-            auditdate: auditdate
-        }
+        data
     })
 }
 

@@ -1,21 +1,45 @@
 <template>
   <div class="app-container">
-    <el-date-picker
-      v-model="currentMonth"
-      type="month"
-      placeholder="选择月"
-      format="yyyyMM"
-      value-format="yyyyMM"
-    ></el-date-picker>
+    <section class="condtion-container">
+      <el-button
+        type="primary"
+        icon="el-icon-document"
+        class="export-button"
+        size="medium"
+        @click.native="exportFile"
+      >导出CSV文件</el-button>
 
-    <el-input
-      v-model="inputSerial"
-      placeholder="服务号码查询"
-      size="large"
-      suffix-icon="el-icon-search"
-      class="serial-search"
-      @blur="specialSerialSearch"
-    />
+      <el-date-picker
+        v-model="currentMonth"
+        type="month"
+        placeholder="选择月"
+        format="yyyyMM"
+        value-format="yyyyMM"
+        @change="getList(
+      listQuery.offset,
+      listQuery.limit,
+      currentMonth
+    )"
+      ></el-date-picker>
+
+      <el-select v-model="auditTypeValue" clearable placeholder="按稽核项目筛选">
+        <el-option
+          v-for="item in auditTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+
+      <el-input
+        v-model="inputSerial"
+        placeholder="服务号码查询"
+        size="large"
+        suffix-icon="el-icon-search"
+        class="serial-search"
+        @blur="serialSearch"
+      />
+    </section>
     <el-table
       class="table-container"
       v-loading="listLoading"
@@ -115,6 +139,101 @@
       </el-table-column>
     </el-table>
 
+    <el-dialog title="稽核结果详情" :visible.sync="dialogVisible" width="65%" :before-close="dialogClose">
+      <div class="item-cotainer">
+        <div class="items">
+          <h4>稽核项目:</h4>
+          <p>{{currentItem.audit_type}}</p>
+        </div>
+        <div class="items">
+          <h4>稽核日期:</h4>
+          <p>{{currentItem.audit_date}}</p>
+        </div>
+        <div class="items">
+          <h4>差错原因:</h4>
+          <p>{{currentItem.non_conformance}}</p>
+        </div>
+        <div class="items">
+          <h4>差错金额:</h4>
+
+          <el-tag size="mini" type="danger" class="current-state">
+            <span>{{ currentItem.fee }}</span>
+          </el-tag>
+        </div>
+        <div class="items">
+          <h4>服务号码:</h4>
+          <p>{{currentItem.serial_number}}</p>
+        </div>
+        <div class="items">
+          <h4>网别:</h4>
+          <p>{{currentItem.net_type_name}}</p>
+        </div>
+        <div class="items">
+          <h4>业务名称:</h4>
+          <p>{{currentItem.subjects_name}}</p>
+        </div>
+        <div class="items">
+          <h4>产品名称:</h4>
+          <p>{{currentItem.product_name}}</p>
+        </div>
+        <div class="items">
+          <h4>受理/发展渠道、发展人(政企):</h4>
+          <p>{{currentItem.access_departname}}</p>
+        </div>
+        <div class="items">
+          <h4>渠道编码:</h4>
+          <p>{{currentItem.access_departid}}</p>
+        </div>
+        <div class="items">
+          <h4>受理工号:</h4>
+          <p>{{currentItem.access_staffid}}</p>
+        </div>
+        <div class="items">
+          <h4>受理时间:</h4>
+          <p>{{currentItem.access_date}}</p>
+        </div>
+        <div class="items">
+          <h4>归属营服:</h4>
+          <p>{{currentItem.id_desc}}</p>
+        </div>
+
+        <div class="items">
+          <h4>复核详情:</h4>
+          <p>{{currentItem.check_desc}}</p>
+        </div>
+        <div class="items">
+          <h4>考核金额:</h4>
+          <el-tag size="mini" type="danger" class="current-state">
+            <span>{{ currentItem.fine_fee }}</span>
+          </el-tag>
+        </div>
+        <div class="items">
+          <h4>稽核员姓名:</h4>
+          <p>{{currentItem.audit_staffname}}</p>
+        </div>
+        <div class="items">
+          <h4>备注:</h4>
+          <p>{{currentItem.remark_desc}}</p>
+        </div>
+        <div class="items">
+          <h4>是否整改:</h4>
+          <el-radio v-model="currentItem.state_name" label="待整改">待整改</el-radio>
+          <el-radio v-model="currentItem.state_name" label="已整改">已整改</el-radio>
+        </div>
+        <div class="items reject">
+          <el-form :rules="rules" ref="ruleForm" :model="currentItem">
+            <el-form-item label="未整改原因或整改说明:" prop="reject_reason">
+              <el-input type="textarea" v-model="currentItem.reject_reason" class="reject-desc"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <el-pagination
       layout="prev, pager, next"
       background
@@ -130,6 +249,7 @@
 
 <script>
 import { getAuditList, searchSerial, auditModify } from '@/api/audit'
+import { exportCsv } from '@/utils/export-csv'
 
 export default {
   name: 'AuditList',
@@ -140,55 +260,38 @@ export default {
         limit: 50,
       },
       currentMonth: '',
+      currentItem: {},
       listLength: 0,
-      list: [
-        {
-          id: 3,
-          audit_type: '低消送宽带',
-          audit_date: '202007',
-          non_conformance: '预存不足',
-          fee: '100',
-          serial_number: '0717XN19107912609',
-          net_type_name: '固网业务-宽带',
-          subjects_name: '湖北宽带100M基本套餐',
-          product_name: '湖北宽带100M基本套餐',
-          access_departname: '城区东山区东园代理点',
-          access_departid: 'E0159',
-          access_staffid: 'AJELF003',
-          access_date: '20200631',
-          id_desc: '枝江城区',
-          state_name: '待整改',
-          reject_reason: null,
-          check_desc: '未完成整改',
-          fine_fee: '22',
-          audit_staffname: '袁琼',
-          remark_desc: '考核责任人张三',
-        },
-        {
-          id: 42,
-          audit_type: '低消送宽带',
-          audit_date: '202007',
-          non_conformance: '宽带产品沟通错误',
-          fee: null,
-          serial_number: '071700807124',
-          net_type_name: '固网业务-宽带',
-          subjects_name: '湖北宽带100M基本套餐',
-          product_name: '湖北宽带100M基本套餐',
-          access_departname: '城区东山区东园代理点',
-          access_departid: 'Y3ZJP',
-          access_staffid: 'AJELF042',
-          access_date: '20200631',
-          id_desc: '城区西陵',
-          state_name: '已整改',
-          reject_reason: null,
-          check_desc: '已审批',
-          fine_fee: '48',
-          audit_staffname: '袁琼',
-          remark_desc: '考核责任人张三',
-        },
-      ],
+      list: [],
       listLoading: true,
       inputSerial: null,
+      dialogVisible: false,
+      rules: {
+        reject_reason: [
+          {
+            min: 3,
+            max: 120,
+            message: '长度在3到120个字符,超过120字请提交正式情况说明',
+            trigger: 'blur',
+          },
+          {
+            required: true,
+            message: '请填写整改反馈信息',
+            trigger: 'blur',
+          },
+        ],
+      },
+      auditTypeOptions: [
+        {
+          value: '选项1',
+          lable: '项目1',
+        },
+        {
+          value: '选项2',
+          lable: '项目2',
+        },
+      ],
+      auditTypeValue: '',
     }
   },
   async mounted() {
@@ -204,7 +307,40 @@ export default {
   },
   methods: {
     async getItem(row) {
-      console.log(row)
+      this.dialogVisible = true
+      this.currentItem = row
+    },
+    dialogClose(done) {
+      this.$confirm('确认关闭？')
+        .then((_) => {
+          done()
+        })
+        .catch((_) => {})
+    },
+    submitForm(formName) {
+      let {
+        id = undefined,
+        serial_number = undefined,
+        audit_date = undefined,
+        state_name = undefined,
+        reject_reason = undefined,
+      } = this.currentItem
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          await auditModify({
+            id,
+            serialNumber: serial_number,
+            auditdate: audit_date,
+            stateName: state_name,
+            rejectReason: reject_reason,
+          })
+          this.dialogVisible = false
+          location.reload()
+        } else {
+          this.$message.error('请确认稽核反馈信息填写是否符合要求')
+          return false
+        }
+      })
     },
     getCurrentMonth() {
       let fullYear = new Date().getFullYear()
@@ -215,20 +351,14 @@ export default {
       return `${fullYear}${month}`
     },
     async getList(offset, limit, auditdate) {
-      //   this.listLoading = true
-
+      this.listLoading = true
       const { result = null, total = undefined } = await getAuditList({
         offset: offset,
         limit: limit,
         auditdate: auditdate,
       })
       this.listLength = total
-      //   const items = result
-      //   this.list = items.map((v, i) => {
-      //     this.$set(v, 'edit', v.operate) // https://vuejs.org/v2/guide/reactivity.html
-      //     this.$set(v, 'ids', i)
-      //     return v
-      //   })
+      this.list = result
       this.listLoading = false
     },
     getPrevPage(p) {},
@@ -236,7 +366,8 @@ export default {
     async getCurrentPage(p) {
       await this.getList(
         parseInt(p - 1) * parseInt(this.listQuery.limit),
-        this.listQuery.limit
+        this.listQuery.limit,
+        this.currentMonth
       )
       this.currentPage = parseInt(p - 1)
     },
@@ -246,52 +377,85 @@ export default {
     sortByAuditDate(a, b) {
       return a.audit_date - b.audit_date
     },
-    // async specialSerialSearch() {
-    //   this.list = []
-    //   if (!this.inputSerial || this.inputSerial.length !== 11) {
-    //     return false
-    //   }
-    //   this.listLoading = true
-    //   try {
-    //     const result = await serialSearch(this.inputSerial)
-    //     this.list = []
-    //     this.list.push(result)
-    //     this.listLoading = false
-    //   } catch (error) {
-    //     this.listLoading = false
-    //     throw error
-    //   }
-    // },
-    // isendDate(end_date) {
-    //   const value1 = end_date.split('/')
-    //   value1.splice(1, 1, (value1[1] - 1).toString())
-    //   const endDateTimeStramp = new Date(...value1).getTime()
-    //   const days = parseInt(
-    //     (endDateTimeStramp - new Date().getTime()) / 1000 / 60 / 60 / 24
-    //   )
-    //   switch (true) {
-    //     case days >= 30:
-    //       return 'info'
-    //     case days > 0 && days < 30:
-    //       return 'warning'
-    //     case days < 0:
-    //       return 'danger'
-    //   }
-    // },
+    async serialSearch() {
+      if (!this.inputSerial) {
+        return false
+      }
+      const { result = null, total = undefined } = await getAuditList({
+        offset: 0,
+        limit: 100000,
+        auditdate: this.currentMonth,
+      })
+
+      const remoteIndex = result.findIndex(
+        (e) => e.serial_number === this.inputSerial
+      )
+
+      if (remoteIndex === -1) {
+        this.$message({ message: '未查询到待销售号码信息', type: 'warning' })
+        return false
+      }
+
+      const pageNumber = remoteIndex / this.listQuery.limit
+      await this.getCurrentPage(pageNumber + 1)
+
+      const localIndex = this.list.findIndex(
+        (e) => e.serial_number === this.inputSerial
+      )
+      return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0])
+    },
+    async exportFile() {
+      const { result = null } = await getAuditList({
+        offset: 0,
+        limit: 100000,
+        auditdate: this.currentMonth,
+      })
+      exportCsv(result)
+    },
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .table-container {
   margin-top: 10px;
 }
-.serial-search {
-  width: 30%;
-  float: right;
+.condtion-container {
+  display: flex;
+  justify-content: space-between;
+  .serial-search {
+    width: 30%;
+    float: right;
+  }
+  .export-button {
+    margin-right: 10px;
+  }
 }
+
 .serial-pagination {
   padding-top: 10px;
   text-align: center;
+}
+.item-cotainer {
+  min-width: 80%;
+  .items {
+    display: flex;
+    margin-bottom: -15px;
+    justify-content: flex-start;
+    align-items: center;
+    color: #909399;
+    h4 {
+      padding-right: 15px;
+      color: #606266;
+    }
+  }
+  .reject {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 20px;
+    .reject-desc {
+      min-width: 500px;
+    }
+  }
 }
 </style>
