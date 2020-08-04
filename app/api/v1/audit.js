@@ -10,7 +10,7 @@ const router = new Router({
 router.get("/list", async (ctx, next) => {
     const v1 = await new PaginationValidator().validate(ctx)
     const v2 = await new AuditDateValidator().validate(ctx)
-    let auditList = await new AuditService({}).auditList(v1.get("query.offset"), v1.get("query.limit"), v2.get("query.auditdate"))
+    let auditList = await new AuditService({}).auditList(v1.get("query.offset"), v1.get("query.limit"), v2.get("query.auditdate"), ctx.request.query.audittype)
     ctx.body = auditList
 })
 
@@ -36,6 +36,12 @@ router.post("/modify", async (ctx, next) => {
         rejectReason: v2.get("body.rejectReason")
     }).auditModify()
     throw new global.errs.Success(`${result.serialNumber} 的稽核结果信息提交成功`, 0, 202)
+})
+
+
+router.get("/audittype", async (ctx, next) => {
+    let result = await new AuditService({}).getAuditType()
+    ctx.body = result
 })
 
 

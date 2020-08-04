@@ -7,7 +7,8 @@
         class="export-button"
         size="medium"
         @click.native="exportFile"
-      >导出CSV文件</el-button>
+        >导出CSV文件</el-button
+      >
 
       <el-date-picker
         v-model="currentMonth"
@@ -15,14 +16,17 @@
         placeholder="选择月"
         format="yyyyMM"
         value-format="yyyyMM"
-        @change="getList(
-      listQuery.offset,
-      listQuery.limit,
-      currentMonth
-    )"
+        @change="searchByMonth()"
+        :clearable="false"
       ></el-date-picker>
 
-      <el-select v-model="auditTypeValue" clearable placeholder="按稽核项目筛选">
+      <el-select
+        v-model="auditTypeValue"
+        clearable
+        placeholder="按稽核项目筛选"
+        @clear="getList(listQuery.offset, listQuery.limit, currentMonth)"
+        @change="searchByAuditType()"
+      >
         <el-option
           v-for="item in auditTypeOptions"
           :key="item.value"
@@ -56,7 +60,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="90px" align="center" prop="audit_type" label="稽核项目" fixed>
+      <el-table-column
+        min-width="90px"
+        align="center"
+        prop="audit_type"
+        label="稽核项目"
+        fixed
+      >
         <template slot-scope="{ row }">
           <span>{{ row.audit_type }}</span>
         </template>
@@ -76,7 +86,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="70px" align="center" label="差错金额" prop="fee" fixed>
+      <el-table-column
+        min-width="70px"
+        align="center"
+        label="差错金额"
+        prop="fee"
+        fixed
+      >
         <template slot-scope="{ row }">
           <span>{{ row.fee }}</span>
         </template>
@@ -94,21 +110,39 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="网别" min-width="120" prop="net_type_name">
+      <el-table-column
+        align="center"
+        label="网别"
+        min-width="120"
+        prop="net_type_name"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.net_type_name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="产品名称" min-width="90" prop="product_name">
+      <el-table-column
+        align="center"
+        label="产品名称"
+        min-width="90"
+        prop="product_name"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.product_name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="是否整改" min-width="70" prop="state_name">
+      <el-table-column
+        align="center"
+        label="是否整改"
+        min-width="70"
+        prop="state_name"
+      >
         <template slot-scope="{ row }">
-          <el-tag size="mini" :type="row.state_name==='已整改'?'success':'danger'">
+          <el-tag
+            size="mini"
+            :type="row.state_name === '已整改' ? 'success' : 'danger'"
+          >
             <span>{{ row.state_name }}</span>
           </el-tag>
         </template>
@@ -127,31 +161,43 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="稽核员" min-width="70" prop="audit_staffname">
+      <el-table-column
+        align="center"
+        label="稽核员"
+        min-width="70"
+        prop="audit_staffname"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.audit_staffname }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="详情" min-width="100" prop>
         <template slot-scope="{ row }">
-          <el-button type="primary" @click.native="getItem(row)" size="mini">详情</el-button>
+          <el-button type="primary" @click.native="getItem(row)" size="mini"
+            >详情</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog title="稽核结果详情" :visible.sync="dialogVisible" width="65%" :before-close="dialogClose">
+    <el-dialog
+      title="稽核结果详情"
+      :visible.sync="dialogVisible"
+      width="65%"
+      :before-close="dialogClose"
+    >
       <div class="item-cotainer">
         <div class="items">
           <h4>稽核项目:</h4>
-          <p>{{currentItem.audit_type}}</p>
+          <p>{{ currentItem.audit_type }}</p>
         </div>
         <div class="items">
           <h4>稽核日期:</h4>
-          <p>{{currentItem.audit_date}}</p>
+          <p>{{ currentItem.audit_date }}</p>
         </div>
         <div class="items">
           <h4>差错原因:</h4>
-          <p>{{currentItem.non_conformance}}</p>
+          <p>{{ currentItem.non_conformance }}</p>
         </div>
         <div class="items">
           <h4>差错金额:</h4>
@@ -162,44 +208,44 @@
         </div>
         <div class="items">
           <h4>服务号码:</h4>
-          <p>{{currentItem.serial_number}}</p>
+          <p>{{ currentItem.serial_number }}</p>
         </div>
         <div class="items">
           <h4>网别:</h4>
-          <p>{{currentItem.net_type_name}}</p>
+          <p>{{ currentItem.net_type_name }}</p>
         </div>
         <div class="items">
           <h4>业务名称:</h4>
-          <p>{{currentItem.subjects_name}}</p>
+          <p>{{ currentItem.subjects_name }}</p>
         </div>
         <div class="items">
           <h4>产品名称:</h4>
-          <p>{{currentItem.product_name}}</p>
+          <p>{{ currentItem.product_name }}</p>
         </div>
         <div class="items">
           <h4>受理/发展渠道、发展人(政企):</h4>
-          <p>{{currentItem.access_departname}}</p>
+          <p>{{ currentItem.access_departname }}</p>
         </div>
         <div class="items">
           <h4>渠道编码:</h4>
-          <p>{{currentItem.access_departid}}</p>
+          <p>{{ currentItem.access_departid }}</p>
         </div>
         <div class="items">
           <h4>受理工号:</h4>
-          <p>{{currentItem.access_staffid}}</p>
+          <p>{{ currentItem.access_staffid }}</p>
         </div>
         <div class="items">
           <h4>受理时间:</h4>
-          <p>{{currentItem.access_date}}</p>
+          <p>{{ currentItem.access_date }}</p>
         </div>
         <div class="items">
           <h4>归属营服:</h4>
-          <p>{{currentItem.id_desc}}</p>
+          <p>{{ currentItem.id_desc }}</p>
         </div>
 
         <div class="items">
           <h4>复核详情:</h4>
-          <p>{{currentItem.check_desc}}</p>
+          <p>{{ currentItem.check_desc }}</p>
         </div>
         <div class="items">
           <h4>考核金额:</h4>
@@ -209,28 +255,38 @@
         </div>
         <div class="items">
           <h4>稽核员姓名:</h4>
-          <p>{{currentItem.audit_staffname}}</p>
+          <p>{{ currentItem.audit_staffname }}</p>
         </div>
         <div class="items">
           <h4>备注:</h4>
-          <p>{{currentItem.remark_desc}}</p>
+          <p>{{ currentItem.remark_desc }}</p>
         </div>
         <div class="items">
           <h4>是否整改:</h4>
-          <el-radio v-model="currentItem.state_name" label="待整改">待整改</el-radio>
-          <el-radio v-model="currentItem.state_name" label="已整改">已整改</el-radio>
+          <el-radio v-model="currentItem.state_name" label="待整改"
+            >待整改</el-radio
+          >
+          <el-radio v-model="currentItem.state_name" label="已整改"
+            >已整改</el-radio
+          >
         </div>
         <div class="items reject">
           <el-form :rules="rules" ref="ruleForm" :model="currentItem">
             <el-form-item label="未整改原因或整改说明:" prop="reject_reason">
-              <el-input type="textarea" v-model="currentItem.reject_reason" class="reject-desc"></el-input>
+              <el-input
+                type="textarea"
+                v-model="currentItem.reject_reason"
+                class="reject-desc"
+              ></el-input>
             </el-form-item>
           </el-form>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
 
@@ -248,18 +304,23 @@
 </template>
 
 <script>
-import { getAuditList, searchSerial, auditModify } from '@/api/audit'
-import { exportCsv } from '@/utils/export-csv'
+import {
+  getAuditList,
+  searchSerial,
+  auditModify,
+  getAuditType
+} from "@/api/audit";
+import { exportCsv } from "@/utils/export-csv";
 
 export default {
-  name: 'AuditList',
+  name: "AuditList",
   data() {
     return {
       listQuery: {
         offset: 0,
-        limit: 50,
+        limit: 50
       },
-      currentMonth: '',
+      currentMonth: "",
       currentItem: {},
       listLength: 0,
       list: [],
@@ -271,51 +332,53 @@ export default {
           {
             min: 3,
             max: 120,
-            message: '长度在3到120个字符,超过120字请提交正式情况说明',
-            trigger: 'blur',
+            message: "长度在3到120个字符,超过120字请提交正式情况说明",
+            trigger: "blur"
           },
           {
             required: true,
-            message: '请填写整改反馈信息',
-            trigger: 'blur',
-          },
-        ],
+            message: "请填写整改反馈信息",
+            trigger: "blur"
+          }
+        ]
       },
-      auditTypeOptions: [
-        {
-          value: '选项1',
-          lable: '项目1',
-        },
-        {
-          value: '选项2',
-          lable: '项目2',
-        },
-      ],
-      auditTypeValue: '',
-    }
+      auditTypeOptions: [],
+      auditTypeValue: undefined
+    };
   },
-  async mounted() {
+  // async mounted() {
+  //   await this.getList(
+  //     this.listQuery.offset,
+  //     this.listQuery.limit,
+  //     this.currentMonth
+  //   )
+  // },
+  // created() {
+  //   this.listLoading = false
+  //   this.currentMonth = this.getCurrentMonth()
+  // },
+  async created() {
+    this.listLoading = false;
+    this.currentMonth = this.getCurrentMonth();
     await this.getList(
       this.listQuery.offset,
       this.listQuery.limit,
       this.currentMonth
-    )
-  },
-  created() {
-    this.listLoading = false
-    this.currentMonth = this.getCurrentMonth()
+    );
+    // 初始化按项目筛选的项目名称
+    await this.inintAuditType();
   },
   methods: {
     async getItem(row) {
-      this.dialogVisible = true
-      this.currentItem = row
+      this.dialogVisible = true;
+      this.currentItem = row;
     },
     dialogClose(done) {
-      this.$confirm('确认关闭？')
-        .then((_) => {
-          done()
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
         })
-        .catch((_) => {})
+        .catch(_ => {});
     },
     submitForm(formName) {
       let {
@@ -323,43 +386,53 @@ export default {
         serial_number = undefined,
         audit_date = undefined,
         state_name = undefined,
-        reject_reason = undefined,
-      } = this.currentItem
-      this.$refs[formName].validate(async (valid) => {
+        reject_reason = undefined
+      } = this.currentItem;
+      this.$refs[formName].validate(async valid => {
         if (valid) {
           await auditModify({
             id,
             serialNumber: serial_number,
             auditdate: audit_date,
             stateName: state_name,
-            rejectReason: reject_reason,
-          })
-          this.dialogVisible = false
-          location.reload()
+            rejectReason: reject_reason
+          });
+          this.dialogVisible = false;
+          location.reload();
         } else {
-          this.$message.error('请确认稽核反馈信息填写是否符合要求')
-          return false
+          this.$message.error("请确认稽核反馈信息填写是否符合要求");
+          return false;
         }
-      })
+      });
     },
     getCurrentMonth() {
-      let fullYear = new Date().getFullYear()
-      let month = new Date().getMonth() + 1
+      let fullYear = new Date().getFullYear();
+      let month = new Date().getMonth() + 1;
       if (month < 10) {
-        return `${fullYear}0${month}`
+        return `${fullYear}0${month}`;
       }
-      return `${fullYear}${month}`
+      return `${fullYear}${month}`;
     },
-    async getList(offset, limit, auditdate) {
-      this.listLoading = true
+    async getList(offset, limit, auditdate, audittype) {
+      this.listLoading = true;
       const { result = null, total = undefined } = await getAuditList({
         offset: offset,
         limit: limit,
         auditdate: auditdate,
-      })
-      this.listLength = total
-      this.list = result
-      this.listLoading = false
+        audittype: audittype
+      });
+      this.listLength = total;
+      this.list = result;
+      this.listLoading = false;
+    },
+    async inintAuditType() {
+      let result = await getAuditType();
+      result["result"].forEach(e => {
+        this.auditTypeOptions.push({
+          value: e.audit_type,
+          lable: e.audit_type
+        });
+      });
     },
     getPrevPage(p) {},
     getNextPage(p) {},
@@ -368,52 +441,71 @@ export default {
         parseInt(p - 1) * parseInt(this.listQuery.limit),
         this.listQuery.limit,
         this.currentMonth
-      )
-      this.currentPage = parseInt(p - 1)
+      );
+      this.currentPage = parseInt(p - 1);
     },
     sortByFineFee(a, b) {
-      return a.fine_fee - b.fine_fee
+      return a.fine_fee - b.fine_fee;
     },
     sortByAuditDate(a, b) {
-      return a.audit_date - b.audit_date
+      return a.audit_date - b.audit_date;
     },
     async serialSearch() {
       if (!this.inputSerial) {
-        return false
+        return false;
       }
+      this.auditTypeValue = undefined;
       const { result = null, total = undefined } = await getAuditList({
         offset: 0,
         limit: 100000,
-        auditdate: this.currentMonth,
-      })
+        auditdate: this.currentMonth
+      });
 
       const remoteIndex = result.findIndex(
-        (e) => e.serial_number === this.inputSerial
-      )
+        e => e.serial_number === this.inputSerial
+      );
 
       if (remoteIndex === -1) {
-        this.$message({ message: '未查询到待销售号码信息', type: 'warning' })
-        return false
+        this.$message({ message: "未查询到稽核号码信息", type: "warning" });
+        return false;
       }
 
-      const pageNumber = remoteIndex / this.listQuery.limit
-      await this.getCurrentPage(pageNumber + 1)
+      const pageNumber = remoteIndex / this.listQuery.limit;
+      await this.getCurrentPage(pageNumber + 1);
 
       const localIndex = this.list.findIndex(
-        (e) => e.serial_number === this.inputSerial
-      )
-      return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0])
+        e => e.serial_number === this.inputSerial
+      );
+      return this.list.splice(0, 0, this.list.splice(localIndex, 1)[0]);
+    },
+
+    async searchByMonth() {
+      this.auditTypeValue = undefined;
+      await this.getList(
+        this.listQuery.offset,
+        this.listQuery.limit,
+        this.currentMonth
+      );
+    },
+    async searchByAuditType() {
+      await this.getList(
+        this.listQuery.offset,
+        this.listQuery.limit,
+        this.currentMonth,
+        this.auditTypeValue
+      );
     },
     async exportFile() {
+      this.auditTypeValue = undefined;
       const { result = null } = await getAuditList({
         offset: 0,
         limit: 100000,
-        auditdate: this.currentMonth,
-      })
-      exportCsv(result)
-    },
-  },
-}
+        auditdate: this.currentMonth
+      });
+      exportCsv(result);
+    }
+  }
+};
 </script>
 
 <style scoped lang="scss">

@@ -1,4 +1,5 @@
 const { AuditModel } = require('../models/audit');
+const { sequelize } = require('../../core/db')
 
 class AuditService {
     constructor({
@@ -45,7 +46,8 @@ class AuditService {
         this.remarkDesc = remarkDesc;
     }
 
-    async auditList(offset, limit, auditdate) {
+    async auditList(offset, limit, auditdate, audittype = undefined) {
+
         let result = await AuditModel.findAll({
             paranoid: false,
             offset: offset,
@@ -55,9 +57,10 @@ class AuditService {
                 'access_departname', 'access_departid', 'access_staffid',
                 'access_date', 'id_desc', 'state_name', 'reject_reason',
                 'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc'],
-            where: {
-                audit_date: auditdate
-            }
+            // where: {
+            //     audit_date: auditdate
+            // }
+            where: audittype ? { audit_date: auditdate, audit_type: audittype } : { audit_date: auditdate }
         }).map((e) => e.dataValues);
         let total = await AuditModel.findAndCountAll({
             paranoid: false,
@@ -100,6 +103,15 @@ class AuditService {
         return {
             serialNumber: this.serialNumber
         }
+    }
+
+    async getAuditType() {
+        let result = await sequelize
+            .query(`SELECT  DISTINCT  audit_type from uni.audit`, {
+                type: sequelize.QueryTypes.SELECT,
+            })
+        return { result }
+
     }
 
 }

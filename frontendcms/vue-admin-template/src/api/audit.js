@@ -10,14 +10,15 @@ let currentMonth = () => {
 }
 
 
-export function getAuditList({ offset = 0, limit = 20, auditdate = currentMonth() }) {
+export function getAuditList({ offset = 0, limit = 20, auditdate = currentMonth(), audittype }) {
     return request({
         url: '/audit/list',
         method: 'get',
         params: {
             offset: offset,
             limit: limit,
-            auditdate: auditdate
+            auditdate: auditdate,
+            audittype: audittype
         }
     })
 }
@@ -38,5 +39,12 @@ export function auditModify(data) {
         url: `/audit/modify`,
         method: 'post',
         data
+    })
+}
+
+export function getAuditType() {
+    return request({
+        url: `/audit/audittype`,
+        method: 'get'
     })
 }
