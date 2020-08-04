@@ -506,7 +506,6 @@ export default {
       let ownerResult = result.filter(e => {
         return this.channelArray.includes(e.access_departid);
       });
-      console.log(ownerResult);
       ownerResult.unshift({
         id: "编号",
         audit_type: "稽核项目",
