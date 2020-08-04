@@ -23,7 +23,7 @@
       <el-select
         v-model="auditTypeValue"
         clearable
-        placeholder="按稽核项目筛选"
+        placeholder="稽核项目筛选"
         @clear="getList(listQuery.offset, listQuery.limit, currentMonth)"
         @change="searchByAuditType()"
       >
@@ -50,9 +50,10 @@
       :data="list"
       border
       fit
-      highlight-current-row
       style="width: 100%"
       height="550"
+      stripe
+      :row-style="rowStyle"
     >
       <el-table-column align="center" label="ID" prop="id" min-width="60" fixed>
         <template slot-scope="{ row }">
@@ -503,6 +504,13 @@ export default {
         auditdate: this.currentMonth
       });
       exportCsv(result);
+    },
+    rowStyle({ row, rowIndex }) {
+      let styleObj = {};
+      if (rowIndex === 0 && row.serial_number === this.inputSerial) {
+        styleObj["background"] = "#f0f9eb";
+        return styleObj;
+      }
     }
   }
 };
