@@ -47,7 +47,7 @@
     <el-table
       class="table-container"
       v-loading="listLoading"
-      :data="list"
+      :data="ownerList"
       border
       fit
       style="width: 100%"
@@ -313,6 +313,8 @@ import {
 } from "@/api/audit";
 import { exportCsv } from "@/utils/export-csv";
 
+import { mapGetters } from "vuex";
+
 export default {
   name: "AuditList",
   data() {
@@ -347,17 +349,14 @@ export default {
       auditTypeValue: undefined
     };
   },
-  // async mounted() {
-  //   await this.getList(
-  //     this.listQuery.offset,
-  //     this.listQuery.limit,
-  //     this.currentMonth
-  //   )
-  // },
-  // created() {
-  //   this.listLoading = false
-  //   this.currentMonth = this.getCurrentMonth()
-  // },
+  computed: {
+    ...mapGetters(["channelArray"]),
+    ownerList() {
+      return this.list.filter(e => {
+        return this.channelArray.includes(e.access_departid);
+      });
+    }
+  },
   async created() {
     this.listLoading = false;
     this.currentMonth = this.getCurrentMonth();
@@ -503,7 +502,34 @@ export default {
         limit: 100000,
         auditdate: this.currentMonth
       });
-      exportCsv(result);
+
+      let ownerResult = result.filter(e => {
+        return this.channelArray.includes(e.access_departid);
+      });
+      console.log(ownerResult);
+      ownerResult.unshift({
+        id: "编号",
+        audit_type: "稽核项目",
+        audit_date: "稽核日期",
+        non_conformance: "差错原因",
+        fee: "差错金额",
+        serial_number: "服务号码",
+        net_type_name: "网别",
+        subjects_name: "业务名称",
+        product_name: "产品名称",
+        access_departname: "受理/发展渠道、发展人(政企)",
+        access_departid: "渠道编码",
+        access_staffid: "受理工号",
+        access_date: "受理时间",
+        id_desc: "归属营服",
+        state_name: "是否整改",
+        reject_reason: "未整改原因或整改说明",
+        check_desc: "复核详情",
+        fine_fee: "考核金额",
+        audit_staffname: "稽核员姓名",
+        remark_desc: "备注"
+      });
+      exportCsv(ownerResult);
     },
     rowStyle({ row, rowIndex }) {
       let styleObj = {};
