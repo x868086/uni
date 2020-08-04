@@ -16,7 +16,9 @@
         将文件拖到此处，或
         <em>点击上传</em>
       </div>
-      <div slot="tip" class="el-upload__tip">只能上传.xlsx/.docx类型文件,且大小不超过50Mb</div>
+      <div slot="tip" class="el-upload__tip">
+        只能上传.xlsx/.docx类型文件,且大小不超过50Mb
+      </div>
     </el-upload>
 
     <el-table
@@ -66,16 +68,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="actions" label="执行" min-width="330">
+      <el-table-column prop="actions" label="执行" min-width="360">
         <template slot-scope="scope">
-          <el-button
-            type="danger"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            @click.native="removeFile(scope.row.fileName)"
-          >删除</el-button>
-
-          <el-dropdown
+          <!-- <el-dropdown
             split-button
             type="warning"
             size="mini"
@@ -88,7 +83,22 @@
               <el-dropdown-item command="specialserial">靓号协议期</el-dropdown-item>
               <el-dropdown-item command="b2iserial">2i二次销售</el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
+
+          <el-select
+            v-model="modelName"
+            placeholder="选择数据表"
+            size="mini"
+            class="select-model"
+          >
+            <el-option
+              v-for="item in modelsOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
 
           <el-button
             type="success"
@@ -96,7 +106,23 @@
             icon="el-icon-circle-check-outline"
             :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
             @click.native="rollingRow(scope.row.fileName)"
-          >导入</el-button>
+            >添加</el-button
+          >
+          <el-button
+            type="warning"
+            size="mini"
+            icon="el-icon-circle-check-outline"
+            :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
+            @click.native="rollingRow(scope.row.fileName)"
+            >更新</el-button
+          >
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-circle-check-outline"
+            @click.native="removeFile(scope.row.fileName)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -104,13 +130,13 @@
 </template>
 
 <script>
-import NProgress from 'nprogress'
-import { getAccessToken } from '@/utils/auth'
-import { _encode } from '@/utils/encode-token'
-import { getUploadFileList, removeFile, rollingFile } from '@/api/thomas'
+import NProgress from "nprogress";
+import { getAccessToken } from "@/utils/auth";
+import { _encode } from "@/utils/encode-token";
+import { getUploadFileList, removeFile, rollingFile } from "@/api/thomas";
 
 export default {
-  name: 'Upload',
+  name: "Upload",
   data() {
     return {
       uploadUrl: `${process.env.VUE_APP_BASE_API}/thomas/uploadfile`,
@@ -118,68 +144,87 @@ export default {
         Authorization: _encode(getAccessToken())
       },
       tableData: [],
-      modelName: ''
-    }
+      modelName: "",
+      modelsOptions: [
+        {
+          value: "psptarpu",
+          label: "证件号消费"
+        },
+        {
+          value: "audit",
+          label: "稽核明细"
+        },
+        {
+          value: "specialserial",
+          label: "靓号协议期"
+        },
+        {
+          value: "b2iserial",
+          label: "2i二次销售"
+        }
+      ]
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     async getList() {
-      const result = await getUploadFileList()
-      this.tableData = this.tableData.concat(result)
+      const result = await getUploadFileList();
+      this.tableData = this.tableData.concat(result);
     },
     async removeFile(fileName) {
-      await removeFile({ fileName: fileName })
+      await removeFile({ fileName: fileName });
       const t = setTimeout(() => {
-        location.reload()
-        clearTimeout(t)
-      }, 2000)
+        location.reload();
+        clearTimeout(t);
+      }, 2000);
     },
     uploadValidate(file) {
-      const extension = file.name.split('.').slice(-1)[0]
-      const extensionReg = new RegExp('(xlsx|docx)$', 'g')
+      const extension = file.name.split(".").slice(-1)[0];
+      const extensionReg = new RegExp("(xlsx|docx)$", "g");
       if (!extensionReg.test(extension)) {
         this.$message({
           message: `不支持上传 .${extension} 类型文件`,
-          type: 'error'
-        })
-        return false
+          type: "error"
+        });
+        return false;
       }
       if (file.size > 50 * 1024 * 1024) {
         this.$message({
           message: `文件大小 ${(file.size / 1024 / 1024).toFixed(
             2
           )}MB 超出上限`,
-          type: 'error'
-        })
-        return false
+          type: "error"
+        });
+        return false;
       }
     },
     uploadSuccess(res, file, filelise) {
-      location.reload()
+      location.reload();
       this.$message({
         message: `${res.fileName} 导入成功,文件大小${res.fileSize}`,
-        type: 'success'
-      })
+        type: "success"
+      });
     },
     uploadError(err, file) {
-      const message = JSON.parse(err['message'])['msg']
+      const message = JSON.parse(err["message"])["msg"];
       this.$message({
         message: `${message}`,
-        type: 'error'
-      })
+        type: "error"
+      });
     },
-    selectModel(command) {
-      this.modelName = command
-    },
+    // selectModel(value) {
+    //   console.log(value);
+    //   this.modelName = value;
+    // },
     async rollingRow(fileName) {
-      NProgress.start()
-      await rollingFile({ filePath: fileName, modelName: this.modelName })
-      NProgress.done()
+      NProgress.start();
+      await rollingFile({ filePath: fileName, modelName: this.modelName });
+      NProgress.done();
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -196,8 +241,9 @@ export default {
     margin-top: 30px;
   }
   .select-model {
-    padding-left: 10px;
+    // padding-left: 10px;
     padding-right: 10px;
+    width: 135px;
   }
 }
 </style>
