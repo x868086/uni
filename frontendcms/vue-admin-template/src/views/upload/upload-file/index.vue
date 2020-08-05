@@ -70,59 +70,7 @@
 
       <el-table-column prop="actions" label="执行" min-width="360">
         <template slot-scope="scope">
-          <!-- <el-dropdown
-            split-button
-            type="warning"
-            size="mini"
-            class="select-model"
-            @command="selectModel"
-          >
-            选择数据表
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="psptarpu">证件号消费</el-dropdown-item>
-              <el-dropdown-item command="specialserial">靓号协议期</el-dropdown-item>
-              <el-dropdown-item command="b2iserial">2i二次销售</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown> -->
-
-          <el-select
-            v-model="modelName"
-            placeholder="选择数据表"
-            size="mini"
-            class="select-model"
-          >
-            <el-option
-              v-for="item in modelsOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-
-          <el-button
-            type="success"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
-            @click.native="rollingRow(scope.row.fileName)"
-            >添加</el-button
-          >
-          <el-button
-            type="warning"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
-            @click.native="rollingRow(scope.row.fileName)"
-            >更新</el-button
-          >
-          <el-button
-            type="danger"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            @click.native="removeFile(scope.row.fileName)"
-            >删除</el-button
-          >
+          <upload-select :fileName="scope.row.fileName"></upload-select>
         </template>
       </el-table-column>
     </el-table>
@@ -130,10 +78,11 @@
 </template>
 
 <script>
-import NProgress from "nprogress";
 import { getAccessToken } from "@/utils/auth";
 import { _encode } from "@/utils/encode-token";
-import { getUploadFileList, removeFile, rollingFile } from "@/api/thomas";
+import { getUploadFileList } from "@/api/thomas";
+
+import uploadSelect from "./components/upload-select";
 
 export default {
   name: "Upload",
@@ -143,27 +92,11 @@ export default {
       uploadSetHeaders: {
         Authorization: _encode(getAccessToken())
       },
-      tableData: [],
-      modelName: "",
-      modelsOptions: [
-        {
-          value: "psptarpu",
-          label: "证件号消费"
-        },
-        {
-          value: "audit",
-          label: "稽核明细"
-        },
-        {
-          value: "specialserial",
-          label: "靓号协议期"
-        },
-        {
-          value: "b2iserial",
-          label: "2i二次销售"
-        }
-      ]
+      tableData: []
     };
+  },
+  components: {
+    uploadSelect
   },
   created() {
     this.getList();
@@ -172,13 +105,6 @@ export default {
     async getList() {
       const result = await getUploadFileList();
       this.tableData = this.tableData.concat(result);
-    },
-    async removeFile(fileName) {
-      await removeFile({ fileName: fileName });
-      const t = setTimeout(() => {
-        location.reload();
-        clearTimeout(t);
-      }, 2000);
     },
     uploadValidate(file) {
       const extension = file.name.split(".").slice(-1)[0];
@@ -213,15 +139,6 @@ export default {
         message: `${message}`,
         type: "error"
       });
-    },
-    // selectModel(value) {
-    //   console.log(value);
-    //   this.modelName = value;
-    // },
-    async rollingRow(fileName) {
-      NProgress.start();
-      await rollingFile({ filePath: fileName, modelName: this.modelName });
-      NProgress.done();
     }
   }
 };

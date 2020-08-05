@@ -7,9 +7,11 @@ let { ThomasModel } = require('../models/thomas');
 let { B2iserialModel } = require('../models/b2iserial');
 let { SpecialSerialModel } = require('../models/special-serial');
 let { PsptArpuModel } = require('../models/psptarpu')
+let { AuditModel } = require('../models/audit')
 const { sequelize } = require('../../core/db');
 
 let { xlsxToJson } = require('../services/xlsxtojson');
+
 
 class ThomasService {
   constructor({
@@ -22,7 +24,7 @@ class ThomasService {
     filePath = '',
     modelName = '',
     stateName = undefined,
-    uploadRow = undefined,
+    uploadRow = undefined
   }) {
     this.buffer = buffer;
     this.path = path;
@@ -35,6 +37,16 @@ class ThomasService {
     this.stateName = stateName;
     this.uploadRow = uploadRow;
   }
+
+  // 有导入需求的所有Model
+  static modelTarget() {
+    return {
+      b2iserial: B2iserialModel,
+      specialserial: SpecialSerialModel,
+      psptarpu: PsptArpuModel,
+      audit: AuditModel
+    };
+  };
 
   async getList() {
     let result = await ThomasModel.findAll({
@@ -61,6 +73,8 @@ class ThomasService {
     return result;
   }
 
+
+
   async removeFile() {
     let file = await ThomasModel.findOne({
       where: {
@@ -82,6 +96,27 @@ class ThomasService {
     }
   }
 
+  async rowsTruncate() {
+    let file = await ThomasModel.findOne({
+      where: {
+        file_path: this.filePath,
+      },
+    });
+    if (!file) {
+      throw new global.errs.ParametersException('未找到对应的上传文件!');
+    }
+    try {
+      // 这里的model是根据前端传入的model待确定调用哪个业务的Model对象
+      let result = await ThomasService.modelTarget()[this.modelName].destroy({
+        truncate: true,
+        force: true
+      });
+      return result
+    } catch (error) {
+      throw new global.errs.HttpException(`${error.message} 清空数据错误`);
+    }
+  }
+
   async rollingRow() {
     let file = await ThomasModel.findOne({
       where: {
@@ -97,28 +132,14 @@ class ThomasService {
       this.modelName
     );
 
-    // 有导入需求的所有Model
-    let modelTarget = () => {
-      return {
-        b2iserial: B2iserialModel,
-        specialserial: SpecialSerialModel,
-        psptarpu: PsptArpuModel
-      };
-    };
-
     return sequelize.transaction(async (t) => {
       let result = null;
       let total = 0;
       try {
         // 这里的model是根据前端传入的model待确定调用哪个业务的Model对象
-        await modelTarget()[this.modelName].destroy({
-          truncate: true,
-          force: true,
-          transaction: t,
-        });
-        result = await modelTarget()[this.modelName].bulkCreate(rollingArray, {
+        result = await ThomasService.modelTarget()[this.modelName].bulkCreate(rollingArray, {
           fields: fields,
-          // ignoreDuplicates: true,
+          ignoreDuplicates: true,
           transaction: t,
         });
         total = result.length;
