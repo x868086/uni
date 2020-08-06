@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   computed: {
-    ...mapGetters(['nickname', 'roles', 'rolesname', 'orgdesc'])
+    ...mapGetters(["nickname", "roles", "rolesname", "orgdesc"])
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -35,6 +35,14 @@ export default {
   &-text {
     font-size: 30px;
     line-height: 46px;
+  }
+}
+.dashboard-container {
+  .dashboard-text {
+    font-size: 22px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 </style>

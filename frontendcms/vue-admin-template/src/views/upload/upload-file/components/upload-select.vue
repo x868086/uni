@@ -60,22 +60,22 @@ export default {
         {
           value: "psptarpu",
           label: "证件号消费",
-          owner: ["林艳"]
+          owner: ["林艳", "超级管理员"]
         },
         {
           value: "audit",
           label: "稽核明细",
-          owner: ["达慧", "袁琼"]
+          owner: ["达慧", "袁琼", "超级管理员"]
         },
         {
           value: "specialserial",
           label: "靓号协议期",
-          owner: ["朱晶", "袁琼"]
+          owner: ["朱晶", "袁琼", "超级管理员"]
         },
         {
           value: "b2iserial",
           label: "2i二次销售",
-          owner: ["李锴"]
+          owner: ["李锴", "超级管理员"]
         }
       ]
     };

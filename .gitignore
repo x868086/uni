@@ -2,7 +2,7 @@
 node_modules/
 /dist/
 logs/
-/temp/
+/temp/uploadfile/
 /public/
 /frontendcms/vue-admin-template/dist/
 npm-debug.log*

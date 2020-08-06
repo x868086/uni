@@ -22,7 +22,7 @@
     </el-upload>
 
     <el-table
-      :data="tableData"
+      :data="ownerTableData"
       fit
       highlight-current-row
       style="width: 100%"
@@ -84,6 +84,8 @@ import { getUploadFileList } from "@/api/thomas";
 
 import uploadSelect from "./components/upload-select";
 
+import { mapGetters } from "vuex";
+
 export default {
   name: "Upload",
   data() {
@@ -94,6 +96,14 @@ export default {
       },
       tableData: []
     };
+  },
+  computed: {
+    ...mapGetters(["nickname"]),
+    ownerTableData() {
+      return this.tableData.filter(e => {
+        return e.operateAuthor === this.nickname;
+      });
+    }
   },
   components: {
     uploadSelect
