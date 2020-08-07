@@ -10,6 +10,7 @@ const apiList = [
   { requestRegexp: /\/v1\/users\/smscode/, apiScope: 1 },
   { requestRegexp: /\/v1\/users\/channels/, apiScope: 1 },
   { requestRegexp: /\/v1\/users\/list/, apiScope: 66 },
+  { requestRegexp: /\/v1\/users\/resetpwd/, apiScope: 66 },
 
   // role
   { requestRegexp: /\/v1\/role\/create/, apiScope: 66 },

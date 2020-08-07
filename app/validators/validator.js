@@ -64,8 +64,8 @@ class UserSecurityValidator extends LinValidator {
   constructor() {
     super()
     this.account = [
-      new Rule("isLength", "账号长度不符合规范", { min: 11, max: 128 }),
-    ];
+      new Rule("isOptional"),
+      new Rule("isLength", "账号长度不符合规范", { min: 11, max: 128 })];
     this.smsCode = [
       new Rule("isOptional"),
       new Rule("isLength", "验证码为6位数字", { min: 6, max: 6 }),
@@ -73,7 +73,7 @@ class UserSecurityValidator extends LinValidator {
     this.secret = [
       new Rule("isOptional"),
       new Rule("isLength", "密码长度最少6位，最大128位", { min: 6, max: 128 }),
-      new Rule('matches', '密码组合不符合规范', '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]')
+      new Rule('matches', '密码组合不符合规范,使用字母数字组合', '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]')
     ];
     this.secretConfirm = this.secret
   }

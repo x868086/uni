@@ -109,8 +109,14 @@ router.get('/list', async (ctx, next) => {
 
 router.post('/security', async (ctx, next) => {
   const v = await new UserSecurityValidator().validate(ctx);
-  let { account } = await new UserService(ctx.request.body).userSecurity();
-  throw new global.errs.Success(`${account} 用户密码修改成功`, 0, 202);
+  let nums = await new UserService(ctx.request.body).userSecurity(ctx.auth.userId);
+  throw new global.errs.Success(`用户密码修改成功`, 0, 202);
+});
+
+router.post('/resetpwd', async (ctx, next) => {
+  const v = await new UserSecurityValidator().validate(ctx);
+  let nums = await new UserService(ctx.request.body).resetPwd();
+  throw new global.errs.Success(`用户密码重置成功`, 0, 202);
 });
 
 router.post('/smscode', async (ctx, next) => {
