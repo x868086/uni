@@ -227,9 +227,6 @@ export default {
     width: 30%;
     float: right;
   }
-  .export-button {
-    margin-right: 10px;
-  }
 }
 
 .serial-pagination {
