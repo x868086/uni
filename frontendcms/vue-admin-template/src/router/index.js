@@ -114,7 +114,7 @@ export const constantRoutes = [
         meta: { title: '工作台', icon: 'dashboard' }
       }
     ]
-  },
+  }
 
   // {
   //   path: '/example',
@@ -398,7 +398,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
 
   {
     path: '/password',

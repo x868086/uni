@@ -11,8 +11,8 @@
       />
     </section>
     <el-table
-      class="table-container"
       v-loading="listLoading"
+      class="table-container"
       :data="List"
       border
       fit
@@ -41,7 +41,7 @@
       >
         <template slot-scope="{ row }">
           <div class="role-wrap">
-            <el-tag size="mini" v-for="e in row.roleName" :key="e">{{
+            <el-tag v-for="e in row.roleName" :key="e" size="mini">{{
               e
             }}</el-tag>
           </div>
@@ -82,8 +82,7 @@
           <el-tag
             size="mini"
             :type="row.stateName === '启用' ? 'success' : 'danger'"
-            >{{ row.stateName }}</el-tag
-          >
+          >{{ row.stateName }}</el-tag>
         </template>
       </el-table-column>
 
@@ -91,25 +90,22 @@
         <template slot-scope="{ row }">
           <el-button
             type="warning"
-            @click.native="resetUser(row)"
             :disabled="row.account === 'rootroot123'"
             size="mini"
-            >重置</el-button
-          >
+            @click.native="resetUser(row)"
+          >重置</el-button>
           <el-button
             type="success"
-            @click.native="usersOn(row)"
             :disabled="row.account === 'rootroot123'"
             size="mini"
-            >启用</el-button
-          >
+            @click.native="usersOn(row)"
+          >启用</el-button>
           <el-button
             type="danger"
-            @click.native="usersOff(row)"
             :disabled="row.account === 'rootroot123'"
             size="mini"
-            >停用</el-button
-          >
+            @click.native="usersOff(row)"
+          >停用</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -134,11 +130,10 @@ import {
   usersSearch,
   usersEnable,
   usersDisable
-} from "@/api/user";
-import { exportCsv } from "@/utils/export-csv";
+} from '@/api/user'
 
 export default {
-  name: "ResetPwd",
+  name: 'ResetPwd',
   data() {
     return {
       listQuery: {
@@ -150,43 +145,43 @@ export default {
       listLength: 0,
       listLoading: true,
       inputSerial: null
-    };
+    }
   },
 
   async created() {
-    this.listLoading = false;
-    await this.getList(this.listQuery.offset, this.listQuery.limit);
+    this.listLoading = false
+    await this.getList(this.listQuery.offset, this.listQuery.limit)
   },
   methods: {
     async resetUser(row) {
-      await resetPwd({ account: row.account });
+      await resetPwd({ account: row.account })
       setTimeout(function() {
-        location.reload();
-      }, 1000);
+        location.reload()
+      }, 1000)
     },
     async usersOn(row) {
-      await usersEnable(row.account);
+      await usersEnable(row.account)
       setTimeout(function() {
-        location.reload();
-      }, 1000);
+        location.reload()
+      }, 1000)
     },
     async usersOff(row) {
-      await usersDisable(row.account);
+      await usersDisable(row.account)
       setTimeout(function() {
-        location.reload();
-      }, 1000);
+        location.reload()
+      }, 1000)
     },
     async getList(offset, limit) {
-      this.listLoading = true;
+      this.listLoading = true
       const {
         result: { userList, total }
       } = await usersList({
         offset: offset,
         limit: limit
-      });
-      this.List = userList;
-      this.listLength = total;
-      this.listLoading = false;
+      })
+      this.List = userList
+      this.listLength = total
+      this.listLoading = false
     },
     getPrevPage(p) {},
     getNextPage(p) {},
@@ -195,20 +190,20 @@ export default {
         parseInt(p - 1) * parseInt(this.listQuery.limit),
         this.listQuery.limit,
         this.currentMonth
-      );
-      this.currentPage = parseInt(p - 1);
+      )
+      this.currentPage = parseInt(p - 1)
     },
     async serialSearch() {
       if (!this.inputSerial) {
-        return false;
+        return false
       }
-      this.List = [];
-      let result = await usersSearch(this.inputSerial);
-      this.List.push(result);
-      this.listLength = 1;
+      this.List = []
+      const result = await usersSearch(this.inputSerial)
+      this.List.push(result)
+      this.listLength = 1
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">

@@ -70,7 +70,7 @@
 
       <el-table-column prop="actions" label="执行" min-width="360">
         <template slot-scope="scope">
-          <upload-select :fileName="scope.row.fileName"></upload-select>
+          <upload-select :file-name="scope.row.fileName" />
         </template>
       </el-table-column>
     </el-table>
@@ -78,16 +78,16 @@
 </template>
 
 <script>
-import { getAccessToken } from "@/utils/auth";
-import { _encode } from "@/utils/encode-token";
-import { getUploadFileList } from "@/api/thomas";
+import { getAccessToken } from '@/utils/auth'
+import { _encode } from '@/utils/encode-token'
+import { getUploadFileList } from '@/api/thomas'
 
-import uploadSelect from "./components/upload-select";
+import uploadSelect from './components/upload-select'
 
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "Upload",
+  name: 'Upload',
   data() {
     return {
       uploadUrl: `${process.env.VUE_APP_BASE_API}/thomas/uploadfile`,
@@ -95,63 +95,63 @@ export default {
         Authorization: _encode(getAccessToken())
       },
       tableData: []
-    };
+    }
   },
   computed: {
-    ...mapGetters(["nickname"]),
+    ...mapGetters(['nickname']),
     ownerTableData() {
       return this.tableData.filter(e => {
-        return e.operateAuthor === this.nickname;
-      });
+        return e.operateAuthor === this.nickname
+      })
     }
   },
   components: {
     uploadSelect
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     async getList() {
-      const result = await getUploadFileList();
-      this.tableData = this.tableData.concat(result);
+      const result = await getUploadFileList()
+      this.tableData = this.tableData.concat(result)
     },
     uploadValidate(file) {
-      const extension = file.name.split(".").slice(-1)[0];
-      const extensionReg = new RegExp("(xlsx|docx)$", "g");
+      const extension = file.name.split('.').slice(-1)[0]
+      const extensionReg = new RegExp('(xlsx|docx)$', 'g')
       if (!extensionReg.test(extension)) {
         this.$message({
           message: `不支持上传 .${extension} 类型文件`,
-          type: "error"
-        });
-        return false;
+          type: 'error'
+        })
+        return false
       }
       if (file.size > 50 * 1024 * 1024) {
         this.$message({
           message: `文件大小 ${(file.size / 1024 / 1024).toFixed(
             2
           )}MB 超出上限`,
-          type: "error"
-        });
-        return false;
+          type: 'error'
+        })
+        return false
       }
     },
     uploadSuccess(res, file, filelise) {
-      location.reload();
+      location.reload()
       this.$message({
         message: `${res.fileName} 导入成功,文件大小${res.fileSize}`,
-        type: "success"
-      });
+        type: 'success'
+      })
     },
     uploadError(err, file) {
-      const message = JSON.parse(err["message"])["msg"];
+      const message = JSON.parse(err['message'])['msg']
       this.$message({
         message: `${message}`,
-        type: "error"
-      });
+        type: 'error'
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

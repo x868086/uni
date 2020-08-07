@@ -62,7 +62,6 @@ export function tokenRefresh(token) {
     })
 }
 
-
 export function changePwd(data) {
   return request({
     url: '/users/security',
@@ -93,20 +92,20 @@ export function usersList({ offset = 0, limit = 50 }) {
 export function usersSearch(account) {
   return request({
     url: `/users/${account}/search`,
-    method: 'get',
+    method: 'get'
   })
 }
 
 export function usersEnable(account) {
   return request({
     url: `/users/${account}/enable`,
-    method: 'get',
+    method: 'get'
   })
 }
 
 export function usersDisable(account) {
   return request({
     url: `/users/${account}/remove`,
-    method: 'get',
+    method: 'get'
   })
 }
