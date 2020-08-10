@@ -97,7 +97,7 @@ class UserModifyValidator extends AccountValidator {
     ]
 
     this.nickName = [
-      new Rule("isLength", "昵称不符合长度规范", { min: 3, max: 32 }),
+      new Rule("isLength", "昵称不符合长度规范", { min: 2, max: 32 }),
     ]
   }
   validateRoles(val) {
