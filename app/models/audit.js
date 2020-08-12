@@ -87,6 +87,10 @@ AuditModel.init(
         remark_desc: {
             type: Sequelize.STRING(30),
             allowNull: true,
+        },
+        cuc_depart_code: {
+            type: Sequelize.STRING(30),
+            allowNull: true,
         }
     },
     {

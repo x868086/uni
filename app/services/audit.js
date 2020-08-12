@@ -22,7 +22,8 @@ class AuditService {
         checkDesc = undefined,
         fineFee = undefined,
         auditStaffname = undefined,
-        remarkDesc = undefined
+        remarkDesc = undefined,
+        cucDepartcode = undefined
     }) {
         this.id = id;
         this.auditType = auditType;
@@ -44,6 +45,7 @@ class AuditService {
         this.fineFee = fineFee;
         this.auditStaffname = auditStaffname;
         this.remarkDesc = remarkDesc;
+        this.cucDepartcode = cucDepartcode
     }
 
     async auditList(offset, limit, auditdate, audittype = undefined) {
@@ -56,7 +58,7 @@ class AuditService {
                 'net_type_name', 'subjects_name', 'product_name',
                 'access_departname', 'access_departid', 'access_staffid',
                 'access_date', 'id_desc', 'state_name', 'reject_reason',
-                'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc'],
+                'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc', 'cuc_depart_code'],
             // where: {
             //     audit_date: auditdate
             // }
@@ -80,7 +82,7 @@ class AuditService {
                 'net_type_name', 'subjects_name', 'product_name',
                 'access_departname', 'access_departid', 'access_staffid',
                 'access_date', 'id_desc', 'state_name', 'reject_reason',
-                'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc'],
+                'check_desc', 'fine_fee', 'audit_staffname', 'remark_desc', 'cuc_depart_code'],
             where: {
                 audit_date: this.auditDate,
                 serial_number: this.serialNumber

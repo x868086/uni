@@ -90,7 +90,9 @@ class ThomasService {
           file_name: this.originalname,
         },
       });
-      await fs.unlink(this.filePath)
+      fs.unlink(this.filePath, () => {
+        console.log(`删除成功`)
+      })
       return result;
     } catch (error) {
       throw new global.errs.HttpException(`${error.message} 删除文件失败`);
