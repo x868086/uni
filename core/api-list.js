@@ -10,6 +10,7 @@ const apiList = [
   { requestRegexp: /\/v1\/users\/smscode/, apiScope: 1 },
   { requestRegexp: /\/v1\/users\/channels/, apiScope: 1 },
   { requestRegexp: /\/v1\/users\/list/, apiScope: 66 },
+  { requestRegexp: /\/v1\/users\/resetpwd/, apiScope: 66 },
 
   // role
   { requestRegexp: /\/v1\/role\/create/, apiScope: 66 },
@@ -42,12 +43,19 @@ const apiList = [
   { requestRegexp: /\/v1\/thomas\/getlist/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/removefile/, apiScope: 48 },
   { requestRegexp: /\/v1\/thomas\/rollingrow/, apiScope: 48 },
+  { requestRegexp: /\/v1\/thomas\/rowstruncate/, apiScope: 48 },
 
   //specialserial
   {
     requestRegexp: /\/v1\/middleplatform\/\w*\/specialserial-search/,
     apiScope: 30,
   },
+
+  //audit
+  { requestRegexp: /\/v1\/audit\/list/, apiScope: 30 },
+  { requestRegexp: /\/v1\/audit\/search/, apiScope: 30 },
+  { requestRegexp: /\/v1\/audit\/modify/, apiScope: 30 },
+  { requestRegexp: /\/v1\/audit\/audittype/, apiScope: 30 },
 ];
 
 const whiteList = [

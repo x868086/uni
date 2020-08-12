@@ -12,7 +12,7 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar" /> -->
-          <div class="user-avatar">{{ avatar }}</div>
+          <div class="user-avatar">{{ nickname }}</div>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -22,6 +22,9 @@
           <!-- <a target="_blank" href="https://github.com/x868086/uni/">
             <el-dropdown-item>招募开发者</el-dropdown-item>
           </a> -->
+          <router-link to="/password">
+            <el-dropdown-item>修改密码</el-dropdown-item>
+          </router-link>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">登出</span>
           </el-dropdown-item>
@@ -32,28 +35,28 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Breadcrumb from '@/components/Breadcrumb';
-import Hamburger from '@/components/Hamburger';
+import { mapGetters } from 'vuex'
+import Breadcrumb from '@/components/Breadcrumb'
+import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger,
+    Hamburger
   },
   computed: {
-    ...mapGetters(['sidebar', 'avatar']),
+    ...mapGetters(['sidebar', 'avatar', 'nickname'])
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar');
+      this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout');
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
-    },
-  },
-};
+      await this.$store.dispatch('user/logout')
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -117,14 +120,11 @@ export default {
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
           height: 40px;
-          border-radius: 10px;
           text-align: center;
           line-height: 40px;
-          font-size: 16px;
-          background-color: cadetblue;
-          color: white;
+          font-size: 12px;
+          color: #909399;
         }
 
         .el-icon-caret-bottom {

@@ -15,6 +15,16 @@ class PaginationValidator extends LinValidator {
   }
 }
 
+class AuditDateValidator extends LinValidator {
+  constructor() {
+    super()
+    this.auditdate = [new Rule("isOptional"), new Rule("isInt", "月份参数范围202001-203001", { min: 202001, max: 203001 })]
+    this.rejectReason = [new Rule("isOptional"), new Rule("isLength", "整改原因描述超过限制,请反馈正式书面说明", { min: 0, max: 128 })]
+    this.stateName = [new Rule("isOptional"), new Rule("isIn", "提交状态必须为'待整改'或'已整改'", ['待整改', '已整改'])]
+    this.id = [new Rule("isOptional"), new Rule("isInt", "号码编号必须为正整数", { min: 0, max: 10000000 })]
+  }
+}
+
 class AccountValidator extends LinValidator {
   constructor() {
     super()
@@ -54,8 +64,8 @@ class UserSecurityValidator extends LinValidator {
   constructor() {
     super()
     this.account = [
-      new Rule("isLength", "账号长度不符合规范", { min: 11, max: 128 }),
-    ];
+      new Rule("isOptional"),
+      new Rule("isLength", "账号长度不符合规范", { min: 11, max: 128 })];
     this.smsCode = [
       new Rule("isOptional"),
       new Rule("isLength", "验证码为6位数字", { min: 6, max: 6 }),
@@ -63,7 +73,7 @@ class UserSecurityValidator extends LinValidator {
     this.secret = [
       new Rule("isOptional"),
       new Rule("isLength", "密码长度最少6位，最大128位", { min: 6, max: 128 }),
-      new Rule('matches', '密码组合不符合规范', '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]')
+      new Rule('matches', '密码组合不符合规范,使用字母数字组合', '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]')
     ];
     this.secretConfirm = this.secret
   }
@@ -87,7 +97,7 @@ class UserModifyValidator extends AccountValidator {
     ]
 
     this.nickName = [
-      new Rule("isLength", "昵称不符合长度规范", { min: 3, max: 32 }),
+      new Rule("isLength", "昵称不符合长度规范", { min: 2, max: 32 }),
     ]
   }
   validateRoles(val) {
@@ -264,5 +274,6 @@ module.exports = {
   ThresholdModifyValidator,
   TokenValidator,
   PsptValidator,
-  ArpuValueValidator
+  ArpuValueValidator,
+  AuditDateValidator
 };

@@ -355,6 +355,30 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/audit',
+    component: Layout,
+    redirect: '/audit/audit-list',
+    name: 'audit',
+    alwaysShow: true,
+    meta: {
+      roles: ['DepartmentSupervisor', 'StoreSupervisor', 'StoreManager'],
+      title: '收入保障',
+      icon: 'el-icon-money'
+    },
+    children: [
+      {
+        path: 'audit-list',
+        component: () => import('@/views/audit/audit-list'),
+        name: 'audit-list',
+        meta: {
+          roles: ['DepartmentSupervisor', 'StoreSupervisor', 'StoreManager'],
+          title: '稽核明细'
+        }
+      }
+    ]
+  },
+
+  {
     path: '/upload',
     component: Layout,
     redirect: '/upload/upload-file',
@@ -371,6 +395,52 @@ export const asyncRoutes = [
         component: () => import('@/views/upload/upload-file'),
         name: 'upload-file',
         meta: { roles: ['DepartmentSupervisor'], title: '文件上传' }
+      }
+    ]
+  },
+
+  {
+    path: '/password',
+    component: Layout,
+    redirect: '/password/change',
+    name: 'changepwd',
+    hidden: true,
+    meta: {
+      title: '账户安全',
+      icon: 'el-icon-upload'
+    },
+    children: [
+      {
+        path: 'change',
+        component: () => import('@/views/password/change'),
+        name: 'change',
+        meta: {
+          title: '修改密码'
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/users',
+    component: Layout,
+    redirect: '/users/userslist',
+    name: 'users',
+    alwaysShow: true,
+    meta: {
+      roles: ['Admin'],
+      title: '用户管理',
+      icon: 'el-icon-user'
+    },
+    children: [
+      {
+        path: 'users-list',
+        component: () => import('@/views/users/users-list'),
+        name: 'users-list',
+        meta: {
+          roles: ['Admin'],
+          title: '用户列表'
+        }
       }
     ]
   },

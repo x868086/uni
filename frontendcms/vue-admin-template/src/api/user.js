@@ -61,3 +61,51 @@ export function tokenRefresh(token) {
       return Promise.reject(error)
     })
 }
+
+export function changePwd(data) {
+  return request({
+    url: '/users/security',
+    method: 'post',
+    data
+  })
+}
+
+export function resetPwd(data) {
+  return request({
+    url: '/users/resetpwd',
+    method: 'post',
+    data
+  })
+}
+
+export function usersList({ offset = 0, limit = 50 }) {
+  return request({
+    url: '/users/list',
+    method: 'get',
+    params: {
+      offset: offset,
+      limit: limit
+    }
+  })
+}
+
+export function usersSearch(account) {
+  return request({
+    url: `/users/${account}/search`,
+    method: 'get'
+  })
+}
+
+export function usersEnable(account) {
+  return request({
+    url: `/users/${account}/enable`,
+    method: 'get'
+  })
+}
+
+export function usersDisable(account) {
+  return request({
+    url: `/users/${account}/remove`,
+    method: 'get'
+  })
+}

@@ -35,6 +35,15 @@ router.post('/removefile', async (ctx, next) => {
 //   }).rollingRow();
 // });
 
+router.post('/rowstruncate', async (ctx, next) => {
+  let { filePath, modelName } = ctx.request.body;
+  let result = await new ThomasService({
+    originalname: filePath,
+    modelName: modelName
+  }).rowsTruncate();
+  ctx.body = result
+})
+
 router.post('/rollingrow', async (ctx, next) => {
   let { filePath, modelName } = ctx.request.body;
   let cp = fork(path.join(__dirname, '../../work-process/rollingrow.js'), [], {

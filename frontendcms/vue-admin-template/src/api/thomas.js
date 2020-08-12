@@ -23,6 +23,14 @@ export function rollingFile(data) {
   })
 }
 
+export function rowsTruncate(data) {
+  return request({
+    url: '/thomas/rowstruncate',
+    method: 'post',
+    data
+  })
+}
+
 // export function getb2iserial({ offset = 0, limit = 5 }) {
 //   return request({
 //     url: '/b2iserial/list',

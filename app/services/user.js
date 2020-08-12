@@ -6,6 +6,7 @@ const { StateModel } = require('../models/state');
 const { PermissionService } = require('../services/permission');
 const { RoleService } = require('../services/role');
 const { OrganizationService } = require('../services/organization');
+const { LockedService } = require('../services/locked')
 
 const { tokenUtile, secretUtile } = require('../../core/utile');
 
@@ -104,6 +105,9 @@ class UserService {
       },
     });
 
+    // 验证用户是否被锁定
+    await new LockedService({ account: this.account }).isLocked()
+
     if (user) {
       let userSecretCiphertext = secretUtile.generateSecret(user.secret);
       let correct =
@@ -131,8 +135,14 @@ class UserService {
           // 存用户密码再次加密后的密文
           user.secret
         );
+        await new LockedService({
+          account: this.account
+        }).userUnlock()
         return { accessToken, refreshToken };
       } else {
+        await new LockedService({
+          account: this.account
+        }).userLock()
         throw new global.errs.Forbidden('密码不正确');
       }
     } else {
@@ -208,6 +218,10 @@ class UserService {
       limit: limit,
     });
 
+    let { count } = await UserModel.findAndCountAll({
+      paranoid: false,
+    });
+
     if (!users.length) {
       throw new global.errs.EmptyResult('用户列表信息未找到');
     }
@@ -237,7 +251,7 @@ class UserService {
     }
 
     let result = Object.assign(
-      { offset: offset, limit: limit },
+      { offset: offset, limit: limit, total: count },
       { userList: userList }
     );
     return result;
@@ -315,10 +329,10 @@ class UserService {
         account: account,
         secret: secret,
         roles: roles,
-        rolesName: roles_name,
+        roleName: roles_name,
         orgId: org_id,
         orgDesc: org_desc,
-        nickName: nick_name,
+        nickname: nick_name,
         stateCode: state_code,
         stateName: state_name,
       }
@@ -372,27 +386,27 @@ class UserService {
     });
   }
 
-  async userSecurity() {
+  async userSecurity(userId) {
     let user = await UserModel.findOne({
       where: {
-        account: this.account,
+        user_id: userId,
       },
     });
     if (!user) {
       throw new global.errs.HttpException('用户不存在');
     }
     try {
-      await UserModel.update(
+      let nums = await UserModel.update(
         {
           secret: this.secret,
         },
         {
           where: {
-            account: this.account,
+            user_id: userId,
           },
         }
       );
-      return { account: this.account };
+      return nums;
     } catch (error) {
       throw new global.errs.ParametersException(
         `${error.message} 用户密码修改失败`
@@ -438,6 +452,34 @@ class UserService {
         );
       }
     });
+  }
+
+  async resetPwd() {
+    let user = await UserModel.findOne({
+      where: {
+        account: this.account,
+      },
+    });
+    if (!user) {
+      throw new global.errs.HttpException('用户不存在');
+    }
+    try {
+      let nums = await UserModel.update(
+        {
+          secret: '123%aA',
+        },
+        {
+          where: {
+            account: this.account,
+          },
+        }
+      );
+      return nums;
+    } catch (error) {
+      throw new global.errs.ParametersException(
+        `${error.message} 用户密码重置失败`
+      );
+    }
   }
 }
 

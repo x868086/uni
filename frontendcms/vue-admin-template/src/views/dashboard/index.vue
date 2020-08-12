@@ -37,4 +37,12 @@ export default {
     line-height: 46px;
   }
 }
+.dashboard-container {
+  .dashboard-text {
+    font-size: 22px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 </style>

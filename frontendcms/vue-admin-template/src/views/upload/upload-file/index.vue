@@ -16,11 +16,13 @@
         将文件拖到此处，或
         <em>点击上传</em>
       </div>
-      <div slot="tip" class="el-upload__tip">只能上传.xlsx/.docx类型文件,且大小不超过50Mb</div>
+      <div slot="tip" class="el-upload__tip">
+        只能上传.xlsx/.docx类型文件,且大小不超过50Mb
+      </div>
     </el-upload>
 
     <el-table
-      :data="tableData"
+      :data="ownerTableData"
       fit
       highlight-current-row
       style="width: 100%"
@@ -66,37 +68,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="actions" label="执行" min-width="330">
+      <el-table-column prop="actions" label="执行" min-width="360">
         <template slot-scope="scope">
-          <el-button
-            type="danger"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            @click.native="removeFile(scope.row.fileName)"
-          >删除</el-button>
-
-          <el-dropdown
-            split-button
-            type="warning"
-            size="mini"
-            class="select-model"
-            @command="selectModel"
-          >
-            选择数据表
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="psptarpu">证件号消费</el-dropdown-item>
-              <el-dropdown-item command="specialserial">靓号协议期</el-dropdown-item>
-              <el-dropdown-item command="b2iserial">2i二次销售</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-
-          <el-button
-            type="success"
-            size="mini"
-            icon="el-icon-circle-check-outline"
-            :disabled="scope.row.fileName.split('.').slice(-1)[0] !== 'xlsx'"
-            @click.native="rollingRow(scope.row.fileName)"
-          >导入</el-button>
+          <upload-select :file-name="scope.row.fileName" />
         </template>
       </el-table-column>
     </el-table>
@@ -104,10 +78,13 @@
 </template>
 
 <script>
-import NProgress from 'nprogress'
 import { getAccessToken } from '@/utils/auth'
 import { _encode } from '@/utils/encode-token'
-import { getUploadFileList, removeFile, rollingFile } from '@/api/thomas'
+import { getUploadFileList } from '@/api/thomas'
+
+import uploadSelect from './components/upload-select'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Upload',
@@ -117,9 +94,19 @@ export default {
       uploadSetHeaders: {
         Authorization: _encode(getAccessToken())
       },
-      tableData: [],
-      modelName: ''
+      tableData: []
     }
+  },
+  computed: {
+    ...mapGetters(['nickname']),
+    ownerTableData() {
+      return this.tableData.filter(e => {
+        return e.operateAuthor === this.nickname
+      })
+    }
+  },
+  components: {
+    uploadSelect
   },
   created() {
     this.getList()
@@ -128,13 +115,6 @@ export default {
     async getList() {
       const result = await getUploadFileList()
       this.tableData = this.tableData.concat(result)
-    },
-    async removeFile(fileName) {
-      await removeFile({ fileName: fileName })
-      const t = setTimeout(() => {
-        location.reload()
-        clearTimeout(t)
-      }, 2000)
     },
     uploadValidate(file) {
       const extension = file.name.split('.').slice(-1)[0]
@@ -169,14 +149,6 @@ export default {
         message: `${message}`,
         type: 'error'
       })
-    },
-    selectModel(command) {
-      this.modelName = command
-    },
-    async rollingRow(fileName) {
-      NProgress.start()
-      await rollingFile({ filePath: fileName, modelName: this.modelName })
-      NProgress.done()
     }
   }
 }
@@ -196,8 +168,9 @@ export default {
     margin-top: 30px;
   }
   .select-model {
-    padding-left: 10px;
+    // padding-left: 10px;
     padding-right: 10px;
+    width: 135px;
   }
 }
 </style>
