@@ -3,7 +3,7 @@ const path = require('path');
 const apiDirectory = path.resolve(__dirname, '../app/api');
 
 const environment = {
-  env: process.env.NODE_ENV || 'development',
+  env: process.env.NODE_ENV || 'production',
 };
 
 // const dbconfig = {
@@ -18,22 +18,22 @@ const environment = {
 const dbconfig = {
   database: 'uni',
   username: 'root',
-  password: 'Wrnmmp6666',
+  password: environment.env === 'production' ? 'Wrnmmp6666' : 'admin',
   host:
-    environment.env === 'development'
+    environment.env === 'production'
       ? 'cdb-iqrua1t7.gz.tencentcdb.com'
       : '192.168.189.8',
-  port: '10016',
+  port: environment.env === 'production' ? '10016' : '3306',
   dialect: 'mysql',
 };
 
 const tokenSecurity = {
   secret:
-    environment.env === 'development'
-      ? 'NEYKR37jCFEH0o5tsbmxvemR7KQv3oZY0yAoa'
-      : 'dW5pY21zc3lzdGVtKioqa',
-  accessExpiresIn: environment.env === 'development' ? '8h' : '2h',
-  refreshExpiresIn: environment.env === 'development' ? '1 days' : '8h',
+    environment.env === 'production'
+      ? 'dW5pY21zc3lzdGVtKioqa'
+      : 'NEYKR37jCFEH0o5tsbmxvemR7KQv3oZY0yAoa',
+  accessExpiresIn: environment.env === 'production' ? '2h' : '8h',
+  refreshExpiresIn: environment.env === 'production' ? '8h' : '1 days',
 };
 
 // const tokenSecurity = {

@@ -6,6 +6,7 @@ const { StateModel } = require('../models/state');
 const { PermissionService } = require('../services/permission');
 const { RoleService } = require('../services/role');
 const { OrganizationService } = require('../services/organization');
+const { LockedService } = require('../services/locked')
 
 const { tokenUtile, secretUtile } = require('../../core/utile');
 
@@ -104,6 +105,9 @@ class UserService {
       },
     });
 
+    // 验证用户是否被锁定
+    await new LockedService({ account: this.account }).isLocked()
+
     if (user) {
       let userSecretCiphertext = secretUtile.generateSecret(user.secret);
       let correct =
@@ -131,8 +135,14 @@ class UserService {
           // 存用户密码再次加密后的密文
           user.secret
         );
+        await new LockedService({
+          account: this.account
+        }).userUnlock()
         return { accessToken, refreshToken };
       } else {
+        await new LockedService({
+          account: this.account
+        }).userLock()
         throw new global.errs.Forbidden('密码不正确');
       }
     } else {
