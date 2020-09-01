@@ -274,10 +274,13 @@
           <el-radio v-model="currentItem.state_name" label="已整改"
             >已整改</el-radio
           >
+          <el-radio v-model="currentItem.state_name" label="无需整改"
+            >无需整改</el-radio
+          >
         </div>
         <div class="items reject">
           <el-form ref="ruleForm" :rules="rules" :model="currentItem">
-            <el-form-item label="未整改原因或整改说明:" prop="reject_reason">
+            <el-form-item :label="resonDesc" prop="reject_reason">
               <el-input
                 v-model="currentItem.reject_reason"
                 type="textarea"
@@ -354,6 +357,12 @@ export default {
       return this.list.filter(e => {
         return this.channelArray.includes(e.access_departid);
       });
+    },
+    resonDesc() {
+      let stateName = ["待整改", "已整改", "无需整改"];
+      let arr = ["未整改说明:", "具体整改措施:", "无需整改原因:"];
+      let index = stateName.findIndex(e => e === this.currentItem.state_name);
+      return arr[index];
     }
   },
   async created() {
