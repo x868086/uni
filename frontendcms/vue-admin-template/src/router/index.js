@@ -422,6 +422,30 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/directsale',
+    component: Layout,
+    redirect: '/directsale/customer-manage',
+    name: 'directsale',
+    alwaysShow: true,
+    meta: {
+      roles: ['DepartmentSupervisor', 'StoreManager', 'DirectSeller'],
+      title: '自营厅运营',
+      icon: 'el-icon-s-shop'
+    },
+    children: [
+      {
+        path: 'customer-manage',
+        component: () => import('@/views/directsale/customer-manage'),
+        name: 'customer-manage',
+        meta: {
+          roles: ['DepartmentSupervisor', 'StoreManager', 'DirectSeller'],
+          title: '客户管理'
+        }
+      }
+    ]
+  },
+
+  {
     path: '/users',
     component: Layout,
     redirect: '/users/userslist',
@@ -444,7 +468,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
