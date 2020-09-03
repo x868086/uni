@@ -49,17 +49,20 @@
           <el-form ref="form" :model="form" :rules="rules" label-width="80px">
             <el-form-item
               label="用户姓名"
-              style="width: 25%;"
+              style="width: 15%;"
               prop="customerName"
             >
               <el-input v-model="form.customerName"></el-input>
             </el-form-item>
             <el-form-item
               label="联系电话"
-              style="width: 35%;"
+              style="width: 20%;"
               prop="contactPhone"
             >
-              <el-input v-model="form.contactPhone"></el-input>
+              <el-input
+                v-model="form.contactPhone"
+                placeholder="固话请加0717前缀"
+              ></el-input>
             </el-form-item>
 
             <el-form-item label="购机时间" prop="saleDate">
@@ -68,12 +71,12 @@
                   type="date"
                   placeholder="选择日期"
                   v-model="form.saleDate"
-                  style="width: 50%;"
+                  style="width: 20%;"
                 ></el-date-picker>
               </el-col>
             </el-form-item>
 
-            <el-form-item label="终端品牌" prop="brand">
+            <el-form-item label="终端品牌" prop="brand" style="width: 15%;">
               <el-select v-model="form.brand" placeholder="请选择终端品牌">
                 <el-option
                   v-for="(e, i) in terminalBrand"
@@ -83,24 +86,23 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="销售价格" style="width: 25%;" prop="salePrice">
+            <el-form-item label="销售价格" style="width: 15%;" prop="salePrice">
               <el-input v-model="form.salePrice" placeholder="￥"></el-input>
             </el-form-item>
-            <el-form-item
-              label="服务号码"
-              style="width: 35%;"
-              prop="servicePhone"
-            >
-              <el-input v-model="form.servicePhone"></el-input>
+            <el-form-item label="跟机号码" style="width: 20%;">
+              <el-input
+                v-model="form.servicePhone"
+                placeholder="固话请加0717前缀"
+              ></el-input>
             </el-form-item>
-            <el-form-item label="活动类型" prop="serviceType">
+            <el-form-item label="活动类型">
               <el-radio-group v-model="form.serviceType">
                 <el-radio label="单卡跟机"></el-radio>
                 <el-radio label="金融分期"></el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="搭载礼品" prop="gift">
-              <el-checkbox-group v-model="form.gift">
+            <el-form-item label="搭载礼品" prop="userGift">
+              <el-checkbox-group v-model="form.userGift" @change="addGift">
                 <el-checkbox
                   v-for="e in giftList"
                   :key="e"
@@ -121,17 +123,20 @@
 
             <el-form-item
               label="销售店员"
-              style="width: 25%;"
+              style="width: 15%;"
               prop="salesclerk"
             >
               <el-input v-model="form.salesclerk"></el-input>
             </el-form-item>
 
-            <el-form-item label="备注">
+            <el-form-item label="备注" style="width: 65%;">
               <el-input type="textarea" v-model="form.desc"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="submitForm('form')"
+              <el-button
+                type="primary"
+                @click="submitForm('form')"
+                :disabled="!channelId"
                 >立即创建</el-button
               >
               <el-button @click="resetForm('form')">取消</el-button>
@@ -188,7 +193,8 @@ export default {
         saleDate: "",
         servicePhone: "",
         serviceType: "",
-        gift: [],
+        userGift: [],
+        gift: "",
         departName: "",
         salesclerk: "",
         desc: ""
@@ -225,23 +231,7 @@ export default {
             trigger: "blur"
           }
         ],
-        servicePhone: [
-          { required: true, message: "请输入服务号码", trigger: "blur" },
-          {
-            min: 11,
-            max: 11,
-            message: "号码长度11位数字,固话请加0717前缀",
-            trigger: "blur"
-          }
-        ],
-        serviceType: [
-          {
-            required: true,
-            message: "请选择活动类型",
-            trigger: "change"
-          }
-        ],
-        gift: [
+        userGift: [
           {
             type: "array",
             required: true,
@@ -260,8 +250,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["roles", "nickname"]),
+    ...mapGetters(["roles", "nickname", "channelId"]),
     hiddenTabs() {
+      // 直销人员权限屏蔽客户列表tabs
       this.roles.length === 1 && this.roles[0] === "DirectSeller"
         ? true
         : false;
@@ -269,6 +260,8 @@ export default {
   },
   created() {
     this.currentMonth = this.getCurrentMonth();
+    this.form.departName = this.nickname;
+    this.form.departid = this.channelId;
   },
   methods: {
     getCurrentMonth() {
@@ -279,11 +272,13 @@ export default {
       }
       return `${fullYear}${month}`;
     },
+    addGift(val) {
+      this.form.gift = val.join(",");
+    },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     submitForm(formName) {
-      this.form.departName = this.nickname;
       this.$refs[formName].validate(valid => {
         if (valid) {
           alert("submit!");

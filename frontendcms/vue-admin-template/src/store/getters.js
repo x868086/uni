@@ -9,6 +9,7 @@ const getters = {
   roles: (state) => state.user.roles,
   rolesname: (state) => state.user.rolesname,
   orgdesc: (state) => state.user.orgdesc,
+  channelId: (state) => state.user.channelId,
   permission_routes: (state) => state.permission.routes,
   channelArray: (state) => state.user.channelArray
 }

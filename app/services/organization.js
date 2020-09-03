@@ -92,12 +92,12 @@ class OrganizationService {
   }
 
   async findOrgDesc() {
-    let { org_desc } = await OrganizationModel.findOne({
+    let { org_desc, channel_id } = await OrganizationModel.findOne({
       where: {
         org_id: this.orgId,
       },
     });
-    return org_desc;
+    return { org_desc, channel_id };
   }
 }
 

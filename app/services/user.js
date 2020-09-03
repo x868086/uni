@@ -436,13 +436,14 @@ class UserService {
         let roles_name = await new PermissionService({
           userId: userId,
         }).permissionNames();
-        let org_desc = await new OrganizationService({
+        let { org_desc = undefined, channel_id = undefined } = await new OrganizationService({
           org_id: orgId,
         }).findOrgDesc();
         return {
           role,
           nick_name,
           org_desc,
+          channel_id,
           roles,
           roles_name,
         };

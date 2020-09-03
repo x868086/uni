@@ -21,6 +21,7 @@ const getDefaultState = () => {
     roles: [],
     rolesname: [],
     orgdesc: '',
+    channelId: '',
     channelArray: []
   }
 }
@@ -55,6 +56,9 @@ const mutations = {
   SET_ORG: (state, orgdesc) => {
     state.orgdesc = orgdesc
   },
+  SET_CHANNELID: (state, channelId) => {
+    state.channelId = channelId
+  },
   SET_CHANNELS: (state, channelArray) => {
     state.channelArray = channelArray
   }
@@ -88,7 +92,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo({ accessToken: state.accessToken })
         .then((response) => {
-          const { nick_name, org_desc, roles, roles_name } = response
+          const { nick_name, org_desc, channel_id, roles, roles_name } = response
           if (!roles) {
             reject('登录过程出错,请重新登录.')
           }
@@ -105,6 +109,7 @@ const actions = {
           commit('SET_ROLESNAME', roles_name)
           commit('SET_NICKNAME', nick_name)
           commit('SET_ORG', org_desc)
+          commit('SET_CHANNELID', channel_id)
           commit('SET_AVATAR', avatar)
           // resolve(data)
           // resolve(response)

@@ -429,7 +429,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     meta: {
       roles: ['DepartmentSupervisor', 'StoreManager', 'DirectSeller'],
-      title: '自营厅运营',
+      title: '门店运营',
       icon: 'el-icon-s-shop'
     },
     children: [
@@ -439,7 +439,7 @@ export const asyncRoutes = [
         name: 'customer-manage',
         meta: {
           roles: ['DepartmentSupervisor', 'StoreManager', 'DirectSeller'],
-          title: '客户管理'
+          title: '终端统计'
         }
       }
     ]
