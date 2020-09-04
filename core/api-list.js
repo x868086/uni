@@ -59,6 +59,7 @@ const apiList = [
 
   //customer
   { requestRegexp: /\/v1\/customer\/addcustomer/, apiScope: 3 },
+  { requestRegexp: /\/v1\/customer\/list/, apiScope: 3 },
 ];
 
 const whiteList = [

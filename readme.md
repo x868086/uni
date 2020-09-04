@@ -370,9 +370,9 @@ cond3(no)->op3
 
 #### customer 用户购机信息
 
-| id  | brand  | sale_price | contact_phone | customer_name | depart_name | departid | gift            | sale_date | salesclerk | service_phone | service_type | desc         |
-| --- | ------ | ---------- | ------------- | ------------- | ----------- | -------- | --------------- | --------- | ---------- | ------------- | ------------ | ------------ |
-| 1   | huawei | 2000       | 15600000000   | Jason         | 国贸厅      | E1215    | 维达抽纸,手机壳 | 202009    | Lily       | 15600000002   | 跟机         | 其他描述信息 |
+| id  | brand  | sale_price | contact_phone | customer_name | depart_name | departid | gift            | sale_date | acct_month | salesclerk | service_phone | service_type | desc         |
+| --- | ------ | ---------- | ------------- | ------------- | ----------- | -------- | --------------- | --------- | ---------- | ---------- | ------------- | ------------ | ------------ |
+| 1   | huawei | 2000       | 15600000000   | Jason         | 国贸厅      | E1215    | 维达抽纸,手机壳 | 20200901  | 202009     | Lily       | 15600000002   | 跟机         | 其他描述信息 |
 
 - _id INTEGER(11), unsigned, autoIncrement, primaryKey_
 - _brand STRING(128), allowNull:false_
@@ -383,6 +383,7 @@ cond3(no)->op3
 - _departid STRING(10), allowNull:false_
 - _gift STRING(128), allowNull:false_
 - _sale_date STRING(20), allowNull:false_
+- _acct_month STRING(10), allowNull:false_
 - _salesclerk STRING(20), allowNull:false_
 - _service_phone STRING(12), allowNull:true_
 - _service_type STRING(12), allowNull:true_

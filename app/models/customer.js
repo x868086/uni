@@ -47,6 +47,10 @@ CustomerModel.init({
         type: Sequelize.STRING(128),
         allowNull: false,
     },
+    acct_month: {
+        type: Sequelize.STRING(10),
+        allowNull: false
+    },
     sale_date: {
         type: Sequelize.STRING(36),
         allowNull: false

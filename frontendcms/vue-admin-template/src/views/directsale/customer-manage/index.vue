@@ -9,15 +9,16 @@
           format="yyyyMM"
           value-format="yyyyMM"
           :clearable="false"
+          @change="selectMonth"
         >
         </el-date-picker>
       </div>
 
       <div class="count-month-wrap">
-        <span>201908</span>
+        <span>{{ currentMonth }}</span>
         <count-to
           :start-val="0"
-          :end-val="totalCount"
+          :end-val="monthCount"
           :duration="2000"
           :decimals="0"
           class="count-month-content"
@@ -28,7 +29,7 @@
         <span>累计</span>
         <count-to
           :start-val="0"
-          :end-val="monthCount"
+          :end-val="totalCount"
           :duration="2000"
           :decimals="0"
           class="count-total-content"
@@ -91,7 +92,7 @@
             <el-form-item label="销售价格" style="width: 15%;" prop="salePrice">
               <el-input
                 v-model.number="form.salePrice"
-                placeholder="￥"
+                placeholder="￥(元)"
               ></el-input>
             </el-form-item>
             <el-form-item
@@ -164,15 +165,20 @@ import countTo from "vue-count-to";
 
 import { mapGetters } from "vuex";
 
-import { addCustomer } from "@/api/customer";
+import { addCustomer, getList } from "@/api/customer";
 export default {
   name: "customer-manage",
   components: { countTo },
   data() {
     return {
+      listQuery: {
+        offset: 0,
+        limit: 50
+      },
       currentMonth: null,
       totalCount: 0,
       monthCount: 0,
+      currentOwnerList: null,
       activeName: "customerAdd",
       terminalBrand: [
         { honor: "荣耀" },
@@ -200,6 +206,7 @@ export default {
         brand: "",
         salePrice: "",
         saleDate: "",
+        acctMonth: "",
         servicePhone: "",
         serviceType: "",
         userGift: [],
@@ -275,10 +282,12 @@ export default {
         : false;
     }
   },
-  created() {
+  async created() {
     this.currentMonth = this.getCurrentMonth();
+    this.form.acctMonth = this.getCurrentMonth();
     this.form.departName = this.nickname;
     this.form.departid = this.channelId;
+    await this.getCurrentMonthList(this.currentMonth);
   },
   methods: {
     getCurrentMonth() {
@@ -288,6 +297,19 @@ export default {
         return `${fullYear}0${month}`;
       }
       return `${fullYear}${month}`;
+    },
+    async getCurrentMonthList(month) {
+      let { totalCount = undefined, currentOwnerList = null } = await getList({
+        offset: this.listQuery.offset,
+        limit: this.listQuery.limit,
+        acctMonth: month
+      });
+      this.totalCount = totalCount;
+      this.monthCount = currentOwnerList.length;
+      this.currentOwnerList = currentOwnerList;
+    },
+    async selectMonth(val) {
+      await this.getCurrentMonthList(val);
     },
     addGift(val) {
       this.form.gift = val.join(",");
