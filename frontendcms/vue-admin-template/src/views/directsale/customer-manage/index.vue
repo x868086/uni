@@ -1,6 +1,6 @@
 <template>
   <section class="content-wrap">
-    <div class="customer-info-wrap">
+    <div class="customer-info-wrap" v-loading="loading">
       <div class="block">
         <el-date-picker
           v-model="currentMonth"
@@ -175,6 +175,7 @@ export default {
         offset: 0,
         limit: 50
       },
+      loading: false,
       currentMonth: null,
       totalCount: 0,
       monthCount: 0,
@@ -299,6 +300,7 @@ export default {
       return `${fullYear}${month}`;
     },
     async getCurrentMonthList(month) {
+      this.loading = true;
       let { totalCount = undefined, currentOwnerList = null } = await getList({
         offset: this.listQuery.offset,
         limit: this.listQuery.limit,
@@ -307,6 +309,7 @@ export default {
       this.totalCount = totalCount;
       this.monthCount = currentOwnerList.length;
       this.currentOwnerList = currentOwnerList;
+      this.loading = false;
     },
     async selectMonth(val) {
       await this.getCurrentMonthList(val);
