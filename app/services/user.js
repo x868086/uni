@@ -449,7 +449,7 @@ class UserService {
         };
       } catch (error) {
         throw new global.errs.ParametersException(
-          `${error.message} token解析错误`
+          `${error.message} 登录超时token失效`
         );
       }
     });

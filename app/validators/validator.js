@@ -184,6 +184,14 @@ class ArpuValueValidator extends LinValidator {
 }
 
 
+class PriceValidator extends LinValidator {
+  constructor() {
+    super()
+    this.salePrice = [new Rule("isInt", "价格区间[0,20000]", { min: 0, max: 20000 })]
+  }
+}
+
+
 class ThresholdValidator extends LinValidator {
   constructor() {
     super()
@@ -275,5 +283,6 @@ module.exports = {
   TokenValidator,
   PsptValidator,
   ArpuValueValidator,
-  AuditDateValidator
+  AuditDateValidator,
+  PriceValidator
 };

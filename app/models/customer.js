@@ -40,16 +40,12 @@ CustomerModel.init({
         allowNull: false,
     },
     desc: {
-        type: Sequelize.TINYTEXT(),
+        type: Sequelize.TEXT('tiny'),
         allowNull: true,
     },
     gift: {
         type: Sequelize.STRING(128),
         allowNull: false,
-    },
-    role_name: {
-        type: Sequelize.STRING(128),
-        allowNull: false
     },
     sale_date: {
         type: Sequelize.STRING(36),

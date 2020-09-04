@@ -71,6 +71,8 @@
                   type="date"
                   placeholder="选择日期"
                   v-model="form.saleDate"
+                  format="yyyy 年 MM 月 dd 日"
+                  value-format="yyyy-MM-dd"
                   style="width: 20%;"
                 ></el-date-picker>
               </el-col>
@@ -87,9 +89,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="销售价格" style="width: 15%;" prop="salePrice">
-              <el-input v-model="form.salePrice" placeholder="￥"></el-input>
+              <el-input
+                v-model.number="form.salePrice"
+                placeholder="￥"
+              ></el-input>
             </el-form-item>
-            <el-form-item label="跟机号码" style="width: 20%;">
+            <el-form-item
+              label="跟机号码"
+              style="width: 20%;"
+              prop="servicePhone"
+            >
               <el-input
                 v-model="form.servicePhone"
                 placeholder="固话请加0717前缀"
@@ -155,7 +164,7 @@ import countTo from "vue-count-to";
 
 import { mapGetters } from "vuex";
 
-import { getArpu, arpuBingo } from "@/api/classic";
+import { addCustomer } from "@/api/customer";
 export default {
   name: "customer-manage",
   components: { countTo },
@@ -209,13 +218,12 @@ export default {
           {
             min: 11,
             max: 11,
-            message: "号码长度11位数字,固话请加0717前缀",
+            message: "联系电话为11位数值,固话请加0717前缀",
             trigger: "blur"
           }
         ],
         saleDate: [
           {
-            type: "date",
             required: true,
             message: "请选择日期",
             trigger: "blur"
@@ -225,9 +233,18 @@ export default {
           { required: true, message: "请选择终端品牌", trigger: "change" }
         ],
         salePrice: [
+          { type: "number", message: "价格必须为数值" },
           {
             required: true,
             message: "请输入终端价格",
+            trigger: "blur"
+          }
+        ],
+        servicePhone: [
+          {
+            min: 11,
+            max: 11,
+            message: "服务号码为11位数值,固话请加0717前缀",
             trigger: "blur"
           }
         ],
@@ -278,12 +295,16 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+    async submitForm(formName) {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
-          alert("submit!");
+          await addCustomer(this.form);
+          this.resetForm("form");
         } else {
-          console.log("error submit!!");
+          this.$message({
+            message: "提交错误,请检查表单内容",
+            type: "error"
+          });
           return false;
         }
       });
