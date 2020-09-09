@@ -153,9 +153,29 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="客户列表" name="customerList" :disabled="hiddenTabs"
-          >客户信息列表</el-tab-pane
+        <el-tab-pane
+          label="客户列表"
+          name="customerList"
+          :disabled="hiddenTabs"
         >
+          <div class="listHeader">
+            <el-button
+              type="primary"
+              icon="el-icon-document"
+              class="export-button"
+              size="medium"
+              @click.native="exportFile"
+              >导出CSV文件</el-button
+            >
+          </div>
+          <customer-list
+            :ownerList="currentOwnerList"
+            :limit="listQuery.limit"
+            :currentMonth="currentMonth"
+            :totalCount="totalCount"
+            @getCurrentPage="getCurrentList"
+          ></customer-list>
+        </el-tab-pane>
       </el-tabs>
     </section>
   </section>
@@ -163,17 +183,20 @@
 <script>
 import countTo from "vue-count-to";
 
+import CustomerList from "./components/customerList";
+
 import { mapGetters } from "vuex";
 
 import { addCustomer, getList } from "@/api/customer";
+import { exportCsv } from "@/utils/export-csv";
 export default {
   name: "customer-manage",
-  components: { countTo },
+  components: { countTo, CustomerList },
   data() {
     return {
       listQuery: {
         offset: 0,
-        limit: 50
+        limit: 25
       },
       loading: false,
       currentMonth: null,
@@ -278,7 +301,7 @@ export default {
     ...mapGetters(["roles", "nickname", "channelId"]),
     hiddenTabs() {
       // 直销人员权限屏蔽客户列表tabs
-      this.roles.length === 1 && this.roles[0] === "DirectSeller"
+      return this.roles.length === 1 && this.roles[0] === "DirectSeller"
         ? true
         : false;
     }
@@ -303,7 +326,8 @@ export default {
       this.loading = true;
       let { totalCount = undefined, currentOwnerList = null } = await getList({
         offset: this.listQuery.offset,
-        limit: this.listQuery.limit,
+        // limit: this.listQuery.limit,
+        limit: 100000,
         acctMonth: month
       });
       this.totalCount = totalCount;
@@ -325,6 +349,9 @@ export default {
         if (valid) {
           await addCustomer(this.form);
           this.resetForm("form");
+          setTimeout(function() {
+            location.reload();
+          }, 1000);
         } else {
           this.$message({
             message: "提交错误,请检查表单内容",
@@ -337,6 +364,23 @@ export default {
 
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    async getCurrentList(p) {
+      let { totalCount = undefined, currentOwnerList = null } = await getList({
+        offset: parseInt(p - 1) * parseInt(this.listQuery.limit),
+        limit: this.listQuery.limit,
+        acctMonth: this.currentMonth
+      });
+      this.currentPage = parseInt(p - 1);
+      this.currentOwnerList = currentOwnerList;
+    },
+    async exportFile() {
+      const { currentOwnerList = null } = await getList({
+        offset: 0,
+        limit: 100000,
+        acctMonth: this.currentMonth
+      });
+      exportCsv(currentOwnerList);
     }
   }
 };
@@ -370,6 +414,9 @@ export default {
   }
   .customer-manage-wrap {
     padding: 20px;
+  }
+  .export-button {
+    margin-right: 10px;
   }
 }
 </style>

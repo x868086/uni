@@ -29,7 +29,7 @@ CustomerModel.init({
     },
     customer_name: {
         type: Sequelize.STRING(20),
-        allowNull: false
+        allowNull: false,
     },
     depart_name: {
         type: Sequelize.STRING(50),

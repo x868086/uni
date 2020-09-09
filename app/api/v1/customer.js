@@ -47,6 +47,7 @@ router.get("/list", async (ctx, next) => {
     ctx.body = { totalCount, currentOwnerList }
 })
 
+
 module.exports = {
     customer: router
 }

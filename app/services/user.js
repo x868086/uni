@@ -231,7 +231,7 @@ class UserService {
       let roles_name = await new PermissionService({
         userId: user_id,
       }).permissionNames();
-      let org_desc = await new OrganizationService({ org_id }).findOrgDesc();
+      let { org_desc = undefined } = await new OrganizationService({ org_id }).findOrgDesc();
       let { state_name } = await StateModel.findOne({
         where: { state_code: state_code },
       });
@@ -318,7 +318,7 @@ class UserService {
     let roles = await new PermissionService({
       userId: user_id,
     }).permissionArray();
-    let org_desc = await new OrganizationService({ org_id }).findOrgDesc();
+    let { org_desc = undefined } = await new OrganizationService({ org_id }).findOrgDesc();
     let { state_name } = await StateModel.findOne({
       where: { state_code: state_code },
     });
