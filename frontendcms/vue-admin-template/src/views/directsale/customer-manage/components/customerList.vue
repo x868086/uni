@@ -149,30 +149,29 @@
 </template>
 
 <script>
-import { getList } from "@/api/customer";
 export default {
-  name: "CustomerList",
-  props: ["ownerList", "totalCount", "currentMonth", "limit"],
+  name: 'CustomerList',
+  props: ['ownerList', 'totalCount', 'currentMonth', 'limit'],
   data() {
     return {
       inputSerial: null,
       currentPage: 1
-    };
+    }
   },
   methods: {
     sortBySaleDate(b, a) {
-      return a.sale_date - b.sale_date;
+      return a.sale_date - b.sale_date
     },
     sortBySalePrice(b, a) {
-      return a.sale_price - b.sale_price;
+      return a.sale_price - b.sale_price
     },
     getPrevPage(p) {},
     getNextPage(p) {},
     getCurrentPage(p) {
-      this.$emit("getCurrentPage", p);
+      this.$emit('getCurrentPage', p)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -20,9 +20,10 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')"
-          >提交</el-button
-        >
+        <el-button
+          type="primary"
+          @click="submitForm('ruleForm')"
+        >提交</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
       </el-form-item>
     </el-form>
@@ -30,39 +31,39 @@
 </template>
 
 <script>
-import { changePwd } from "@/api/user";
+import { changePwd } from '@/api/user'
 export default {
-  name: "Changepwd",
+  name: 'Changepwd',
   data() {
     var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
+      if (value === '') {
+        callback(new Error('请输入密码'))
       } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass')
         }
-        callback();
+        callback()
       }
-    };
+    }
     var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
       } else if (value !== this.ruleForm.pass) {
-        callback(new Error("两次输入密码不一致!"));
+        callback(new Error('两次输入密码不一致!'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       ruleForm: {
-        pass: "",
-        checkPass: ""
+        pass: '',
+        checkPass: ''
       },
       rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }]
+        pass: [{ validator: validatePass, trigger: 'blur' }],
+        checkPass: [{ validator: validatePass2, trigger: 'blur' }]
       }
-    };
+    }
   },
   methods: {
     async submitForm(formName) {
@@ -71,25 +72,25 @@ export default {
           await changePwd({
             secret: this.ruleForm.pass,
             secretConfirm: this.ruleForm.checkPass
-          });
+          })
           setTimeout(() => {
-            this.logout();
-          }, 1000);
+            this.logout()
+          }, 1000)
         } else {
-          this.$message({ message: "请确认填写信息是否完整", type: "warning" });
-          return false;
+          this.$message({ message: '请确认填写信息是否完整', type: 'warning' })
+          return false
         }
-      });
+      })
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     },
     async logout() {
-      await this.$store.dispatch("user/logout");
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+      await this.$store.dispatch('user/logout')
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

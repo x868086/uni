@@ -3,7 +3,7 @@ const path = require('path');
 const apiDirectory = path.resolve(__dirname, '../app/api');
 
 const environment = {
-  env: process.env.NODE_ENV || 'development',
+  env: process.env.NODE_ENV || 'production', //development production
 };
 
 // const dbconfig = {
