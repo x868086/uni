@@ -303,11 +303,21 @@
       </span>
     </el-dialog>
 
-    <el-pagination
+    <!-- <el-pagination
       layout="prev, pager, next"
       background
       :page-size="listQuery.limit"
       :total="listLength"
+      class="serial-pagination"
+      @prev-click="getPrevPage"
+      @next-click="getNextPage"
+      @current-change="getCurrentPage"
+    /> -->
+    <el-pagination
+      layout="prev, pager, next"
+      background
+      :page-size="listQuery.limit"
+      :total="ownerListLength"
       class="serial-pagination"
       @prev-click="getPrevPage"
       @next-click="getNextPage"
@@ -330,6 +340,7 @@ export default {
         offset: 0,
         limit: 50
       },
+      currentPage: 0,
       currentMonth: '',
       currentItem: {},
       listLength: 0,
@@ -359,10 +370,22 @@ export default {
   computed: {
     ...mapGetters(['channelArray']),
     ownerList() {
+      return this.list
+        .filter(e => {
+          return this.channelArray.includes(e.access_departid)
+        })
+        .slice(
+          this.currentPage * this.listQuery.limit,
+          this.currentPage * this.listQuery.limit + this.listQuery.limit
+        )
+      // 每页取50行
+    },
+    ownerListLength() {
       return this.list.filter(e => {
         return this.channelArray.includes(e.access_departid)
-      })
+      }).length
     },
+
     resonDesc() {
       const stateName = ['待整改', '已整改', '无需整改']
       const arr = ['未整改说明:', '具体整改措施:', '无需整改原因:']
@@ -375,7 +398,8 @@ export default {
     this.currentMonth = this.getCurrentMonth()
     await this.getList(
       this.listQuery.offset,
-      this.listQuery.limit,
+      // this.listQuery.limit,
+      100000,
       this.currentMonth
     )
     // 初始化按项目筛选的项目名称
@@ -447,15 +471,31 @@ export default {
         })
       })
     },
-    getPrevPage(p) {},
-    getNextPage(p) {},
+    getPrevPage(p) {
+      this.currentPage = p - 1
+    },
+    getNextPage(p) {
+      this.currentPage = p - 1
+    },
+    // async getCurrentPage(p) {
+    //   await this.getList(
+    //     parseInt(p - 1) * parseInt(this.listQuery.limit),
+    //     // this.listQuery.limit,
+    //     100000,
+    //     this.currentMonth
+    //   );
+    //   this.currentPage = parseInt(p - 1);
+    // },
     async getCurrentPage(p) {
-      await this.getList(
-        parseInt(p - 1) * parseInt(this.listQuery.limit),
-        this.listQuery.limit,
-        this.currentMonth
-      )
-      this.currentPage = parseInt(p - 1)
+      this.currentPage = p - 1
+      // await this.getList(
+      //   // parseInt(p - 1) * parseInt(this.listQuery.limit),
+      //   // this.listQuery.limit,
+      //   this.listQuery.limit,
+      //   100000,
+      //   this.currentMonth
+      // );
+      // this.currentPage = parseInt(p - 1);
     },
     sortByFineFee(a, b) {
       return a.fine_fee - b.fine_fee
@@ -497,14 +537,16 @@ export default {
       this.auditTypeValue = undefined
       await this.getList(
         this.listQuery.offset,
-        this.listQuery.limit,
+        // this.listQuery.limit,
+        100000,
         this.currentMonth
       )
     },
     async searchByAuditType() {
       await this.getList(
         this.listQuery.offset,
-        this.listQuery.limit,
+        // this.listQuery.limit,
+        100000,
         this.currentMonth,
         this.auditTypeValue
       )
