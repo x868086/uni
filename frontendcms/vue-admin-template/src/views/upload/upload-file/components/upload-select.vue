@@ -72,6 +72,11 @@ export default {
           value: 'b2iserial',
           label: '2i二次销售',
           owner: ['李锴', '超级管理员']
+        },
+        {
+          value: 'servicedetail',
+          label: '全量工单',
+          owner: ['谭妮娜','超级管理员']
         }
       ]
     }

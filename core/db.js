@@ -53,6 +53,11 @@ let loaddb = async () => {
 loaddb()
 
 sequelize.sync()
+// .then(() => {
+//     console.log('模型已成功同步到数据库');
+// }).catch(err => {
+//     console.error('同步模型时出现错误：', err);
+// });
 
 module.exports = {
     sequelize

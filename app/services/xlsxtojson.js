@@ -41,7 +41,8 @@ let insertFields = () => {
       'access_departname', 'access_departid', 'access_staffid', 'access_date', 'id_desc', 'state_name', 'reject_reason', 'check_desc',
       'fine_fee', 'audit_staffname', 'remark_desc', 'cuc_depart_code'],
     specialserial: ['serial_number', 'in_date', 'rule_value', 'end_date'],
-    b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee']
+    b2iserial: ['serial_number', 'product_name', 'yf_code', 'id_desc', 'fee'],
+    servicedetail: ['order_no', 'result_cut1', 'result_cut2', 'result_cut3', 'result_cut4', 'service_result']
   }
 }
 
@@ -79,24 +80,54 @@ let xlsxToJson = async (filePath, modelName) => {
     );
   }
 
-  const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath);
+  // const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath);
+
+  // let rollingArray = [];
+
+  // for await (const worksheetReader of workbookReader) {
+  //   for await (const row of worksheetReader) {
+  //     // console.log(row.values);
+  //     let obj = {};
+  //     sheetHeader.map((e, i) => {
+  //       // Object.assign(obj, { e: row.values[i] });
+  //       Object.assign(obj, { [e.toLowerCase()]: row.values[i + 1] });
+  //       // console.log(obj);
+  //     });
+  //     rollingArray.push(obj);
+  //   }
+  // }
+  // rollingArray.shift();
+  // //返回由xlsx row转换的objArray,和数据表的字段名称
+  // return { rollingArray, fields: insertFields()[modelName] };
 
   let rollingArray = [];
 
-  for await (const worksheetReader of workbookReader) {
-    for await (const row of worksheetReader) {
-      // console.log(row.values);
-      let obj = {};
-      sheetHeader.map((e, i) => {
-        // Object.assign(obj, { e: row.values[i] });
-        Object.assign(obj, { [e.toLowerCase()]: row.values[i + 1] });
-        // console.log(obj);
+  async function readExcelFile(filePath) {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+
+    workbook.eachSheet((sheet1) => {
+      sheet1.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        if (rowNumber > 1) {
+          let obj = {};
+          row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+            console.log(row.rowNumber)
+            console.log(cell.text);  // 使用text属性获取单元格的原始文本, 用.value方法获取会产生单元格内文本自动分割的问题
+            console.log(colNumber) //将service_result最长的单元格放最后一列是，避免单元格文本过长导致eachCell跳过同一行后续的空单元格
+            Object.assign(obj, { [sheetHeader[colNumber - 1]]: cell.text });
+            console.log(obj);
+          });
+          rollingArray.push(obj);
+          console.log(rollingArray)
+
+        }
+
       });
-      rollingArray.push(obj);
-    }
+    });
+    return { rollingArray, fields: insertFields()[modelName] };
   }
-  rollingArray.shift();
-  //返回由xlsx row转换的objArray,和数据表的字段名称
+
+  await readExcelFile(filePath);
   return { rollingArray, fields: insertFields()[modelName] };
 };
 

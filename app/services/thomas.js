@@ -8,6 +8,7 @@ let { B2iserialModel } = require('../models/b2iserial');
 let { SpecialSerialModel } = require('../models/special-serial');
 let { PsptArpuModel } = require('../models/psptarpu')
 let { AuditModel } = require('../models/audit')
+let { ServiceOrderModel } = require('../models/service-order-detail')
 const { sequelize } = require('../../core/db');
 
 let { xlsxToJson } = require('../services/xlsxtojson');
@@ -44,7 +45,8 @@ class ThomasService {
       b2iserial: B2iserialModel,
       specialserial: SpecialSerialModel,
       psptarpu: PsptArpuModel,
-      audit: AuditModel
+      audit: AuditModel,
+      servicedetail: ServiceOrderModel
     };
   };
 
